@@ -1,1 +1,19 @@
 @import 'tailwindcss';
+@keyframes scanSweep {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(420%);
+    opacity: 0;
+  }
+}
+
+.scan-sweep {
+  background: linear-gradient(to bottom, transparent 0%, rgba(34, 211, 238, 0.2) 50%, transparent 100%);
+  animation: scanSweep 3s linear infinite;
+}
