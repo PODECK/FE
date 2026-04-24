@@ -1,12 +1,19 @@
 import NicknameStep from '@/components/start/NicknameStep';
+import Image from 'next/image';
 
 export default function HomePage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[linear-gradient(to_bottom,#ef4444_0%,#dc2626_44%,#f8fafc_44%,#f8fafc_48%)] text-white">
-      <div className="border-10px pointer-events-none absolute top-[44%] left-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black shadow-[0_0_0_6px_rgba(248,250,252,0.45)]">
-        <div className="absolute inset-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-[6px] bg-white" />
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#FFD45E] to-[#F6B400]">
+      <div className="pointer-events-none absolute -right-80 -bottom-72 opacity-20 sm:-right-48 sm:-bottom-80">
+        <Image
+          src="/images/silhouette.png"
+          alt=""
+          width={800}
+          height={800}
+          className="animate-slow-spin h-[700px] w-[700px] -rotate-45 sm:h-[800px] sm:w-[800px]"
+          priority
+        />
       </div>
-
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-4 py-10">
         <NicknameStep />
       </div>
