@@ -27,7 +27,7 @@ export default function DialogBox({
             aria-hidden="true"
             animate={{ y: [0, 3, 0] }}
             transition={{ duration: 1, repeat: Infinity }}
-            className="pointer-events--none absolute right-5 bottom-4 h-0 w-0 border-x-[8px] border-t-[13px] border-x-transparent border-t-[#FBBF24]"
+            className="pointer-events-none absolute right-5 bottom-4 h-0 w-0 border-x-[8px] border-t-[13px] border-x-transparent border-t-[#FBBF24]"
           /> // 깜빡이는 역삼각형
         )}
       </div>
