@@ -1,1 +1,15 @@
 @import 'tailwindcss';
+
+@keyframes slow-spin {
+  from {
+    transform: translateX(-8.75rem) translateY(-5rem) rotate(-45deg);
+  }
+  to {
+    transform: translateX(-8.75rem) translateY(-5rem) rotate(315deg);
+  }
+}
+
+.animate-slow-spin {
+  animation: slow-spin 18s linear infinite;
+  transform-origin: center;
+}
