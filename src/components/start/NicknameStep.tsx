@@ -1,41 +1,50 @@
 'use client';
 
-import { hasTrainer } from '@/utils/storage';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import type { TrainerData } from '@/types/trainer';
 import { motion } from 'framer-motion';
-import { z } from 'zod';
 import Image from 'next/image';
 import Typewriter from 'typewriter-effect';
-// zod schema
-const nicknameSchema = z
-  .string()
-  .trim()
-  .min(1, '닉네임을 입력해주세요')
-  .min(2, '닉네임은 2자 이상이어야 합니다')
-  .max(12, '닉네임은 12자 이하여야 합니다')
-  .regex(/^[가-힣a-zA-Z0-9]+$/, '한글, 영문, 숫자만 사용할 수 있습니다.');
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { storageKeys } from '@/constants/key';
+import { nicknameSchema } from '@/schemas/nicknameSchema';
+import DialogBox from '@/shared/components/DialogBox';
+import TextField from '@/shared/components/TextField';
+import { landingMessages } from '@/constants/messages';
 
 export default function NicknameStep() {
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
+
   const router = useRouter();
 
+  const { getItem: getTrainerData, setItem: setTrainerData } = useLocalStorage<TrainerData>(storageKeys.TRINER_DATA);
+
   useEffect(() => {
-    // 이미 트레이너가 있다면
-    if (hasTrainer()) {
-      router.push('/home');
+    const trainerData = getTrainerData();
+
+    if (trainerData) {
+      router.push('/home'); // 아직 home이 없음. 차후에 연결 예정
     }
-  }, [router]);
+  }, [getTrainerData, router]);
 
   const handleSubmit = () => {
     const result = nicknameSchema.safeParse(nickname);
+
     if (!result.success) {
       setError(result.error.issues[0].message);
       return;
     }
+
+    const trainerData: TrainerData = {
+      nickname: result.data,
+      createdAt: new Date().toISOString(),
+    };
+
+    setTrainerData(trainerData);
     setError('');
-    console.log('유효한 닉네임 ', result.data);
+    router.push('/home');
   };
 
   return (
@@ -52,36 +61,24 @@ export default function NicknameStep() {
             priority
           />
         </div>
-        <div className="h-10 w-[547px] pt-3 text-center font-['Pixelify_Sans'] text-xl leading-8 font-medium tracking-[15px] text-neutral-500">
+        <div className="h-10 w-full max-w-[547px] pt-3 text-center font-['Pixelify_Sans'] text-xl leading-8 font-medium tracking-[15px] text-neutral-500">
           Battle Ascent TCG
         </div>
       </div>
 
       {/* 카드 뒤 뿌연 효과 & 간단한 소개 글*/}
-      <div className="relative mb-5 w-full">
-        <div className="absolute -inset-2 rounded-[20px] bg-white opacity-30" />
-        <div className="relative overflow-hidden rounded-[13px] border border-white bg-white p-6">
-          <div className="text-center text-lg leading-relaxed font-semibold whitespace-pre-line text-black">
-            <Typewriter
-              options={{
-                strings: ['트레이너가 되어 당신만의\n포켓몬과 모험을 시작해보세요!'],
-                autoStart: true,
-                loop: true,
-                delay: 50,
-                deleteSpeed: 50,
-                cursor: '|',
-              }}
-            />
-          </div>
-          {/* 우측 하단 깜빡이는 삼각형 */}
-          <motion.div
-            aria-hidden="true"
-            animate={{ y: [0, 3, 0] }}
-            transition={{ duration: 1, repeat: Infinity }}
-            className="pointer-events-none absolute right-5 bottom-4 h-0 w-0 border-x-[8px] border-t-[13px] border-x-transparent border-t-[#FBBF24]"
-          />
-        </div>
-      </div>
+      <DialogBox className="mb-5" contentClassName="min-h-24 pr-14 text-center leading-8 whitespace-pre-line font-bold">
+        <Typewriter
+          options={{
+            strings: [landingMessages.nicknameGuide],
+            autoStart: true,
+            loop: true,
+            delay: 50,
+            deleteSpeed: 50,
+            cursor: '|',
+          }}
+        />
+      </DialogBox>
 
       {/* 카드 */}
       <div className="relative mt-3 mb-5 w-full">
@@ -93,34 +90,28 @@ export default function NicknameStep() {
           className="relative w-full overflow-hidden rounded-[13px] border border-white bg-white p-6 backdrop-blur-md"
         >
           <div className="relative z-10">
-            <label className="mb-2 block text-sm font-bold text-black">닉네임</label>
-
-            <input
+            <TextField
+              label="닉네임"
               type="text"
+              autoFocus
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
-                if (error) setError('');
+
+                if (error) {
+                  setError('');
+                }
               }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSubmit();
+                if (e.key === 'Enter') {
+                  handleSubmit();
+                }
               }}
               placeholder="트레이너 이름을 입력하세요"
               maxLength={12}
-              className="h-12 w-full rounded-xl border border-slate-500/40 bg-slate-100 px-4 text-sm text-slate-900 transition outline-none focus:border-yellow-300"
+              error={error}
             />
-            {/* 에러 */}
-            <div className="mt-2 h-5">
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-sm font-medium text-rose-400"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </div>
+
             <motion.button
               whileTap={{ scale: 0.95 }}
               whileHover={{ scale: 1.03 }}
