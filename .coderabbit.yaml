@@ -1,4 +1,4 @@
-language: "ko-KR"
+language: 'ko-KR'
 early_access: false
 
 reviews:
@@ -13,18 +13,18 @@ reviews:
 
   # 일반적인 제외 경로만 (프로젝트 공통)
   path_filters:
-    - "!**/*.lock"
-    - "!package-lock.json"
-    - "!pnpm-lock.yaml"
-    - "!yarn.lock"
-    - "!.next/**"
-    - "!out/**"
-    - "!dist/**"
-    - "!build/**"
-    - "!coverage/**"
-    - "!node_modules/**"
-    - "!public/**"
-    - "!**/*.generated.*"
+    - '!**/*.lock'
+    - '!package-lock.json'
+    - '!pnpm-lock.yaml'
+    - '!yarn.lock'
+    - '!.next/**'
+    - '!out/**'
+    - '!dist/**'
+    - '!build/**'
+    - '!coverage/**'
+    - '!node_modules/**'
+    - '!public/**'
+    - '!**/*.generated.*'
 
 chat:
   auto_reply: true
