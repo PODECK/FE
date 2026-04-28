@@ -38,20 +38,20 @@ PODECK은
 
 ## 💻 기술 스택
 
-| **역할**        | **종류**                                                                                                                                                                                                                                                                                                                          | **선정 이유**                                                                 |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Runtime/Routing | <img src="https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white">                                                                                                                                                                                                                       | RSC 기반으로 라우팅·렌더링 일원화, 파일 시스템 라우팅으로 팀 간 충돌 최소화   |
-| UI              | <img src="https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black">                                                                                                                                                                                                                           | 컴포넌트 기반 UI, 복잡한 배틀·수집 화면 구성에 적합                           |
-| Language        | <img src="https://img.shields.io/badge/TypeScript_5-3178C6?style=for-the-badge&logo=typescript&logoColor=white">                                                                                                                                                                                                                  | strict 모드로 도메인·엔진 타입 안정성 확보                                    |
-| Styling         | <img src="https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"><br /><img src="https://img.shields.io/badge/clsx-000000?style=for-the-badge&logoColor=white"><br /><img src="https://img.shields.io/badge/tw--merge-000000?style=for-the-badge&logoColor=white">              | 유틸리티 기반으로 빠른 UI 반복, clsx·tw-merge로 조건부 클래스 충돌 방지       |
-| Validation      | <img src="https://img.shields.io/badge/Zod_4-3E67B1?style=for-the-badge&logo=zod&logoColor=white">                                                                                                                                                                                                                                | 런타임 스키마로 폼·LocalStorage 저장 데이터 검증                              |
-| State           | <img src="https://img.shields.io/badge/Zustand_5-433D3D?style=for-the-badge&logoColor=white">                                                                                                                                                                                                                                     | 전역 상태를 최소 보일러플레이트로 유지, 게임·배틀 스토어 단위 분리 예정       |
-| Animation       | <img src="https://img.shields.io/badge/Framer_Motion_12-black?style=for-the-badge&logo=framer&logoColor=white">                                                                                                                                                                                                                   | 카드 등장·배틀 연출 선언형 작성 가능, CSS 트랜지션 대비 인터럽트 처리가 용이  |
-| Persistence     | LocalStorage + Repository 패턴                                                                                                                                                                                                                                                                                                    | 회원가입 없는 MVP 저장소, 인터페이스 추상화로 추후 IndexedDB 등으로 교체 가능 |
-| Formatting      | <img src="https://img.shields.io/badge/ESLint_9-4B32C3?style=for-the-badge&logo=eslint&logoColor=white"><br /><img src="https://img.shields.io/badge/Prettier_3-000000?style=for-the-badge&logo=prettier&logoColor=F7B93E"><br /><img src="https://img.shields.io/badge/lint--staged-000000?style=for-the-badge&logoColor=white"> | 커밋 시점에 자동 교정, CI와 로컬 환경 일치                                    |
-| Package Manager | <img src="https://img.shields.io/badge/pnpm_10-F69220?style=for-the-badge&logo=pnpm&logoColor=white">                                                                                                                                                                                                                             | 엄격한 lockfile로 CI·로컬 환경 일치, node_modules 중복 설치 방지              |
-| CI              | <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">                                                                                                                                                                                                            | PR 시 typecheck·lint 품질 게이트 자동 실행                                    |
-| Hosting (예정)  | <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white">                                                                                                                                                                                                                            | Next.js App Router와 통합 배포 환경 제공                                      |
+| **역할**        | **종류**                                                                                                                                                                                                                                                                                                                                                                            | **선정 이유**                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Runtime/Routing | <img src="https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16">                                                                                                                                                                                                                                                        | RSC 기반으로 라우팅·렌더링 일원화, 파일 시스템 라우팅으로 팀 간 충돌 최소화   |
+| UI              | <img src="https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19">                                                                                                                                                                                                                                                              | 컴포넌트 기반 UI, 복잡한 배틀·수집 화면 구성에 적합                           |
+| Language        | <img src="https://img.shields.io/badge/TypeScript_5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5">                                                                                                                                                                                                                                                 | strict 모드로 도메인·엔진 타입 안정성 확보                                    |
+| Styling         | <img src="https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4"><br /><img src="https://img.shields.io/badge/clsx-000000?style=for-the-badge&logoColor=white" alt="clsx"><br /><img src="https://img.shields.io/badge/tw--merge-000000?style=for-the-badge&logoColor=white" alt="tailwind-merge">           | 유틸리티 기반으로 빠른 UI 반복, clsx·tw-merge로 조건부 클래스 충돌 방지       |
+| Validation      | <img src="https://img.shields.io/badge/Zod_4-3E67B1?style=for-the-badge&logo=zod&logoColor=white" alt="Zod 4">                                                                                                                                                                                                                                                                      | 런타임 스키마로 폼·LocalStorage 저장 데이터 검증                              |
+| State           | <img src="https://img.shields.io/badge/Zustand_5-433D3D?style=for-the-badge&logoColor=white" alt="Zustand 5">                                                                                                                                                                                                                                                                       | 전역 상태를 최소 보일러플레이트로 유지, 게임·배틀 스토어 단위 분리 예정       |
+| Animation       | <img src="https://img.shields.io/badge/Framer_Motion_12-black?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion 12">                                                                                                                                                                                                                                              | 카드 등장·배틀 연출 선언형 작성 가능, CSS 트랜지션 대비 인터럽트 처리가 용이  |
+| Persistence     | LocalStorage + Repository 패턴                                                                                                                                                                                                                                                                                                                                                      | 회원가입 없는 MVP 저장소, 인터페이스 추상화로 추후 IndexedDB 등으로 교체 가능 |
+| Formatting      | <img src="https://img.shields.io/badge/ESLint_9-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint 9"><br /><img src="https://img.shields.io/badge/Prettier_3-000000?style=for-the-badge&logo=prettier&logoColor=F7B93E" alt="Prettier 3"><br /><img src="https://img.shields.io/badge/lint--staged-000000?style=for-the-badge&logoColor=white" alt="lint-staged"> | 커밋 시점에 자동 교정, CI와 로컬 환경 일치                                    |
+| Package Manager | <img src="https://img.shields.io/badge/pnpm_10-F69220?style=for-the-badge&logo=pnpm&logoColor=white" alt="pnpm 10">                                                                                                                                                                                                                                                                 | 엄격한 lockfile로 CI·로컬 환경 일치, node_modules 중복 설치 방지              |
+| CI              | <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions">                                                                                                                                                                                                                                         | PR 시 typecheck·lint 품질 게이트 자동 실행                                    |
+| Hosting (예정)  | <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">                                                                                                                                                                                                                                                                 | Next.js App Router와 통합 배포 환경 제공                                      |
 
 **추가 예정:** React Hook Form, Howler.js(BGM), Vitest·Playwright, Storybook 등은 마일스톤에 맞춰 도입합니다.
 
@@ -94,7 +94,7 @@ pnpm run format:check     # Prettier 검사만
 
 ## 📂 프로젝트 구조 (현재)
 
-```
+```text
 📦 podeck (FE)
 ┣ 📂 .github
 ┃ ┣ 📂 workflows        # CI (예: typecheck, lint)
@@ -107,21 +107,23 @@ pnpm run format:check     # Prettier 검사만
 ┃ ┃ ┣ 📂 (auth)         # login, signup 등
 ┃ ┃ ┣ 📂 (main)         # 메인 앱 셸
 ┃ ┃ ┃ ┣ 📂 (start)      # 랜딩·닉네임 등 (URL 그룹)
+┃ ┃ ┃ ┃ ┣ 📂 _components
+┃ ┃ ┃ ┃ ┣ 📂 _constants
+┃ ┃ ┃ ┃ ┣ 📂 _schemas
+┃ ┃ ┃ ┃ ┣ 📂 _types
+┃ ┃ ┃ ┃ ┣ 📜 layout.tsx
+┃ ┃ ┃ ┃ ┗ 📜 page.tsx
 ┃ ┃ ┃ ┣ 📜 layout.tsx
 ┃ ┃ ┃ ┗ 📂 [id]         # 동적 라우트 예시
 ┃ ┃ ┣ 📂 api            # Route Handlers
 ┃ ┃ ┣ 📜 layout.tsx
 ┃ ┃ ┣ 📜 globals.css
 ┃ ┃ ┣ 📜 error.tsx · loading.tsx · not-found.tsx
-┃ ┣ 📂 components       # 도메인/기능 단위 컴포넌트 (예: start)
-┃ ┣ 📂 shared           # 공용 UI 등
-┃ ┣ 📂 hooks
-┃ ┣ 📂 schemas          # Zod 스키마
-┃ ┣ 📂 constants
-┃ ┣ 📂 types
-┃ ┣ 📂 config           # env 등
-┃ ┣ 📂 lib · utils · styles  # 확장용
-┃ ┗ ...
+┃ ┗ 📂 shared           # 공용 UI, 훅, 설정, 타입
+┃   ┣ 📂 components
+┃   ┣ 📂 hooks
+┃   ┣ 📂 config
+┃   ┗ 📂 types
 ┣ 📜 package.json
 ┣ 📜 pnpm-lock.yaml
 ┣ 📜 tsconfig.json
@@ -129,8 +131,8 @@ pnpm run format:check     # Prettier 검사만
 ┗ 📜 eslint.config.mjs
 ```
 
-- `**app/(main)/(start)**` — 랜딩 전용 레이아웃·`/` 닉네임 진입 등 (추후 홈·게이트는 동일 URL 정책에 맞게 확장)
-- `**components/start**` — 온보딩·닉네임 스텝 등
-- `**shared**` — 여러 기능에서 쓰는 UI·유틸
+- `app/(main)/(start)` — 랜딩 전용 레이아웃·`/` 닉네임 진입 등 (추후 홈·게이트는 동일 URL 정책에 맞게 확장)
+- `app/(main)/(start)/_components` — 해당 라우트에서만 쓰는 UI
+- `shared` — 여러 기능에서 재사용하는 UI·훅·설정·타입
 
 _배틀 엔진·Repository 레이어 도입에 따라 `features/`, `engine/` 등으로 확장될 수 있습니다._
