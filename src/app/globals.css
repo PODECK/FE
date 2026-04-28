@@ -1,5 +1,51 @@
 @import 'tailwindcss';
 
+@theme {
+  /* ─── 브랜드 컬러 ─── */
+  --color-primary: #ffb41d;
+
+  /* ─── 기본 컬러 ─── */
+  --color-base-0: #212121;
+  --color-base-1: #999999;
+  --color-base-2: #f1f1f1;
+  --color-base-3: #ffffff;
+
+  /* ─── 유틸리티 컬러 ─── */
+  --color-dimmed: rgb(0 0 0 / 0.4); /* 모달 배경용 딤 처리 */
+  --color-outline: rgb(255 255 255 / 0.3); /* 외곽선 강조용 */
+
+  /* ─── 보조 컬러 ─── */
+  --color-secondary-1: #555555;
+  --color-secondary-2: #ffffff;
+
+  /* ─── 포켓몬 타입 컬러 ─── */
+  --color-type-fire: #ff612c; /* 불꽃 */
+  --color-type-water: #2992ff; /* 물 */
+  --color-type-grass: #42bf24; /* 풀 */
+  --color-type-electric: #ffdb00; /* 전기 */
+  --color-type-flying: #95c9ff; /* 비행 */
+  --color-type-ground: #ab7939; /* 땅 */
+  --color-type-steel: #6aaed3; /* 강철 */
+  --color-type-ghost: #6e4570; /* 고스트 */
+  --color-type-psychic: #ff637f; /* 에스퍼 */
+  --color-type-dark: #4f4747; /* 악 */
+  --color-type-ice: #42d8ff; /* 얼음 */
+  --color-type-bug: #9fa424; /* 벌레 */
+  --color-type-rock: #bcb889; /* 바위 */
+  --color-type-fight: #ffa202; /* 격투 */
+  --color-type-poison: #994dcf; /* 독 */
+  --color-type-dragon: #5462d6; /* 드래곤 */
+  --color-type-normal: #999999; /* 노말 */
+
+  /* ─── 그라디언트 배경 ─── */
+  --gradient-bg: linear-gradient(180deg, #ffd45e 0%, #f6b400 100%);
+}
+
+/* ─── 커스텀 유틸리티 ─── */
+@utility bg-gradient-primary {
+  background-image: var(--gradient-bg);
+}
+
 @keyframes slow-spin {
   from {
     transform: translateX(-8.75rem) translateY(-5rem) rotate(-45deg);

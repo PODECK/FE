@@ -1,7 +1,10 @@
-import NicknameStep from '@/components/start/NicknameStep';
 import Image from 'next/image';
 
-export default function HomePage() {
+export default function StartLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#FFD45E] to-[#F6B400]">
       <div className="pointer-events-none absolute -right-80 -bottom-72 opacity-20 sm:-right-48 sm:-bottom-80">
@@ -15,7 +18,7 @@ export default function HomePage() {
         />
       </div>
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-4 py-10">
-        <NicknameStep />
+        {children}
       </div>
     </main>
   );

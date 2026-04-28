@@ -1,24 +1,40 @@
 name: Quality Check
 
 on:
+  push:
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
 jobs:
   check:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 9
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run typecheck
-      - run: pnpm run lint
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 1. 린트 검사
+      - name: Run Lint
+        run: pnpm run lint
+
+      # 2. 타입 검사
+      - name: Run Type Check
+        run: pnpm run typecheck
+
+      # 3. 프리티어 검사
+      - name: Run Format Check
+        run: pnpm run format:check

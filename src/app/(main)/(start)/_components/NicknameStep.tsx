@@ -1,33 +1,22 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import type { TrainerData } from '@/types/trainer';
+import { useState } from 'react';
+import type { TrainerData } from '../_types/trainer';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Typewriter from 'typewriter-effect';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { storageKeys } from '@/constants/key';
-import { nicknameSchema } from '@/schemas/nicknameSchema';
+import { useLocalStorage } from '@/shared/hooks/useLocalStorage';
+import { storageKeys } from '../_constants/key';
+import { nicknameSchema } from '../_schemas/nicknameSchema';
 import DialogBox from '@/shared/components/DialogBox';
 import TextField from '@/shared/components/TextField';
-import { landingMessages } from '@/constants/messages';
+import { landingMessages } from '../_constants/messages';
 
 export default function NicknameStep() {
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
 
-  const router = useRouter();
-
-  const { getItem: getTrainerData, setItem: setTrainerData } = useLocalStorage<TrainerData>(storageKeys.TRINER_DATA);
-
-  useEffect(() => {
-    const trainerData = getTrainerData();
-
-    if (trainerData) {
-      router.push('/home'); // 아직 home이 없음. 차후에 연결 예정
-    }
-  }, [getTrainerData, router]);
+  const { setItem: setTrainerData } = useLocalStorage<TrainerData>(storageKeys.TRINER_DATA);
 
   const handleSubmit = () => {
     const result = nicknameSchema.safeParse(nickname);
@@ -44,7 +33,6 @@ export default function NicknameStep() {
 
     setTrainerData(trainerData);
     setError('');
-    router.push('/home');
   };
 
   return (
