@@ -55,6 +55,22 @@
   }
 }
 
+@font-face {
+  font-family: 'NeoDunggeunmo';
+  src: url('/fonts/neodgm.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 .animate-slow-spin {
   animation: slow-spin 18s linear infinite;
   transform-origin: center;
