@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { TrainerData } from '../_types/trainer';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -15,6 +16,8 @@ import { landingMessages } from '../_constants/messages';
 export default function NicknameStep() {
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
+
+  const router = useRouter();
 
   const { setItem: setTrainerData } = useLocalStorage<TrainerData>(storageKeys.TRINER_DATA);
 
@@ -33,6 +36,7 @@ export default function NicknameStep() {
 
     setTrainerData(trainerData);
     setError('');
+    router.push('/loading');
   };
 
   return (
@@ -49,7 +53,7 @@ export default function NicknameStep() {
             priority
           />
         </div>
-        <div className="h-10 w-full max-w-[547px] pt-3 text-center font-['Pixelify_Sans'] text-xl leading-8 font-medium tracking-[15px] text-neutral-500">
+        <div className="h-10 w-full max-w-[547px] pt-3 text-center font-['Roboto'] text-xl leading-8 font-medium tracking-[15px] text-neutral-500">
           Battle Ascent TCG
         </div>
       </div>
