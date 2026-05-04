@@ -20,7 +20,7 @@ export abstract class BuildPipeline<TInput, TOutput> {
 
     const result = await this.collectAll();
 
-    this.save(result);
+    await this.save(result);
     this.onComplete(result);
   }
 
@@ -49,9 +49,7 @@ export abstract class BuildPipeline<TInput, TOutput> {
     for (let i = 0; i < targets.length; i += batchSize) {
       const batch = targets.slice(i, i + batchSize);
 
-      const settled = await Promise.allSettled(
-        batch.map((target) => this.fetch(target)),
-      );
+      const settled = await Promise.allSettled(batch.map((target) => this.fetch(target)));
 
       for (let j = 0; j < settled.length; j++) {
         const target = batch[j]!;
@@ -68,7 +66,7 @@ export abstract class BuildPipeline<TInput, TOutput> {
         logProgress(processed, targets.length, String(target));
       }
 
-      if (i * batchSize < targets.length) {
+      if (i + batchSize < targets.length) {
         await pokeApi.sleep(delayMs);
       }
     }
@@ -83,9 +81,7 @@ export abstract class BuildPipeline<TInput, TOutput> {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(outputPath, JSON.stringify(result, null, 2), 'utf-8');
 
-    console.log(
-      `\n저장 완료: ${outputPath} (${Object.keys(result).length}개)\n`,
-    );
+    console.log(`\n저장 완료: ${outputPath} (${Object.keys(result).length}개)\n`);
 
     if (this.errors.length > 0) {
       console.warn(`실패한 항목: [${this.errors.join(', ')}]`);
