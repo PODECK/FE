@@ -102,3 +102,4 @@ export type BaseStats = z.infer<typeof BaseStats>;
 export type BattlePokemon = z.infer<typeof BattlePokemon>;
 export type DamageResult = z.infer<typeof DamageResult>;
 export type PokemonData = z.infer<typeof PokemonData>;
+export type MoveData = z.infer<typeof MoveData>;
