@@ -17,7 +17,7 @@ export const FloorConfig = z.object({
 // 무한의 탑 진행도 (영속 저장)
 export const TowerProgress = z.object({
   currentFloor: z.number().int().min(1).max(10),
-  maxClearedFloor: z.number().int().min(1).max(10).default(0), // 현재는 10층이 최대
+  maxClearedFloor: z.number().int().min(0).max(10).default(0), // 현재는 10층이 최대
   playerLives: z.number().int().min(0).max(4).default(4), // 플레이어 목숨
 });
 

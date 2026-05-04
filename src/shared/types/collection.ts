@@ -39,7 +39,7 @@ export const PackOpenResult = z.object({
 
 // 게임 통계
 export const GameStats = z.object({
-  win: z.number().int().min(0).default(0),
+  wins: z.number().int().min(0).default(0),
   losses: z.number().int().min(0).default(0),
 });
 

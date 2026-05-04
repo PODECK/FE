@@ -81,8 +81,8 @@ export const TurnLogEntry = z.object({
   kind: LogEntryKind,
   turn: z.number().int().min(0), // 현재 턴 번호
   actorName: z.string(), // 행동자
-  targetName: z.string(), // 대상
-  damage: z.number().int().min(0),
+  targetName: z.string().optional(), // 대상
+  damage: z.number().int().min(0).optional(),
   effectiveness: z.number().optional(),
   message: z.string(), // UI에 표시할 문구
 });
