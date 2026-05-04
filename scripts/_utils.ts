@@ -1,14 +1,9 @@
 const POKEAPI_BASE_URL = 'https://pokeapi.co/api/v2';
 
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // PokeAPI 호출 시 retry 기능 추가
-export async function fetchWithRetry(
-  url: string,
-  retries = 3,
-  delayMs = 1000,
-): Promise<unknown> {
+export async function fetchWithRetry(url: string, retries = 3, delayMs = 1000): Promise<unknown> {
   for (let attemp = 1; attemp <= retries; attemp++) {
     try {
       const res = await fetch(url);
@@ -35,17 +30,13 @@ export async function fetchWithRetry(
 
 export const pokeApi = {
   // 포켓몬 기본 데이터(타입, 능력치, 스포트라이트, 기술 목록, 특성)
-  fetchPokemon: (id: number) =>
-    fetchWithRetry(`${POKEAPI_BASE_URL}/pokemon/${id}`) as Promise<any>,
+  fetchPokemon: (id: number) => fetchWithRetry(`${POKEAPI_BASE_URL}/pokemon/${id}`) as Promise<any>,
   // 포켓몬 종 데이터(한국어 이름, 도감, 설명 분류, 진화 정보)
-  fetchSpecies: (id: number) =>
-    fetchWithRetry(`${POKEAPI_BASE_URL}/pokemon-species/${id}`) as Promise<any>,
+  fetchSpecies: (id: number) => fetchWithRetry(`${POKEAPI_BASE_URL}/pokemon-species/${id}`) as Promise<any>,
   // 특성 데이터(한국어 이름, 설명)
-  fetchAbility: (name: string) =>
-    fetchWithRetry(`${POKEAPI_BASE_URL}/ability/${name}`) as Promise<any>,
+  fetchAbility: (name: string) => fetchWithRetry(`${POKEAPI_BASE_URL}/ability/${name}`) as Promise<any>,
   // 기술 데이터(한국어 이름, 위력, 명중률, pp, 타입, 물리/특수)
-  fetchMove: (name: string) =>
-    fetchWithRetry(`${POKEAPI_BASE_URL}/move/${name}`) as Promise<any>,
+  fetchMove: (name: string) => fetchWithRetry(`${POKEAPI_BASE_URL}/move/${name}`) as Promise<any>,
 
   sleep,
 };
@@ -60,10 +51,7 @@ export function logProgress(current: number, total: number, label: string) {
   if (current === total) process.stdout.write('\n');
 }
 
-export function findKoName(
-  names: Array<{ name: string; language: { name: string } }>,
-  fallback = '',
-): string {
+export function findKoName(names: Array<{ name: string; language: { name: string } }>, fallback = ''): string {
   return names.find((n) => n.language.name === 'ko')?.name ?? fallback;
 }
 
@@ -79,10 +67,7 @@ export function findKoFlavorText(
 
   for (const version of GEN4_VERSIONS) {
     const entry = entries.find(
-      (e) =>
-        e.language.name === 'ko' &&
-        (e.version?.name === version ||
-          e.version_group?.name.includes(version)),
+      (e) => e.language.name === 'ko' && (e.version?.name === version || e.version_group?.name.includes(version)),
     );
     if (entry) return entry.flavor_text.replace(/\f|\n/g, ' ').trim();
   }

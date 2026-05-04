@@ -21,16 +21,11 @@ class MoveBuildPipeline extends BuildPipeline<string, MoveData> {
     const pokemonMovesPath = path.resolve('/data/pokemon-moves.json');
 
     if (!fs.existsSync(pokemonMovesPath)) {
-      console.error(
-        '[오류] data/pokemon-moves.json 없음. ' +
-          '먼저 build-pokemon-moves.ts를 실행하세요.',
-      );
+      console.error('[오류] data/pokemon-moves.json 없음. ' + '먼저 build-pokemon-moves.ts를 실행하세요.');
       process.exit(1);
     }
 
-    const pokemonMoves: Record<string, string[]> = JSON.parse(
-      fs.readFileSync(pokemonMovesPath, 'utf-8'),
-    );
+    const pokemonMoves: Record<string, string[]> = JSON.parse(fs.readFileSync(pokemonMovesPath, 'utf-8'));
 
     const moveNames = [...new Set(Object.values(pokemonMoves).flat())].sort();
 

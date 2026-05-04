@@ -16,10 +16,7 @@ function selectMoves(candidates: MoveCandidate[]): string[] {
   const result: string[] = [];
 
   const attacks = candidates
-    .filter(
-      (m) =>
-        m.method === 'level-up' && m.damageClass !== 'status' && m.power > 0,
-    )
+    .filter((m) => m.method === 'level-up' && m.damageClass !== 'status' && m.power > 0)
     .sort((a, b) => b.level - a.level);
 
   for (const move of attacks) {
@@ -71,9 +68,7 @@ class PokemonMovesBuildPipeline extends BuildPipeline<number, string[]> {
         const detail = await pokeApi.fetchMove(name);
         const vgDetail = pokemonRaw.moves
           .find((m: any) => m.move.name === name)
-          ?.version_group_details.find((vg: any) =>
-            GEN4_VERSIONS.includes(vg.version_group.name),
-          );
+          ?.version_group_details.find((vg: any) => GEN4_VERSIONS.includes(vg.version_group.name));
 
         return {
           name,

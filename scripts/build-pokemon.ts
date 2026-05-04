@@ -1,12 +1,6 @@
 import path from 'path';
 import { BuildPipeline } from './_pipeline';
-import {
-  pokeApi,
-  findKoName,
-  findKoFlavorText,
-  TYPE_MAP,
-  getGEneration,
-} from './_utils';
+import { pokeApi, findKoName, findKoFlavorText, TYPE_MAP, getGEneration } from './_utils';
 
 import type { PokemonData } from '@/shared/types';
 
@@ -58,15 +52,9 @@ class PokemonBuilder {
     const category = findKoName(raw.genera, '???');
     const flavorText = findKoFlavorText(raw.flavor_text_entries);
 
-    const evolvesFromDexId = raw.evolves_from_species
-      ? Number(raw.evolves_from_species.url.split('/').at(-2))
-      : null;
+    const evolvesFromDexId = raw.evolves_from_species ? Number(raw.evolves_from_species.url.split('/').at(-2)) : null;
 
-    const evolutionStage = raw.evolution_from_species
-      ? raw.is_baby
-        ? 1
-        : 2
-      : 1;
+    const evolutionStage = raw.evolution_from_species ? (raw.is_baby ? 1 : 2) : 1;
 
     this.data = {
       ...this.data,
@@ -96,9 +84,7 @@ class PokemonBuilder {
   // 데이터 빌드
   build(): PokemonData {
     if (!this.data.dexId || !this.data.koName) {
-      throw new Error(
-        `PokemonBuilder: 필수 필드 누락 (dexId: ${this.data.dexId}`,
-      );
+      throw new Error(`PokemonBuilder: 필수 필드 누락 (dexId: ${this.data.dexId}`);
     }
     return this.data as PokemonData;
   }
@@ -122,14 +108,9 @@ class PokemonBuildPipeline extends BuildPipeline<number, PokemonData> {
   }
 
   protected async fetch(dexId: number): Promise<PokemonData> {
-    const [pokemonRaw, speciesRaw] = await Promise.all([
-      pokeApi.fetchPokemon(dexId),
-      pokeApi.fetchSpecies(dexId),
-    ]);
+    const [pokemonRaw, speciesRaw] = await Promise.all([pokeApi.fetchPokemon(dexId), pokeApi.fetchSpecies(dexId)]);
 
-    const builder = new PokemonBuilder()
-      .setBase(pokemonRaw)
-      .setSpecies(speciesRaw, dexId);
+    const builder = new PokemonBuilder().setBase(pokemonRaw).setSpecies(speciesRaw, dexId);
 
     // 일반 특성 가져오기
     const mainAbility = pokemonRaw.abilities.find((a: any) => !a.is_hidden);

@@ -356,14 +356,8 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
  * getTypeEffectiveness('water', ['fire', 'rock']) // 4 (물 → 불꽃/바위)
  * getTypeEffectiveness('ground', ['flying'])       // 0 (땅 → 비행: 무효)
  */
-export function getTypeEffectiveness(
-  attackType: PokemonType,
-  defenderTypes: PokemonType[],
-): number {
-  return defenderTypes.reduce(
-    (acc, defType) => acc * (TYPE_CHART[attackType][defType] ?? 1),
-    1,
-  );
+export function getTypeEffectiveness(attackType: PokemonType, defenderTypes: PokemonType[]): number {
+  return defenderTypes.reduce((acc, defType) => acc * (TYPE_CHART[attackType][defType] ?? 1), 1);
 }
 
 /**
