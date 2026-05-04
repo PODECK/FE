@@ -80,6 +80,16 @@ export const PokemonData = z.object({
   evolutionStage: z.number().int().min(1).max(3), // 1: 1세대, 2: 2세대, 3: 3세대
   evolvesFromDexId: z.number().int().nullable(), // 진화 전 포켓몬 dexId
   evolvesAtFloor: z.number().int().nullable(), // 몇 층 클리어 시 진화 (없으면 null)
+
+  // 도감 카드 상세 정보
+  category: z.string(),
+  height: z.number(),
+  weight: z.number(),
+  flavorText: z.string(),
+  ability: z.object({
+    name: z.string(),
+    description: z.string(),
+  }),
 });
 
 // 기술 정적 데이터 (data/moves.json 스키마)
