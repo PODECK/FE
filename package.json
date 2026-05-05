@@ -20,6 +20,9 @@
     ],
     "**/*.{json,md,css,yml,yaml}": [
       "prettier --write"
+    ],
+    "**/*.{mjs,cjs}": [
+      "prettier --write"
     ]
   },
   "dependencies": {
