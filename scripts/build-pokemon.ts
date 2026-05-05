@@ -97,7 +97,7 @@ class PokemonBuildPipeline extends BuildPipeline<number, PokemonData> {
       total: 493,
       batchSize: 10,
       delayMs: 200,
-      outputPath: path.resolve('/data/pokemon.json'),
+      outputPath: path.resolve('data/pokemon.json'),
       label: '포켓몬 데이터 수집',
     });
   }

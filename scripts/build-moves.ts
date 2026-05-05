@@ -11,14 +11,14 @@ class MoveBuildPipeline extends BuildPipeline<string, MoveData> {
       total: 0,
       batchSize: 20,
       delayMs: 200,
-      outputPath: path.resolve('/data/moves.json'),
+      outputPath: path.resolve('data/moves.json'),
       label: '기술 데이터 수집',
     });
   }
 
   // 기술 데이터 수집
   protected getTargets(): string[] {
-    const pokemonMovesPath = path.resolve('/data/pokemon-moves.json');
+    const pokemonMovesPath = path.resolve('data/pokemon-moves.json');
 
     if (!fs.existsSync(pokemonMovesPath)) {
       console.error('[오류] data/pokemon-moves.json 없음. ' + '먼저 build-pokemon-moves.ts를 실행하세요.');
