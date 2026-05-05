@@ -1,6 +1,6 @@
 import path from 'path';
 import { BuildPipeline } from './_pipeline';
-import { pokeApi, findKoName, findKoFlavorText, TYPE_MAP, getGEneration } from './_utils';
+import { pokeApi, findKoName, findKoFlavorText, TYPE_MAP, getGeneration } from './_utils';
 
 import type { PokemonData } from '@/shared/types';
 
@@ -61,7 +61,7 @@ class PokemonBuilder {
       koName,
       category,
       flavorText,
-      generation: getGEneration(dexId),
+      generation: getGeneration(dexId),
       evolvesFromDexId,
       evolutionStage,
       evolvesAtFloor: null,
