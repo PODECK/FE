@@ -81,7 +81,7 @@ export function findKoFlavorText(
 }
 
 // 세대 번호 (4세대까지)
-export function getGEneration(dexId: number): number {
+export function getGeneration(dexId: number): number {
   if (dexId <= 151) return 1;
   if (dexId <= 251) return 2;
   if (dexId <= 386) return 3;
