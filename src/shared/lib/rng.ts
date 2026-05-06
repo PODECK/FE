@@ -43,5 +43,5 @@ export function chance(rng: Rng, probability: number): boolean {
 
 // 4세대 데미지 랜덤 보정값 반환 (0.85 ~ 1.00)
 export function damageRoll(rng: Rng): number {
-  return 0.85 + rng() * 0.15;
+  return (Math.floor(rng() * 16) + 85) / 100;
 }
