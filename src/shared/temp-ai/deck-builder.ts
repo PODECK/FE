@@ -1,3 +1,4 @@
+import { invariant } from '@/shared/lib/invariant';
 import type { Rng } from '@/shared/lib/rng';
 import { randomInt, shuffle } from '@/shared/lib/rng';
 import { MOCK_BULBASAUR } from '@/shared/temp-ai/__mocks__/mock-pokemon';
@@ -26,6 +27,10 @@ export function buildAiDeck(
   rng: Rng,
   dataSource: PokemonDataSource = new MockPokemonDataSource(),
 ): BattlePokemon[] {
+  invariant(floor.pokemonPool.length >= 3, '층 포켓몬 풀은 최소 3마리 이상이어야 합니다.', {
+    floor: floor.floor,
+    poolSize: floor.pokemonPool.length,
+  });
   // 풀 섞기
   const shuffled = shuffle(rng, floor.pokemonPool);
   const selected = shuffled.slice(0, 6);
