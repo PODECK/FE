@@ -32,7 +32,7 @@ export function assertPhase(currentPhase: string, expectedPhase: string, eventTy
 }
 
 // 배열 인덱스가 범위 내에 있는지 검증 후 값 반환
-export function asserArrayIndex<T>(array: T[], index: number, code: string): T {
+export function assertArrayIndex<T>(array: T[], index: number, code: string): T {
   invariant(index >= 0 && index < array.length, code, {
     arrayLength: array.length,
     index,
