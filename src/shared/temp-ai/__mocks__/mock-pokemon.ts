@@ -136,4 +136,7 @@ export const MOCK_CHARMANDER: BattlePokemon = {
 export const MOCK_AI_TEAM: BattlePokemon[] = Array.from({ length: 6 }, (_, i) => ({
   ...MOCK_BULBASAUR,
   instanceId: `mock-bulbasaur-00${i + 1}`,
+  moves: MOCK_BULBASAUR.moves.map((m) => ({ ...m })),
+  stats: { ...MOCK_BULBASAUR.stats },
+  types: [...MOCK_BULBASAUR.types],
 }));
