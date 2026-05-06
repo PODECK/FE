@@ -10,11 +10,17 @@ export interface PokemonDataSource {
 
 // mock 데이터용 소스
 export class MockPokemonDataSource implements PokemonDataSource {
+  private counter = 0;
+
   getPokemon(dexId: number, level: number): BattlePokemon {
+    const id = this.counter++;
     return {
       ...MOCK_BULBASAUR,
-      instanceId: `ai-${dexId}-${Date.now()}-${Math.random()}`,
+      instanceId: `ai-${dexId}-${id}`,
       level,
+      moves: MOCK_BULBASAUR.moves.map((m) => ({ ...m })),
+      stats: { ...MOCK_BULBASAUR.stats },
+      types: [...MOCK_BULBASAUR.types],
       maxHp: Math.floor(MOCK_BULBASAUR.stats.hp * (level / 10) + 10),
       currentHp: Math.floor(MOCK_BULBASAUR.stats.hp * (level / 10) + 10),
     };
@@ -33,7 +39,7 @@ export function buildAiDeck(
   });
   // 풀 섞기
   const shuffled = shuffle(rng, floor.pokemonPool);
-  const selected = shuffled.slice(0, 6);
+  const selected = shuffled.slice(0, Math.min(6, shuffled.length));
 
   const [minLevel, maxLevel] = floor.levelRange;
 

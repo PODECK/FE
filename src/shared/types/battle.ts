@@ -49,7 +49,7 @@ export const PendingAction = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('swap'),
-    targetIndex: z.number().int().min(0).max(3),
+    targetIndex: z.number().int().min(0).max(5),
   }),
 ]);
 
