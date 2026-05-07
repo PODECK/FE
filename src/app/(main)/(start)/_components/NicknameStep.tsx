@@ -36,7 +36,7 @@ export default function NicknameStep() {
 
     setTrainerData(trainerData);
     setError('');
-    router.push('/loading');
+    router.push('/build-deck');
   };
 
   return (
@@ -74,12 +74,12 @@ export default function NicknameStep() {
 
       {/* 카드 */}
       <div className="relative mt-3 mb-5 w-full">
-        <div className="absolute -inset-2 rounded-[20px] bg-white opacity-30" />
+        <div className="absolute -inset-2 rounded-[20px] bg-[var(--color-base-3)] opacity-30" />
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative w-full overflow-hidden rounded-[13px] border border-white bg-white p-6 backdrop-blur-md"
+          className="relative w-full overflow-hidden rounded-[13px] border border-white bg-[var(--color-base-3)] p-6 backdrop-blur-md"
         >
           <div className="relative z-10">
             <TextField
@@ -110,7 +110,7 @@ export default function NicknameStep() {
               type="button"
               onClick={handleSubmit}
               disabled={!nickname.trim()}
-              className="text-l mt-4 h-12 w-full rounded-xl bg-[#FFB41D] font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+              className="text-l mt-4 h-12 w-full rounded-xl bg-[var(--color-primary)] font-bold text-[var(--color-secondary-2)] transition disabled:cursor-not-allowed disabled:opacity-50"
             >
               모험 시작하기
             </motion.button>
