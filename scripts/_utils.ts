@@ -80,6 +80,15 @@ export function findKoFlavorText(
   );
 }
 
+export function findKoGenus(genera: Array<{ genus: string; language: { name: string } }>, fallback = ''): string {
+  for (const genus of genera) {
+    if (genus.language.name === 'ko') {
+      return genus.genus;
+    }
+  }
+  return genera.at(-1)?.genus ?? fallback;
+}
+
 // 세대 번호 (4세대까지)
 export function getGeneration(dexId: number): number {
   if (dexId <= 151) return 1;

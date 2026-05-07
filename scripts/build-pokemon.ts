@@ -1,6 +1,6 @@
 import path from 'path';
 import { BuildPipeline } from './_pipeline';
-import { pokeApi, findKoName, findKoFlavorText, TYPE_MAP, getGeneration } from './_utils';
+import { pokeApi, findKoName, findKoFlavorText, TYPE_MAP, getGeneration, findKoGenus } from './_utils';
 
 import type { PokemonData } from '@/shared/types';
 
@@ -52,7 +52,7 @@ class PokemonBuilder {
   // 종족 정보 설정
   setSpecies(raw: any, dexId: number): this {
     const koName = findKoName(raw.names, this.data.koName ?? '');
-    const category = findKoName(raw.genera, '???');
+    const category = findKoGenus(raw.genera, '???');
     const flavorText = findKoFlavorText(raw.flavor_text_entries);
 
     const evolvesFromDexId = raw.evolves_from_species ? Number(raw.evolves_from_species.url.split('/').at(-2)) : null;
