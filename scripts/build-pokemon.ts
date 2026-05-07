@@ -41,6 +41,9 @@ class PokemonBuilder {
       spriteUrl:
         raw.sprites.front_default ??
         `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${raw.id}.png`,
+      artworkUrl:
+        raw.sprites.other?.['official-artwork']?.front_default ??
+        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${raw.id}.png`,
     };
 
     return this;
@@ -97,7 +100,7 @@ class PokemonBuildPipeline extends BuildPipeline<number, PokemonData> {
       total: 493,
       batchSize: 10,
       delayMs: 200,
-      outputPath: path.resolve('/data/pokemon.json'),
+      outputPath: path.resolve('data/pokemon.json'),
       label: '포켓몬 데이터 수집',
     });
   }

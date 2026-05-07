@@ -9,7 +9,7 @@ export const FloorConfig = z.object({
   challengerName: z.string(),
   concept: z.string(), // 컨셉 테마 명칭
   aiLevel: AiLevel,
-  pokemonPool: z.array(z.number().int().min(1).max(493)).min(6), // 6마리 풀
+  pokemonPool: z.array(z.number().int().min(1).max(493)).min(3).max(6), // 3~6마리 풀
   levelRange: z.tuple([z.number().int().min(1), z.number().int().max(100)]),
   packReward: z.number().int().min(1),
 });

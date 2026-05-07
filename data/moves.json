@@ -1,0 +1,2262 @@
+{
+  "absorb": {
+    "id": "absorb",
+    "koName": "흡수",
+    "enName": "absorb",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "acid": {
+    "id": "acid",
+    "koName": "용해액",
+    "enName": "acid",
+    "type": "poison",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "aerial-ace": {
+    "id": "aerial-ace",
+    "koName": "제비반환",
+    "enName": "aerial-ace",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "aeroblast": {
+    "id": "aeroblast",
+    "koName": "에어로블라스트",
+    "enName": "aeroblast",
+    "type": "flying",
+    "damageClass": "special",
+    "power": 100,
+    "accuracy": 95,
+    "pp": 5
+  },
+  "air-cutter": {
+    "id": "air-cutter",
+    "koName": "에어컷터",
+    "enName": "air-cutter",
+    "type": "flying",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 95,
+    "pp": 25
+  },
+  "air-slash": {
+    "id": "air-slash",
+    "koName": "에어슬래시",
+    "enName": "air-slash",
+    "type": "flying",
+    "damageClass": "special",
+    "power": 75,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "ancient-power": {
+    "id": "ancient-power",
+    "koName": "원시의힘",
+    "enName": "ancient-power",
+    "type": "rock",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "aqua-jet": {
+    "id": "aqua-jet",
+    "koName": "아쿠아제트",
+    "enName": "aqua-jet",
+    "type": "water",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "aqua-tail": {
+    "id": "aqua-tail",
+    "koName": "아쿠아테일",
+    "enName": "aqua-tail",
+    "type": "water",
+    "damageClass": "physical",
+    "power": 90,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "assurance": {
+    "id": "assurance",
+    "koName": "승부굳히기",
+    "enName": "assurance",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "astonish": {
+    "id": "astonish",
+    "koName": "놀래키기",
+    "enName": "astonish",
+    "type": "ghost",
+    "damageClass": "physical",
+    "power": 30,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "attack-order": {
+    "id": "attack-order",
+    "koName": "공격지령",
+    "enName": "attack-order",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "aura-sphere": {
+    "id": "aura-sphere",
+    "koName": "파동탄",
+    "enName": "aura-sphere",
+    "type": "fighting",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "aurora-beam": {
+    "id": "aurora-beam",
+    "koName": "오로라빔",
+    "enName": "aurora-beam",
+    "type": "ice",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "avalanche": {
+    "id": "avalanche",
+    "koName": "눈사태",
+    "enName": "avalanche",
+    "type": "ice",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "bite": {
+    "id": "bite",
+    "koName": "물기",
+    "enName": "bite",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "blaze-kick": {
+    "id": "blaze-kick",
+    "koName": "브레이즈킥",
+    "enName": "blaze-kick",
+    "type": "fire",
+    "damageClass": "physical",
+    "power": 85,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "blizzard": {
+    "id": "blizzard",
+    "koName": "눈보라",
+    "enName": "blizzard",
+    "type": "ice",
+    "damageClass": "special",
+    "power": 110,
+    "accuracy": 70,
+    "pp": 5
+  },
+  "body-slam": {
+    "id": "body-slam",
+    "koName": "누르기",
+    "enName": "body-slam",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 85,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "bone-rush": {
+    "id": "bone-rush",
+    "koName": "본러쉬",
+    "enName": "bone-rush",
+    "type": "ground",
+    "damageClass": "physical",
+    "power": 25,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "bounce": {
+    "id": "bounce",
+    "koName": "뛰어오르다",
+    "enName": "bounce",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 85,
+    "accuracy": 85,
+    "pp": 5
+  },
+  "brave-bird": {
+    "id": "brave-bird",
+    "koName": "브레이브버드",
+    "enName": "brave-bird",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "brine": {
+    "id": "brine",
+    "koName": "소금물",
+    "enName": "brine",
+    "type": "water",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "bubble": {
+    "id": "bubble",
+    "koName": "거품",
+    "enName": "bubble",
+    "type": "water",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "bubble-beam": {
+    "id": "bubble-beam",
+    "koName": "거품광선",
+    "enName": "bubble-beam",
+    "type": "water",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "bug-bite": {
+    "id": "bug-bite",
+    "koName": "벌레먹음",
+    "enName": "bug-bite",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "bug-buzz": {
+    "id": "bug-buzz",
+    "koName": "벌레의야단법석",
+    "enName": "bug-buzz",
+    "type": "bug",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "bullet-seed": {
+    "id": "bullet-seed",
+    "koName": "기관총",
+    "enName": "bullet-seed",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 25,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "charge-beam": {
+    "id": "charge-beam",
+    "koName": "차지빔",
+    "enName": "charge-beam",
+    "type": "electric",
+    "damageClass": "special",
+    "power": 50,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "chatter": {
+    "id": "chatter",
+    "koName": "수다",
+    "enName": "chatter",
+    "type": "flying",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "clamp": {
+    "id": "clamp",
+    "koName": "껍질끼우기",
+    "enName": "clamp",
+    "type": "water",
+    "damageClass": "physical",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15
+  },
+  "close-combat": {
+    "id": "close-combat",
+    "koName": "인파이트",
+    "enName": "close-combat",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "confusion": {
+    "id": "confusion",
+    "koName": "염동력",
+    "enName": "confusion",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "constrict": {
+    "id": "constrict",
+    "koName": "휘감기",
+    "enName": "constrict",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 10,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "covet": {
+    "id": "covet",
+    "koName": "탐내다",
+    "enName": "covet",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "crabhammer": {
+    "id": "crabhammer",
+    "koName": "찝게햄머",
+    "enName": "crabhammer",
+    "type": "water",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "cross-chop": {
+    "id": "cross-chop",
+    "koName": "크로스촙",
+    "enName": "cross-chop",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 80,
+    "pp": 5
+  },
+  "cross-poison": {
+    "id": "cross-poison",
+    "koName": "크로스포이즌",
+    "enName": "cross-poison",
+    "type": "poison",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "crunch": {
+    "id": "crunch",
+    "koName": "깨물어부수기",
+    "enName": "crunch",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "crush-claw": {
+    "id": "crush-claw",
+    "koName": "브레이크크루",
+    "enName": "crush-claw",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 75,
+    "accuracy": 95,
+    "pp": 10
+  },
+  "dark-pulse": {
+    "id": "dark-pulse",
+    "koName": "악의파동",
+    "enName": "dark-pulse",
+    "type": "dark",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "dig": {
+    "id": "dig",
+    "koName": "구멍파기",
+    "enName": "dig",
+    "type": "ground",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "discharge": {
+    "id": "discharge",
+    "koName": "방전",
+    "enName": "discharge",
+    "type": "electric",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "dive": {
+    "id": "dive",
+    "koName": "다이빙",
+    "enName": "dive",
+    "type": "water",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "dizzy-punch": {
+    "id": "dizzy-punch",
+    "koName": "잼잼펀치",
+    "enName": "dizzy-punch",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "doom-desire": {
+    "id": "doom-desire",
+    "koName": "파멸의소원",
+    "enName": "doom-desire",
+    "type": "steel",
+    "damageClass": "special",
+    "power": 140,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "double-edge": {
+    "id": "double-edge",
+    "koName": "이판사판태클",
+    "enName": "double-edge",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "double-hit": {
+    "id": "double-hit",
+    "koName": "더블어택",
+    "enName": "double-hit",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 35,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "double-kick": {
+    "id": "double-kick",
+    "koName": "두번치기",
+    "enName": "double-kick",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 30,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "double-slap": {
+    "id": "double-slap",
+    "koName": "연속뺨치기",
+    "enName": "double-slap",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 10
+  },
+  "dragon-breath": {
+    "id": "dragon-breath",
+    "koName": "용의숨결",
+    "enName": "dragon-breath",
+    "type": "dragon",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "dragon-claw": {
+    "id": "dragon-claw",
+    "koName": "드래곤크루",
+    "enName": "dragon-claw",
+    "type": "dragon",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "dragon-pulse": {
+    "id": "dragon-pulse",
+    "koName": "용의파동",
+    "enName": "dragon-pulse",
+    "type": "dragon",
+    "damageClass": "special",
+    "power": 85,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "dragon-rush": {
+    "id": "dragon-rush",
+    "koName": "드래곤다이브",
+    "enName": "dragon-rush",
+    "type": "dragon",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 75,
+    "pp": 10
+  },
+  "dream-eater": {
+    "id": "dream-eater",
+    "koName": "꿈먹기",
+    "enName": "dream-eater",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 100,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "drill-peck": {
+    "id": "drill-peck",
+    "koName": "회전부리",
+    "enName": "drill-peck",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "dynamic-punch": {
+    "id": "dynamic-punch",
+    "koName": "폭발펀치",
+    "enName": "dynamic-punch",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 50,
+    "pp": 5
+  },
+  "earth-power": {
+    "id": "earth-power",
+    "koName": "대지의힘",
+    "enName": "earth-power",
+    "type": "ground",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "earthquake": {
+    "id": "earthquake",
+    "koName": "지진",
+    "enName": "earthquake",
+    "type": "ground",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "egg-bomb": {
+    "id": "egg-bomb",
+    "koName": "알폭탄",
+    "enName": "egg-bomb",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 75,
+    "pp": 10
+  },
+  "ember": {
+    "id": "ember",
+    "koName": "불꽃세례",
+    "enName": "ember",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "energy-ball": {
+    "id": "energy-ball",
+    "koName": "에너지볼",
+    "enName": "energy-ball",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "eruption": {
+    "id": "eruption",
+    "koName": "분화",
+    "enName": "eruption",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 150,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "explosion": {
+    "id": "explosion",
+    "koName": "대폭발",
+    "enName": "explosion",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 250,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "extrasensory": {
+    "id": "extrasensory",
+    "koName": "신통력",
+    "enName": "extrasensory",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "extreme-speed": {
+    "id": "extreme-speed",
+    "koName": "신속",
+    "enName": "extreme-speed",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "facade": {
+    "id": "facade",
+    "koName": "객기",
+    "enName": "facade",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "fake-out": {
+    "id": "fake-out",
+    "koName": "속이다",
+    "enName": "fake-out",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "false-swipe": {
+    "id": "false-swipe",
+    "koName": "칼등치기",
+    "enName": "false-swipe",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 40
+  },
+  "feint": {
+    "id": "feint",
+    "koName": "페인트",
+    "enName": "feint",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 30,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "feint-attack": {
+    "id": "feint-attack",
+    "koName": "속여때리기",
+    "enName": "feint-attack",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "fire-blast": {
+    "id": "fire-blast",
+    "koName": "불대문자",
+    "enName": "fire-blast",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 110,
+    "accuracy": 85,
+    "pp": 5
+  },
+  "fire-fang": {
+    "id": "fire-fang",
+    "koName": "불꽃엄니",
+    "enName": "fire-fang",
+    "type": "fire",
+    "damageClass": "physical",
+    "power": 65,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "fire-punch": {
+    "id": "fire-punch",
+    "koName": "불꽃펀치",
+    "enName": "fire-punch",
+    "type": "fire",
+    "damageClass": "physical",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "fire-spin": {
+    "id": "fire-spin",
+    "koName": "회오리불꽃",
+    "enName": "fire-spin",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15
+  },
+  "flame-wheel": {
+    "id": "flame-wheel",
+    "koName": "화염자동차",
+    "enName": "flame-wheel",
+    "type": "fire",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "flamethrower": {
+    "id": "flamethrower",
+    "koName": "화염방사",
+    "enName": "flamethrower",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "flare-blitz": {
+    "id": "flare-blitz",
+    "koName": "플레어드라이브",
+    "enName": "flare-blitz",
+    "type": "fire",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "flash-cannon": {
+    "id": "flash-cannon",
+    "koName": "러스터캐논",
+    "enName": "flash-cannon",
+    "type": "steel",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "fly": {
+    "id": "fly",
+    "koName": "공중날기",
+    "enName": "fly",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 90,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "focus-punch": {
+    "id": "focus-punch",
+    "koName": "힘껏펀치",
+    "enName": "focus-punch",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 150,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "force-palm": {
+    "id": "force-palm",
+    "koName": "발경",
+    "enName": "force-palm",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "fury-attack": {
+    "id": "fury-attack",
+    "koName": "마구찌르기",
+    "enName": "fury-attack",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 20
+  },
+  "fury-cutter": {
+    "id": "fury-cutter",
+    "koName": "연속자르기",
+    "enName": "fury-cutter",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 95,
+    "pp": 20
+  },
+  "fury-swipes": {
+    "id": "fury-swipes",
+    "koName": "마구할퀴기",
+    "enName": "fury-swipes",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 18,
+    "accuracy": 80,
+    "pp": 15
+  },
+  "future-sight": {
+    "id": "future-sight",
+    "koName": "미래예지",
+    "enName": "future-sight",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "giga-drain": {
+    "id": "giga-drain",
+    "koName": "기가드레인",
+    "enName": "giga-drain",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "giga-impact": {
+    "id": "giga-impact",
+    "koName": "기가임팩트",
+    "enName": "giga-impact",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 150,
+    "accuracy": 90,
+    "pp": 5
+  },
+  "gunk-shot": {
+    "id": "gunk-shot",
+    "koName": "더스트슈트",
+    "enName": "gunk-shot",
+    "type": "poison",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 80,
+    "pp": 5
+  },
+  "gust": {
+    "id": "gust",
+    "koName": "바람일으키기",
+    "enName": "gust",
+    "type": "flying",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "hammer-arm": {
+    "id": "hammer-arm",
+    "koName": "암해머",
+    "enName": "hammer-arm",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "head-smash": {
+    "id": "head-smash",
+    "koName": "양날박치기",
+    "enName": "head-smash",
+    "type": "rock",
+    "damageClass": "physical",
+    "power": 150,
+    "accuracy": 80,
+    "pp": 5
+  },
+  "headbutt": {
+    "id": "headbutt",
+    "koName": "박치기",
+    "enName": "headbutt",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "heat-wave": {
+    "id": "heat-wave",
+    "koName": "열풍",
+    "enName": "heat-wave",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 95,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "hidden-power": {
+    "id": "hidden-power",
+    "koName": "잠재파워",
+    "enName": "hidden-power",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "high-jump-kick": {
+    "id": "high-jump-kick",
+    "koName": "무릎차기",
+    "enName": "high-jump-kick",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 130,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "horn-attack": {
+    "id": "horn-attack",
+    "koName": "뿔찌르기",
+    "enName": "horn-attack",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "hydro-pump": {
+    "id": "hydro-pump",
+    "koName": "하이드로펌프",
+    "enName": "hydro-pump",
+    "type": "water",
+    "damageClass": "special",
+    "power": 110,
+    "accuracy": 80,
+    "pp": 5
+  },
+  "hyper-beam": {
+    "id": "hyper-beam",
+    "koName": "파괴광선",
+    "enName": "hyper-beam",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 150,
+    "accuracy": 90,
+    "pp": 5
+  },
+  "hyper-fang": {
+    "id": "hyper-fang",
+    "koName": "필살앞니",
+    "enName": "hyper-fang",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 90,
+    "pp": 15
+  },
+  "hyper-voice": {
+    "id": "hyper-voice",
+    "koName": "하이퍼보이스",
+    "enName": "hyper-voice",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "ice-beam": {
+    "id": "ice-beam",
+    "koName": "냉동빔",
+    "enName": "ice-beam",
+    "type": "ice",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "ice-fang": {
+    "id": "ice-fang",
+    "koName": "얼음엄니",
+    "enName": "ice-fang",
+    "type": "ice",
+    "damageClass": "physical",
+    "power": 65,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "ice-punch": {
+    "id": "ice-punch",
+    "koName": "냉동펀치",
+    "enName": "ice-punch",
+    "type": "ice",
+    "damageClass": "physical",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "ice-shard": {
+    "id": "ice-shard",
+    "koName": "얼음뭉치",
+    "enName": "ice-shard",
+    "type": "ice",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "icy-wind": {
+    "id": "icy-wind",
+    "koName": "얼다바람",
+    "enName": "icy-wind",
+    "type": "ice",
+    "damageClass": "special",
+    "power": 55,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "iron-head": {
+    "id": "iron-head",
+    "koName": "아이언헤드",
+    "enName": "iron-head",
+    "type": "steel",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "iron-tail": {
+    "id": "iron-tail",
+    "koName": "아이언테일",
+    "enName": "iron-tail",
+    "type": "steel",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 75,
+    "pp": 15
+  },
+  "judgment": {
+    "id": "judgment",
+    "koName": "심판의뭉치",
+    "enName": "judgment",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 100,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "jump-kick": {
+    "id": "jump-kick",
+    "koName": "점프킥",
+    "enName": "jump-kick",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 95,
+    "pp": 10
+  },
+  "knock-off": {
+    "id": "knock-off",
+    "koName": "탁쳐서떨구기",
+    "enName": "knock-off",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "last-resort": {
+    "id": "last-resort",
+    "koName": "뒀다쓰기",
+    "enName": "last-resort",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 140,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "lava-plume": {
+    "id": "lava-plume",
+    "koName": "분연",
+    "enName": "lava-plume",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "leaf-blade": {
+    "id": "leaf-blade",
+    "koName": "리프블레이드",
+    "enName": "leaf-blade",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "leaf-storm": {
+    "id": "leaf-storm",
+    "koName": "리프스톰",
+    "enName": "leaf-storm",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 130,
+    "accuracy": 90,
+    "pp": 5
+  },
+  "leech-life": {
+    "id": "leech-life",
+    "koName": "흡혈",
+    "enName": "leech-life",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "lick": {
+    "id": "lick",
+    "koName": "핥기",
+    "enName": "lick",
+    "type": "ghost",
+    "damageClass": "physical",
+    "power": 30,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "luster-purge": {
+    "id": "luster-purge",
+    "koName": "라스트버지",
+    "enName": "luster-purge",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 95,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "magical-leaf": {
+    "id": "magical-leaf",
+    "koName": "메지컬리프",
+    "enName": "magical-leaf",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "magma-storm": {
+    "id": "magma-storm",
+    "koName": "마그마스톰",
+    "enName": "magma-storm",
+    "type": "fire",
+    "damageClass": "special",
+    "power": 100,
+    "accuracy": 75,
+    "pp": 5
+  },
+  "magnet-bomb": {
+    "id": "magnet-bomb",
+    "koName": "마그넷봄",
+    "enName": "magnet-bomb",
+    "type": "steel",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "mega-drain": {
+    "id": "mega-drain",
+    "koName": "메가드레인",
+    "enName": "mega-drain",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "mega-kick": {
+    "id": "mega-kick",
+    "koName": "메가톤킥",
+    "enName": "mega-kick",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 75,
+    "pp": 5
+  },
+  "mega-punch": {
+    "id": "mega-punch",
+    "koName": "메가톤펀치",
+    "enName": "mega-punch",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 85,
+    "pp": 20
+  },
+  "megahorn": {
+    "id": "megahorn",
+    "koName": "메가폰",
+    "enName": "megahorn",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 85,
+    "pp": 10
+  },
+  "metal-claw": {
+    "id": "metal-claw",
+    "koName": "메탈크로우",
+    "enName": "metal-claw",
+    "type": "steel",
+    "damageClass": "physical",
+    "power": 50,
+    "accuracy": 95,
+    "pp": 35
+  },
+  "meteor-mash": {
+    "id": "meteor-mash",
+    "koName": "코멧펀치",
+    "enName": "meteor-mash",
+    "type": "steel",
+    "damageClass": "physical",
+    "power": 90,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "mirror-shot": {
+    "id": "mirror-shot",
+    "koName": "미러숏",
+    "enName": "mirror-shot",
+    "type": "steel",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 85,
+    "pp": 10
+  },
+  "mist-ball": {
+    "id": "mist-ball",
+    "koName": "미스트볼",
+    "enName": "mist-ball",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 95,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "mud-bomb": {
+    "id": "mud-bomb",
+    "koName": "진흙폭탄",
+    "enName": "mud-bomb",
+    "type": "ground",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 85,
+    "pp": 10
+  },
+  "mud-shot": {
+    "id": "mud-shot",
+    "koName": "머드숏",
+    "enName": "mud-shot",
+    "type": "ground",
+    "damageClass": "special",
+    "power": 55,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "mud-slap": {
+    "id": "mud-slap",
+    "koName": "진흙뿌리기",
+    "enName": "mud-slap",
+    "type": "ground",
+    "damageClass": "special",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "muddy-water": {
+    "id": "muddy-water",
+    "koName": "탁류",
+    "enName": "muddy-water",
+    "type": "water",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 85,
+    "pp": 10
+  },
+  "needle-arm": {
+    "id": "needle-arm",
+    "koName": "바늘팔",
+    "enName": "needle-arm",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "night-slash": {
+    "id": "night-slash",
+    "koName": "깜짝베기",
+    "enName": "night-slash",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "ominous-wind": {
+    "id": "ominous-wind",
+    "koName": "괴상한바람",
+    "enName": "ominous-wind",
+    "type": "ghost",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "outrage": {
+    "id": "outrage",
+    "koName": "역린",
+    "enName": "outrage",
+    "type": "dragon",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "payback": {
+    "id": "payback",
+    "koName": "보복",
+    "enName": "payback",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "peck": {
+    "id": "peck",
+    "koName": "쪼기",
+    "enName": "peck",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 35,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "petal-dance": {
+    "id": "petal-dance",
+    "koName": "꽃잎댄스",
+    "enName": "petal-dance",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "pin-missile": {
+    "id": "pin-missile",
+    "koName": "바늘미사일",
+    "enName": "pin-missile",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 25,
+    "accuracy": 95,
+    "pp": 20
+  },
+  "poison-fang": {
+    "id": "poison-fang",
+    "koName": "독엄니",
+    "enName": "poison-fang",
+    "type": "poison",
+    "damageClass": "physical",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "poison-jab": {
+    "id": "poison-jab",
+    "koName": "독찌르기",
+    "enName": "poison-jab",
+    "type": "poison",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "poison-sting": {
+    "id": "poison-sting",
+    "koName": "독침",
+    "enName": "poison-sting",
+    "type": "poison",
+    "damageClass": "physical",
+    "power": 15,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "pound": {
+    "id": "pound",
+    "koName": "막치기",
+    "enName": "pound",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "powder-snow": {
+    "id": "powder-snow",
+    "koName": "눈싸라기",
+    "enName": "powder-snow",
+    "type": "ice",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "power-gem": {
+    "id": "power-gem",
+    "koName": "파워젬",
+    "enName": "power-gem",
+    "type": "rock",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "power-whip": {
+    "id": "power-whip",
+    "koName": "파워휩",
+    "enName": "power-whip",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 85,
+    "pp": 10
+  },
+  "psybeam": {
+    "id": "psybeam",
+    "koName": "환상빔",
+    "enName": "psybeam",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "psychic": {
+    "id": "psychic",
+    "koName": "사이코키네시스",
+    "enName": "psychic",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "psycho-boost": {
+    "id": "psycho-boost",
+    "koName": "사이코부스트",
+    "enName": "psycho-boost",
+    "type": "psychic",
+    "damageClass": "special",
+    "power": 140,
+    "accuracy": 90,
+    "pp": 5
+  },
+  "psycho-cut": {
+    "id": "psycho-cut",
+    "koName": "사이코커터",
+    "enName": "psycho-cut",
+    "type": "psychic",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "pursuit": {
+    "id": "pursuit",
+    "koName": "따라가때리기",
+    "enName": "pursuit",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "quick-attack": {
+    "id": "quick-attack",
+    "koName": "전광석화",
+    "enName": "quick-attack",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "rage": {
+    "id": "rage",
+    "koName": "분노",
+    "enName": "rage",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "rapid-spin": {
+    "id": "rapid-spin",
+    "koName": "고속스핀",
+    "enName": "rapid-spin",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 40
+  },
+  "razor-leaf": {
+    "id": "razor-leaf",
+    "koName": "잎날가르기",
+    "enName": "razor-leaf",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 55,
+    "accuracy": 95,
+    "pp": 25
+  },
+  "razor-wind": {
+    "id": "razor-wind",
+    "koName": "칼바람",
+    "enName": "razor-wind",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "revenge": {
+    "id": "revenge",
+    "koName": "리벤지",
+    "enName": "revenge",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "rock-blast": {
+    "id": "rock-blast",
+    "koName": "락블레스트",
+    "enName": "rock-blast",
+    "type": "rock",
+    "damageClass": "physical",
+    "power": 25,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "rock-slide": {
+    "id": "rock-slide",
+    "koName": "스톤샤워",
+    "enName": "rock-slide",
+    "type": "rock",
+    "damageClass": "physical",
+    "power": 75,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "rock-throw": {
+    "id": "rock-throw",
+    "koName": "돌떨구기",
+    "enName": "rock-throw",
+    "type": "rock",
+    "damageClass": "physical",
+    "power": 50,
+    "accuracy": 90,
+    "pp": 15
+  },
+  "rock-wrecker": {
+    "id": "rock-wrecker",
+    "koName": "암석포",
+    "enName": "rock-wrecker",
+    "type": "rock",
+    "damageClass": "physical",
+    "power": 150,
+    "accuracy": 90,
+    "pp": 5
+  },
+  "rollout": {
+    "id": "rollout",
+    "koName": "구르기",
+    "enName": "rollout",
+    "type": "rock",
+    "damageClass": "physical",
+    "power": 30,
+    "accuracy": 90,
+    "pp": 20
+  },
+  "sacred-fire": {
+    "id": "sacred-fire",
+    "koName": "성스러운불꽃",
+    "enName": "sacred-fire",
+    "type": "fire",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 95,
+    "pp": 5
+  },
+  "sand-tomb": {
+    "id": "sand-tomb",
+    "koName": "모래지옥",
+    "enName": "sand-tomb",
+    "type": "ground",
+    "damageClass": "physical",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15
+  },
+  "scratch": {
+    "id": "scratch",
+    "koName": "할퀴기",
+    "enName": "scratch",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "seed-bomb": {
+    "id": "seed-bomb",
+    "koName": "씨폭탄",
+    "enName": "seed-bomb",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "seed-flare": {
+    "id": "seed-flare",
+    "koName": "시드플레어",
+    "enName": "seed-flare",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 120,
+    "accuracy": 85,
+    "pp": 5
+  },
+  "self-destruct": {
+    "id": "self-destruct",
+    "koName": "자폭",
+    "enName": "self-destruct",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 200,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "shadow-ball": {
+    "id": "shadow-ball",
+    "koName": "섀도볼",
+    "enName": "shadow-ball",
+    "type": "ghost",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "shadow-claw": {
+    "id": "shadow-claw",
+    "koName": "섀도크루",
+    "enName": "shadow-claw",
+    "type": "ghost",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "shadow-punch": {
+    "id": "shadow-punch",
+    "koName": "섀도펀치",
+    "enName": "shadow-punch",
+    "type": "ghost",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "shadow-sneak": {
+    "id": "shadow-sneak",
+    "koName": "야습",
+    "enName": "shadow-sneak",
+    "type": "ghost",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "shock-wave": {
+    "id": "shock-wave",
+    "koName": "전격파",
+    "enName": "shock-wave",
+    "type": "electric",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "signal-beam": {
+    "id": "signal-beam",
+    "koName": "시그널빔",
+    "enName": "signal-beam",
+    "type": "bug",
+    "damageClass": "special",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "silver-wind": {
+    "id": "silver-wind",
+    "koName": "은빛바람",
+    "enName": "silver-wind",
+    "type": "bug",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "skull-bash": {
+    "id": "skull-bash",
+    "koName": "로케트박치기",
+    "enName": "skull-bash",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 130,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "sky-attack": {
+    "id": "sky-attack",
+    "koName": "불새",
+    "enName": "sky-attack",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 140,
+    "accuracy": 90,
+    "pp": 5
+  },
+  "sky-uppercut": {
+    "id": "sky-uppercut",
+    "koName": "스카이업퍼",
+    "enName": "sky-uppercut",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 85,
+    "accuracy": 90,
+    "pp": 15
+  },
+  "slam": {
+    "id": "slam",
+    "koName": "힘껏치기",
+    "enName": "slam",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 75,
+    "pp": 20
+  },
+  "slash": {
+    "id": "slash",
+    "koName": "베어가르기",
+    "enName": "slash",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "sludge": {
+    "id": "sludge",
+    "koName": "오물공격",
+    "enName": "sludge",
+    "type": "poison",
+    "damageClass": "special",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "sludge-bomb": {
+    "id": "sludge-bomb",
+    "koName": "오물폭탄",
+    "enName": "sludge-bomb",
+    "type": "poison",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "smelling-salts": {
+    "id": "smelling-salts",
+    "koName": "정신차리기",
+    "enName": "smelling-salts",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "smog": {
+    "id": "smog",
+    "koName": "스모그",
+    "enName": "smog",
+    "type": "poison",
+    "damageClass": "special",
+    "power": 30,
+    "accuracy": 70,
+    "pp": 20
+  },
+  "snore": {
+    "id": "snore",
+    "koName": "코골기",
+    "enName": "snore",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "solar-beam": {
+    "id": "solar-beam",
+    "koName": "솔라빔",
+    "enName": "solar-beam",
+    "type": "grass",
+    "damageClass": "special",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "spark": {
+    "id": "spark",
+    "koName": "스파크",
+    "enName": "spark",
+    "type": "electric",
+    "damageClass": "physical",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "spike-cannon": {
+    "id": "spike-cannon",
+    "koName": "가시대포",
+    "enName": "spike-cannon",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "steel-wing": {
+    "id": "steel-wing",
+    "koName": "강철날개",
+    "enName": "steel-wing",
+    "type": "steel",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 90,
+    "pp": 25
+  },
+  "stomp": {
+    "id": "stomp",
+    "koName": "짓밟기",
+    "enName": "stomp",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "stone-edge": {
+    "id": "stone-edge",
+    "koName": "스톤에지",
+    "enName": "stone-edge",
+    "type": "rock",
+    "damageClass": "physical",
+    "power": 100,
+    "accuracy": 80,
+    "pp": 5
+  },
+  "struggle": {
+    "id": "struggle",
+    "koName": "발버둥",
+    "enName": "struggle",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 50,
+    "accuracy": 0,
+    "pp": 1
+  },
+  "submission": {
+    "id": "submission",
+    "koName": "지옥의바퀴",
+    "enName": "submission",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 80,
+    "pp": 20
+  },
+  "sucker-punch": {
+    "id": "sucker-punch",
+    "koName": "기습",
+    "enName": "sucker-punch",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "superpower": {
+    "id": "superpower",
+    "koName": "엄청난힘",
+    "enName": "superpower",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "swift": {
+    "id": "swift",
+    "koName": "스피드스타",
+    "enName": "swift",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 0,
+    "pp": 20
+  },
+  "tackle": {
+    "id": "tackle",
+    "koName": "몸통박치기",
+    "enName": "tackle",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "take-down": {
+    "id": "take-down",
+    "koName": "돌진",
+    "enName": "take-down",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 90,
+    "accuracy": 85,
+    "pp": 20
+  },
+  "thief": {
+    "id": "thief",
+    "koName": "도둑질",
+    "enName": "thief",
+    "type": "dark",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "thrash": {
+    "id": "thrash",
+    "koName": "난동부리기",
+    "enName": "thrash",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "thunder": {
+    "id": "thunder",
+    "koName": "번개",
+    "enName": "thunder",
+    "type": "electric",
+    "damageClass": "special",
+    "power": 110,
+    "accuracy": 70,
+    "pp": 10
+  },
+  "thunder-fang": {
+    "id": "thunder-fang",
+    "koName": "번개엄니",
+    "enName": "thunder-fang",
+    "type": "electric",
+    "damageClass": "physical",
+    "power": 65,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "thunder-punch": {
+    "id": "thunder-punch",
+    "koName": "번개펀치",
+    "enName": "thunder-punch",
+    "type": "electric",
+    "damageClass": "physical",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "thunder-shock": {
+    "id": "thunder-shock",
+    "koName": "전기쇼크",
+    "enName": "thunder-shock",
+    "type": "electric",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "thunderbolt": {
+    "id": "thunderbolt",
+    "koName": "10만볼트",
+    "enName": "thunderbolt",
+    "type": "electric",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "tri-attack": {
+    "id": "tri-attack",
+    "koName": "트라이어택",
+    "enName": "tri-attack",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "triple-kick": {
+    "id": "triple-kick",
+    "koName": "트리플킥",
+    "enName": "triple-kick",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 10,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "twister": {
+    "id": "twister",
+    "koName": "회오리",
+    "enName": "twister",
+    "type": "dragon",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "u-turn": {
+    "id": "u-turn",
+    "koName": "유턴",
+    "enName": "u-turn",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "uproar": {
+    "id": "uproar",
+    "koName": "소란피기",
+    "enName": "uproar",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "vine-whip": {
+    "id": "vine-whip",
+    "koName": "덩굴채찍",
+    "enName": "vine-whip",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 45,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "wake-up-slap": {
+    "id": "wake-up-slap",
+    "koName": "잠깨움뺨치기",
+    "enName": "wake-up-slap",
+    "type": "fighting",
+    "damageClass": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "water-gun": {
+    "id": "water-gun",
+    "koName": "물대포",
+    "enName": "water-gun",
+    "type": "water",
+    "damageClass": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25
+  },
+  "water-pulse": {
+    "id": "water-pulse",
+    "koName": "물의파동",
+    "enName": "water-pulse",
+    "type": "water",
+    "damageClass": "special",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "water-spout": {
+    "id": "water-spout",
+    "koName": "해수스파우팅",
+    "enName": "water-spout",
+    "type": "water",
+    "damageClass": "special",
+    "power": 150,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "waterfall": {
+    "id": "waterfall",
+    "koName": "폭포오르기",
+    "enName": "waterfall",
+    "type": "water",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "weather-ball": {
+    "id": "weather-ball",
+    "koName": "웨더볼",
+    "enName": "weather-ball",
+    "type": "normal",
+    "damageClass": "special",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "whirlpool": {
+    "id": "whirlpool",
+    "koName": "바다회오리",
+    "enName": "whirlpool",
+    "type": "water",
+    "damageClass": "special",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15
+  },
+  "wing-attack": {
+    "id": "wing-attack",
+    "koName": "날개치기",
+    "enName": "wing-attack",
+    "type": "flying",
+    "damageClass": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 35
+  },
+  "wood-hammer": {
+    "id": "wood-hammer",
+    "koName": "우드해머",
+    "enName": "wood-hammer",
+    "type": "grass",
+    "damageClass": "physical",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "wrap": {
+    "id": "wrap",
+    "koName": "김밥말이",
+    "enName": "wrap",
+    "type": "normal",
+    "damageClass": "physical",
+    "power": 15,
+    "accuracy": 90,
+    "pp": 20
+  },
+  "x-scissor": {
+    "id": "x-scissor",
+    "koName": "시저크로스",
+    "enName": "x-scissor",
+    "type": "bug",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "zap-cannon": {
+    "id": "zap-cannon",
+    "koName": "전자포",
+    "enName": "zap-cannon",
+    "type": "electric",
+    "damageClass": "special",
+    "power": 120,
+    "accuracy": 50,
+    "pp": 5
+  },
+  "zen-headbutt": {
+    "id": "zen-headbutt",
+    "koName": "사념의박치기",
+    "enName": "zen-headbutt",
+    "type": "psychic",
+    "damageClass": "physical",
+    "power": 80,
+    "accuracy": 90,
+    "pp": 15
+  }
+}
