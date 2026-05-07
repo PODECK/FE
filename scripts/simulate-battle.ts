@@ -18,6 +18,9 @@ function simulateOneBattle(floor: number, seed: number): 'player' | 'ai' {
   const playerTeam: BattlePokemon[] = Array.from({ length: 6 }, (_, i) => ({
     ...MOCK_BULBASAUR,
     instanceId: `player-${i}`,
+    moves: MOCK_BULBASAUR.moves.map((m) => ({ ...m })),
+    stats: { ...MOCK_BULBASAUR.stats },
+    types: [...MOCK_BULBASAUR.types],
   }));
 
   let playerIndex = 0;
@@ -31,11 +34,15 @@ function simulateOneBattle(floor: number, seed: number): 'player' | 'ai' {
 
     // 플레이어: 항상 첫 번째 기술
     const playerMoveIdx = player.moves.findIndex((m) => m.pp > 0);
-    if (playerMoveIdx === -1) break;
+    if (playerMoveIdx === -1) {
+      return 'ai';
+    }
 
     // AI: 전략 선택
     const aiMoveIdx = chooseMove(ai, player, floorConfig.aiLevel, rng);
-    if (aiMoveIdx === -1) break;
+    if (aiMoveIdx === -1) {
+      return 'player';
+    }
 
     // 간단한 데미지 계산 (목 시뮬레이션용)
     const playerMove = player.moves[playerMoveIdx]!;
