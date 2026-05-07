@@ -20,7 +20,13 @@ const move2 = chooseMove(MOCK_BULBASAUR, MOCK_CHARMANDER, 'normal', rng2);
 
 console.log(`시드 42, 1차: ${move1}`);
 console.log(`시드 42, 2차: ${move2}`);
-console.log(`결정론성: ${move1 === move2 ? '✅ 통과' : '❌ 실패'}`);
+
+let failed = false;
+const pass = (label: string, condition: boolean) => {
+  console.log(`${label}: ${condition ? '✅ 통과' : '❌ 실패'}`);
+  if (!condition) failed = true;
+};
+pass('결정론성', move1 === move2);
 
 // ────────────────────────────────────────────────
 // 검증 2: 타입 상성 평가 (불꽃 → 풀: 2배)
@@ -37,7 +43,7 @@ ranked.forEach((e) => {
 
 const bestMove = ranked.find((e) => e.isUsable);
 const isFireFirst = bestMove?.move.type === 'fire';
-console.log(`불꽃 기술 1순위: ${isFireFirst ? '✅ 통과' : '❌ 실패'}`);
+pass('불꽃 기술 1순위', isFireFirst);
 
 // ────────────────────────────────────────────────
 // 검증 3: 덱 빌더 (시드 기반, 길이 = min(6, pokemonPool.length))
@@ -60,8 +66,8 @@ const decksMatch = deck1.every(
   (p, i) => deck2[i] !== undefined && p.instanceId === deck2[i]!.instanceId && p.level === deck2[i]!.level,
 );
 
-console.log(`덱 사이즈 (${expectedDeckSize}마리 기대): ${deckSizeOk ? '✅ 통과' : '❌ 실패'}`);
-console.log(`결정론성: ${decksMatch ? '✅ 통과' : '❌ 실패'}`);
+pass(`덱 사이즈 (${expectedDeckSize}마리 기대)`, deckSizeOk);
+pass('결정론성', decksMatch);
 
 // ────────────────────────────────────────────────
 // 검증 4: PP 소진 처리
@@ -73,7 +79,7 @@ const exhausted = {
   moves: MOCK_BULBASAUR.moves.map((m) => ({ ...m, pp: 0 })),
 };
 const result = chooseMove(exhausted, MOCK_CHARMANDER, 'easy', createRng(1));
-console.log(`PP 전부 소진 시 -1 반환: ${result === -1 ? '✅ 통과' : '❌ 실패'}`);
+pass('PP 전부 소진 시 -1 반환', result === -1);
 
 // ────────────────────────────────────────────────
 // 검증 5: 강제 교체
@@ -82,6 +88,10 @@ console.log('\n[5] 강제 교체 검증');
 
 const faintedTeam = MOCK_AI_TEAM.map((p, i) => (i === 0 ? { ...p, fainted: true } : p));
 const swapIndex = chooseForceSwap(faintedTeam, 0, createRng(1));
-console.log(`기절 포켓몬(0) 제외 교체: ${swapIndex > 0 ? '✅ 통과' : '❌ 실패'} (index: ${swapIndex})`);
+pass(`기절 포켓몬(0) 제외 교체: ${swapIndex > 0 ? '✅ 통과' : '❌ 실패'} (index: ${swapIndex})`, swapIndex > 0);
 
 console.log('\n검증 완료\n');
+if (failed) {
+  console.error('\n일부 검증 실패\n');
+  process.exit(1);
+}

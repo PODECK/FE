@@ -41,6 +41,9 @@ function simulateOneBattle(floor: number, seed: number): 'player' | 'ai' {
     const playerMove = player.moves[playerMoveIdx]!;
     const aiMove = ai.moves[aiMoveIdx]!;
 
+    player.moves[playerMoveIdx]!.pp--;
+    ai.moves[aiMoveIdx]!.pp--;
+
     ai.currentHp -= Math.max(1, Math.floor(playerMove.power * 0.3));
     player.currentHp -= Math.max(1, Math.floor(aiMove.power * 0.3));
 
