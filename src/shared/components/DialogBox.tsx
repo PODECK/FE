@@ -19,8 +19,10 @@ export default function DialogBox({
   return (
     // 불투명 배경 블럭과 위로 올라오는 배경 블럭
     <div className={`relative w-full ${className}`}>
-      <div className="absolute -inset-2 rounded-[20px] bg-white opacity-30" />
-      <div className={`relative overflow-hidden rounded-[13px] border border-white bg-white p-6 ${contentClassName}`}>
+      <div className="absolute -inset-2 rounded-[20px] bg-[var(--color-secondary-2)] opacity-30" />
+      <div
+        className={`relative overflow-hidden rounded-[13px] border border-white bg-[var(--color-secondary-2)] p-6 ${contentClassName}`}
+      >
         {children}
         {isShowIndicator && (
           <motion.div

@@ -46,6 +46,16 @@
   background-image: var(--gradient-bg);
 }
 
+@utility text-body-sm {
+  font-size: 1rem;
+  line-height: 1.625rem;
+}
+
+@utility text-body-md {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 @keyframes slow-spin {
   from {
     transform: translateX(-8.75rem) translateY(-5rem) rotate(-45deg);
