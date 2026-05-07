@@ -76,6 +76,7 @@ export const PokemonData = z.object({
   types: z.array(PokemonType).min(1).max(2),
   baseStats: BaseStats,
   spriteUrl: z.string(), // url or 상대 경로
+  artworkUrl: z.string(),
   generation: z.number().int().min(1).max(4),
   evolutionStage: z.number().int().min(1).max(3), // 1: 1세대, 2: 2세대, 3: 3세대
   evolvesFromDexId: z.number().int().nullable(), // 진화 전 포켓몬 dexId

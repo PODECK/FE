@@ -41,6 +41,9 @@ class PokemonBuilder {
       spriteUrl:
         raw.sprites.front_default ??
         `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${raw.id}.png`,
+      artworkUrl:
+        raw.sprites.other?.['official-artwork']?.front_default ??
+        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${raw.id}.png`,
     };
 
     return this;
