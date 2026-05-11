@@ -42,7 +42,7 @@ export default function LoadingPage() {
     if (!isLoadingComplete) return;
 
     const timeoutId = window.setTimeout(() => {
-      router.push('/build-deck');
+      router.push('/home');
     }, COMPLETE_DELAY_MS);
 
     return () => {
