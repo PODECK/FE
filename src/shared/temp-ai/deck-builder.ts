@@ -16,6 +16,7 @@ export class MockPokemonDataSource implements PokemonDataSource {
     const id = this.counter++;
     return {
       ...MOCK_BULBASAUR,
+      dexId,
       instanceId: `ai-${dexId}-${id}`,
       level,
       moves: MOCK_BULBASAUR.moves.map((m) => ({ ...m })),
