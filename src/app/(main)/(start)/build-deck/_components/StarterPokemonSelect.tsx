@@ -2,13 +2,10 @@
 
 import { useLocalStorage } from '@/shared/hooks/useLocalStorage';
 import type { Generation } from '../_types/pokemon';
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData, SelectedPokemon } from '@/app/(main)/(start)/_types/trainer';
-import {
-  generationTabs,
-  starterPokemonIdsByGeneration,
-} from '@/app/(main)/(start)/build-deck/_constants/starter-pokemon';
+import { generationTabs, starterPokemonDexIds } from '@/app/(main)/(start)/build-deck/_constants/starter-pokemon';
 import DialogBox from '@/shared/components/DialogBox';
 import GenerationTabs from './GenerationTabs';
 import { motion } from 'framer-motion';
@@ -19,10 +16,6 @@ import { useRouter } from 'next/navigation';
 import pokemonDataJson from '../../../../../../data/pokemon.json';
 
 const defaultTrainerName = '트레이너';
-const subscribeTrainerStorage = () => {
-  return () => {};
-};
-
 const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
 export default function StarterPokemonSelect() {
@@ -31,7 +24,9 @@ export default function StarterPokemonSelect() {
   const [selectedPokemons, setSelectedPokemons] = useState<SelectedPokemon[]>([]);
 
   const pokemons = useMemo(() => {
-    return starterPokemonIdsByGeneration[activeGeneration].map((pokemonId) => pokemonDataById[String(pokemonId)]);
+    return starterPokemonDexIds
+      .map((pokemonId) => pokemonDataById[String(pokemonId)])
+      .filter((pokemon) => pokemon.generation === activeGeneration);
   }, [activeGeneration]);
 
   const selectedPokemonIds = selectedPokemons.map((pokemon) => pokemon.dexId);
@@ -40,8 +35,24 @@ export default function StarterPokemonSelect() {
 
   const { getItem: getTrainerData, setItem: setTrainerData } = useLocalStorage<TrainerData>(storageKeys.TRAINER_DATA);
 
+  const subscribeTrainerData = useCallback((onStoreChange: () => void) => {
+    if (typeof window === 'undefined') return () => {};
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === storageKeys.TRAINER_DATA) {
+        onStoreChange();
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []); // 닉네임을 불러올 때 hydration error 방지 목적
+
   const trainerName = useSyncExternalStore(
-    subscribeTrainerStorage,
+    subscribeTrainerData,
     () => getTrainerData()?.nickname ?? defaultTrainerName,
     () => defaultTrainerName,
   );
@@ -91,6 +102,7 @@ export default function StarterPokemonSelect() {
 
     router.push('/loading');
   };
+
   return (
     <div className="flex w-full flex-col items-center justify-center gap-8">
       <header className="text-center">
