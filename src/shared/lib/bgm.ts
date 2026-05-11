@@ -1,77 +1,89 @@
-let audioContext: AudioContext | null = null;
-let sourceNode: AudioBufferSourceNode | null = null;
-let gainNode: GainNode | null = null;
-let currentSrc: string | null = null;
-let audioBuffer: AudioBuffer | null = null;
+import { Howl } from 'howler';
 
-function getContext(): AudioContext {
-  if (!audioContext) {
-    audioContext = new AudioContext();
-  }
-
-  return audioContext;
-}
+let bgmHowl: Howl | null = null;
+let currentBgmSrc: string | null = null;
 
 export const bgm = {
-  async play(src: string, volume: number) {
-    const ctx = getContext();
-
-    // 오디오 컨텍스트가 멈춰있으면 재생
-    if (ctx.state === 'suspended') {
-      await ctx.resume();
-    }
-
-    // 이미 재생 중이고 같은 파일이면 볼륨만 조절
-    if (currentSrc === src && sourceNode) {
-      gainNode?.gain.setValueAtTime(volume, ctx.currentTime);
+  play(src: string, volume: number) {
+    if (currentBgmSrc === src) {
+      bgmHowl?.volume(volume);
       return;
     }
 
-    // 기존 재생 중지
-    this.stop();
+    bgmHowl?.stop();
+    bgmHowl?.unload();
 
-    // 파일 로드
-    const response = await fetch(src);
-    const arrayBuffer = await response.arrayBuffer();
-    audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+    bgmHowl = new Howl({
+      src: [src],
+      loop: true,
+      volume,
+      html5: true, // 스트리밍 재생 (대용량 파일 메모리 최적화)
+    });
 
-    // 노드 연결: source -> gain -> destination
-    gainNode = ctx.createGain();
-    gainNode.gain.setValueAtTime(volume, ctx.currentTime);
-    gainNode.connect(ctx.destination);
-
-    sourceNode = ctx.createBufferSource();
-    sourceNode.buffer = audioBuffer;
-    sourceNode.loop = true;
-    sourceNode.connect(gainNode);
-    sourceNode.start();
-
-    currentSrc = src;
+    bgmHowl.play();
+    currentBgmSrc = src;
   },
 
   stop() {
-    sourceNode?.stop();
-    sourceNode?.disconnect();
-    gainNode?.disconnect();
-    sourceNode = null;
-    currentSrc = null;
+    bgmHowl?.stop();
+    bgmHowl?.unload();
+    bgmHowl = null;
+    currentBgmSrc = null;
   },
 
   volume(volume: number) {
-    const ctx = getContext();
-    gainNode?.gain.setValueAtTime(volume, ctx.currentTime);
+    bgmHowl?.volume(volume);
   },
 
   mute(muted: boolean) {
-    const ctx = getContext();
-    gainNode?.gain.setValueAtTime(muted ? 0 : 1, ctx.currentTime);
+    bgmHowl?.mute(muted);
   },
 
   pause() {
-    audioContext?.suspend();
+    bgmHowl?.pause();
   },
 
-  async resume() {
-    await audioContext?.resume();
+  resume() {
+    bgmHowl?.play();
   },
 };
+
+const sfxCache = new Map<string, Howl>();
+
+export const sfx = {
+  play(src: string, volume: number = 1.0) {
+    let howl = sfxCache.get(src);
+
+    if (!howl) {
+      howl = new Howl({
+        src: [src],
+        volume,
+        preload: true,
+      });
+      sfxCache.set(src, howl);
+    } else {
+      howl.volume(volume);
+    }
+
+    howl.play();
+  },
+
+  volume(volume: number) {
+    sfxCache.forEach((howl) => howl.volume(volume));
+  },
+
+  mute(muted: boolean) {
+    sfxCache.forEach((howl) => howl.mute(muted));
+  },
+
+  // 캐시 비우기 (씬 전환시)
+  unloadAll() {
+    sfxCache.forEach((howl) => howl.unload());
+    sfxCache.clear();
+  },
+};
+
+// 모든 오디오 음원 뮤트
+export function muteAll(muted: boolean) {
+  Howler.mute(muted);
+}
