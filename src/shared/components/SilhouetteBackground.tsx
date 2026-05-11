@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { cn } from '@/shared/lib/cn';
 
 type SilhouetteBackgroundProps = {
   className?: string; // 포켓볼 실루엣 이미지를 감싸는 위치 조정용 클래스
@@ -24,7 +25,7 @@ export default function SilhouetteBackground({
         alt=""
         width={800}
         height={800}
-        className={`${animationClassName} h-[700px] w-[700px] -rotate-45 sm:h-[1000px] sm:w-[1000px] ${imageClassName}`}
+        className={cn(animationClassName, 'h-[700px] w-[700px] -rotate-45 sm:h-[1000px] sm:w-[1000px]', imageClassName)}
         priority={priority}
       />
     </div>
