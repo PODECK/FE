@@ -85,3 +85,7 @@
   animation: slow-spin 18s linear infinite;
   transform-origin: center;
 }
+
+body {
+  font-family: 'Roboto', sans-serif;
+}

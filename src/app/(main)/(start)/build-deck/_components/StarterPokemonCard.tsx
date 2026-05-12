@@ -30,7 +30,7 @@ export default function StarterPokemonCard({
       <button
         type="button"
         onClick={() => onOpenDetail(pokemon.dexId)}
-        className="absolute top-6 left-6 z-20 cursor-grab rounded-full bg-[#EDEDED] px-3 py-1 text-xs font-bold text-[#999999]"
+        className="absolute top-6 left-6 z-20 cursor-grab rounded-full bg-[#EDEDED] px-3 py-1 text-xs font-bold text-[var(--color-base-1)]"
       >
         상세정보
       </button>
@@ -47,7 +47,7 @@ export default function StarterPokemonCard({
         {pokemon.types.map((type) => (
           <span
             key={type}
-            className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold text-white ${
+            className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold text-[var(--color-base-3)] ${
               typeColorMap[type] ?? 'bg-gray-400'
             }`}
           >
