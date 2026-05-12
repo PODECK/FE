@@ -4,7 +4,7 @@ import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import HomeActionCards from '@/app/(main)/home/_components/HomeActionCards';
 import HomeBanner from '@/app/(main)/home/_components/HomeBanner';
-import HomeHeader from '@/app/(main)/home/_components/HomeHeader';
+import HomeHeader from '@/shared/components/HomeHeader';
 import TrainerStatusBar from '@/app/(main)/home/_components/TrainerStatusBar';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
@@ -68,7 +68,7 @@ export default function HomePage() {
   const selectedPokemonCount = parsedTrainerData.selectedPokemons?.length ?? 0;
 
   return (
-    <main className="min-h-dvh overflow-x-hidden bg-[#FFFFFF] text-[#999999]">
+    <main className="min-h-dvh overflow-x-hidden bg-[var(--color-base-3)] text-[var(--color-base-1)]">
       <HomeHeader />
       <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pt-14 pb-8">
         <HomeBanner />

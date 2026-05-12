@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { homeNavItems } from '../_constants/home';
+import { homeNavItems } from '@/app/(main)/home/_constants/home';
 
 export default function HomeHeader() {
   return (
@@ -27,7 +27,9 @@ export default function HomeHeader() {
                 key={item.id}
                 href={item.href}
                 className={`flex h-12 min-w-[112px] items-center justify-center gap-2 rounded-2xl px-5 text-base font-semibold transition ${
-                  isActive ? 'bg-[#FFFFFF] text-[#999999]' : 'text-[#9999999] hover:bg-[#F1F1F1] hover:text-[#999999]'
+                  isActive
+                    ? 'bg-[var(--color-base-3)] text-[var(--color-base-1)]'
+                    : 'text-[var(--color-base-1)] hover:bg-[var(--color-base-2)] hover:text-[var(--color-base-1)]'
                 }`}
               >
                 <Icon aria-hidden="true" className="text-xl" />
