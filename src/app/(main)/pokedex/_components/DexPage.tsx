@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useSyncExternalStore } from 'react';
 
 import pokemonData from '../../../../../data/pokemon.json';
 import type { PokemonData, PokemonType } from '@/shared/types/pokemon';
@@ -16,19 +16,27 @@ import HomeHeader from '@/shared/components/HomeHeader';
 
 const ITEMS_PER_PAGE = 20;
 
-//로컬스토리지에서 보유 포켓몬 정보 가져오기
-function getOwnedPokemonsFromStorage(): number[] {
-  if (typeof window === 'undefined') return [];
+function subscribeToStorage(callback: () => void) {
+  window.addEventListener('storage', callback);
+  return () => window.removeEventListener('storage', callback);
+}
+
+function getTrainerDataSnapshot() {
+  return localStorage.getItem(storageKeys.TRAINER_DATA);
+}
+
+function getServerSnapshot() {
+  return null;
+}
+
+function parseOwnedPokemonIds(raw: string | null): number[] {
+  if (!raw) return [];
   try {
-    const raw = localStorage.getItem(storageKeys.TRAINER_DATA);
-    if (raw) {
-      const parsed = JSON.parse(raw) as TrainerData;
-      return parsed.selectedPokemons?.map((p) => p.dexId) ?? [];
-    }
-  } catch (e) {
-    console.error(e);
+    const parsed = JSON.parse(raw) as TrainerData;
+    return parsed.selectedPokemons?.map((p) => p.dexId) ?? [];
+  } catch {
+    return [];
   }
-  return [];
 }
 
 export default function DexPage() {
@@ -37,7 +45,8 @@ export default function DexPage() {
   const [types, setTypes] = useState<PokemonType[]>([] as PokemonType[]);
   const [page, setPage] = useState(1);
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonData | null>(null);
-  const [ownedPokemonIds] = useState<number[]>(() => getOwnedPokemonsFromStorage());
+  const trainerDataJson = useSyncExternalStore(subscribeToStorage, getTrainerDataSnapshot, getServerSnapshot);
+  const ownedPokemonIds = useMemo(() => parseOwnedPokemonIds(trainerDataJson), [trainerDataJson]);
   const selectedPokemonCount = ownedPokemonIds.length;
 
   //임시 - 카드 뽑기 기능 작업 후 로컬스토리지 연동 예정
