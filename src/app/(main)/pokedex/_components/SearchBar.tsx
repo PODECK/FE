@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useState } from 'react';
 import { PokemonType } from '@/shared/types/pokemon';
 import { TYPE_CONFIG } from '@/app/(main)/pokedex/_constants/pokemon-type';
@@ -89,7 +90,14 @@ export default function SearchBar({
 
         {/* 보유 포켓몬 카드 수 */}
         <div className="flex shrink-0 items-center gap-1" style={{ marginRight: '20px' }}>
-          <img src="/images/deck-icon.svg" alt="카드 뽑기" width={17} height={20} style={{ marginRight: '3px' }} />
+          <Image
+            src="/images/pokedex/deck-icon.svg"
+            alt="보유 포켓몬 수"
+            width={17}
+            height={20}
+            style={{ marginRight: '3px' }}
+            unoptimized
+          />
           <span className="text-lg font-extrabold" style={{ color: 'var(--color-primary)' }}>
             {selectedPokemonCount}
           </span>

@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 type Props = {
   cardPackCount: number;
   onClick: () => void;
@@ -43,7 +45,7 @@ export default function FloatingButton({ cardPackCount, onClick }: Props) {
         </div>
 
         {/* 카드 아이콘 */}
-        <img src="/images/pokedex/card-icon.svg" alt="카드 뽑기" width={28} height={28} />
+        <Image src="/images/pokedex/card-icon.svg" alt="카드 뽑기" width={28} height={28} unoptimized />
       </div>
 
       {/* 라벨 */}

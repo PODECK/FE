@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { PokemonData } from '@/shared/types/pokemon';
 import { TYPE_CONFIG } from '../_constants/pokemon-type';
 
@@ -26,7 +27,14 @@ export default function PokemonListCard({ pokemon, owned = true, onClick }: Prop
         }}
       >
         <div className="mb-1 flex w-full items-center justify-center" style={{ height: '140px' }}>
-          <img src="/images/pokedex/lock-icon.svg" alt="카드 뽑기" width={89} height={89} style={{ opacity: 0.3 }} />
+          <Image
+            src="/images/pokedex/lock-icon.svg"
+            alt="미획득 포켓몬"
+            width={89}
+            height={89}
+            style={{ opacity: 0.3 }}
+            unoptimized
+          />
         </div>
         {/* 개체번호 */}
         <p className="font-mono text-xs font-semibold" style={{ color: 'var(--color-base-1)' }}>
@@ -66,7 +74,7 @@ export default function PokemonListCard({ pokemon, owned = true, onClick }: Prop
           background: typeConfig?.gradient ?? 'var(--color-base-2)',
         }}
       >
-        <img
+        <Image
           src={pokemon.artworkUrl}
           alt={pokemon.koName}
           width={110}
@@ -99,10 +107,11 @@ export default function PokemonListCard({ pokemon, owned = true, onClick }: Prop
                 backgroundColor: config.color,
               }}
             >
-              <img
+              <Image
                 src={config.icon}
                 alt={config.label}
-                style={{ height: '12px', width: 'auto' }}
+                width={12}
+                height={12}
                 className="flex-shrink-0"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
