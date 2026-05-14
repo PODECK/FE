@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import HomeHeader from '@/shared/components/HomeHeader';
 import SilhouetteBackground from '@/shared/components/SilhouetteBackground';
-import { useTowerProgress } from '@/shared/hooks/use-tower-progress';
+import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 
 export default function BattleWinPage() {
   const router = useRouter();
