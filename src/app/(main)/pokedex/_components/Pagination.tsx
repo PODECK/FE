@@ -19,8 +19,12 @@ export default function Pagination({ page, setPage, totalPages }: Props) {
 
     if (currentPage > 4) result.push('...');
 
-    for (let i = Math.max(2, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) {
-      result.push(i);
+    for (
+      let pageNumber = Math.max(2, currentPage - 2);
+      pageNumber <= Math.min(totalPages - 1, currentPage + 2);
+      pageNumber++
+    ) {
+      result.push(pageNumber);
     }
 
     if (currentPage < totalPages - 3) result.push('...');
