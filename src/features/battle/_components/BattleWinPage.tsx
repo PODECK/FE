@@ -19,6 +19,11 @@ export default function BattleWinPage() {
     router.push('/battle');
   };
 
+  const handleGoHome = () => {
+    advanceFloor();
+    router.push('/home');
+  };
+
   return (
     <main className="relative h-screen overflow-hidden bg-gradient-to-b from-[#F9F9F9] to-[#E1E1E1]">
       <HomeHeader />
@@ -57,7 +62,7 @@ export default function BattleWinPage() {
             </button>
             <button
               type="button"
-              onClick={() => router.push('/home')}
+              onClick={handleGoHome}
               className="flex h-11 min-w-[96px] items-center justify-center rounded-[10px] border border-black/10 bg-[var(--color-base-3)] px-5 font-['NeoDunggeunmo'] text-sm font-bold text-[var(--color-base-0)]"
             >
               홈으로
