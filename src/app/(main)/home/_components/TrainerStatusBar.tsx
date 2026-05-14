@@ -1,3 +1,5 @@
+// 트레이너 현황 바 — 닉네임, 카드팩, 탑 진행도, 배틀 전적 표시
+
 import Typewriter from 'typewriter-effect';
 
 interface TrainerStatusBarProps {

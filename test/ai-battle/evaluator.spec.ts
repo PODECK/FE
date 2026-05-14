@@ -1,6 +1,7 @@
 import { MOCK_BULBASAUR, MOCK_CHARMANDER } from '@/shared/temp-ai/__mocks__/mock-pokemon';
 import { evaluateAllMoves, evaluateMove } from '@/shared/temp-ai/battle-ai-evaluator';
 import { describe, expect, it } from 'vitest';
+import type { PokemonType } from '@/shared/types/pokemon';
 
 describe('evaluateMove', () => {
   it('PP가 0인 기술은 isUsable: false를 반환', () => {
@@ -27,7 +28,8 @@ describe('evaluateMove', () => {
 
   it('무효 타입(effectiveness 0)은 score: 0을 반환', () => {
     const normalMove = MOCK_CHARMANDER.moves.find((m) => m.type === 'normal' && m.power > 0)!;
-    const ghostPokemon = { ...MOCK_BULBASAUR, types: ['ghost'] as any };
+    const ghostTypes: PokemonType[] = ['ghost'];
+    const ghostPokemon = { ...MOCK_BULBASAUR, types: ghostTypes };
 
     const result = evaluateMove(normalMove, MOCK_CHARMANDER, ghostPokemon);
 
