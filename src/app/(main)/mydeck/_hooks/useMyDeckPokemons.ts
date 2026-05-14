@@ -40,7 +40,13 @@ export function useMyDeckPokemons() {
 
   const trainerData = useMemo(() => {
     if (!trainerDataJson) return null;
-    return JSON.parse(trainerDataJson) as TrainerData;
+
+    try {
+      return JSON.parse(trainerDataJson) as TrainerData;
+    } catch (error) {
+      console.error('트레이너 데이터를 불러오지 못했습니다.', error);
+      return null;
+    }
   }, [trainerDataJson]);
 
   const pokemons = useMemo(() => {
