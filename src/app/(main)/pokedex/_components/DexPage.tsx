@@ -16,9 +16,15 @@ import HomeHeader from '@/shared/components/HomeHeader';
 
 const ITEMS_PER_PAGE = 20;
 
+const TRAINER_DATA_UPDATED_EVENT = 'trainer-data-updated';
+
 function subscribeToStorage(callback: () => void) {
   window.addEventListener('storage', callback);
-  return () => window.removeEventListener('storage', callback);
+  window.addEventListener(TRAINER_DATA_UPDATED_EVENT, callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener(TRAINER_DATA_UPDATED_EVENT, callback);
+  };
 }
 
 function getTrainerDataSnapshot() {
