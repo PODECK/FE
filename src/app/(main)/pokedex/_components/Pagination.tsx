@@ -33,6 +33,7 @@ export default function Pagination({ page, setPage, totalPages }: Props) {
     <div className="mt-10 flex items-center justify-center gap-2">
       {/* 이전 버튼 */}
       <button
+        aria-label="이전 페이지"
         disabled={page === 1}
         onClick={() => setPage(page - 1)}
         className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border disabled:opacity-30"
@@ -71,6 +72,7 @@ export default function Pagination({ page, setPage, totalPages }: Props) {
       )}
       {/* 다음 버튼 */}
       <button
+        aria-label="다음 페이지"
         disabled={page === totalPages}
         onClick={() => setPage(page + 1)}
         className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border disabled:opacity-30"

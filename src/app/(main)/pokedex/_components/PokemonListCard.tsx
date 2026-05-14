@@ -57,8 +57,10 @@ export default function PokemonListCard({ pokemon, owned = true, onClick }: Prop
 
   // 획득 카드
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
+      aria-label={`${pokemon.koName} 상세 보기`}
       className="flex w-full cursor-pointer flex-col items-center overflow-hidden rounded-2xl shadow-sm transition-shadow select-none hover:shadow-md"
       style={{
         backgroundColor: 'var(--color-base-3)',
@@ -122,6 +124,6 @@ export default function PokemonListCard({ pokemon, owned = true, onClick }: Prop
           );
         })}
       </div>
-    </div>
+    </button>
   );
 }

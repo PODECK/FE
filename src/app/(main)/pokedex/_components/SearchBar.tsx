@@ -50,7 +50,11 @@ export default function SearchBar({
       <div className="mb-6 flex items-center justify-between">
         {/* 검색창 */}
         <div className="flex items-center gap-[10px]" style={{ maxWidth: '700px', width: '100%' }}>
+          <label htmlFor="pokemon-search" className="sr-only">
+            포켓몬 이름 검색
+          </label>
           <input
+            id="pokemon-search"
             value={tempSearch}
             onChange={(e) => setTempSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -116,6 +120,7 @@ export default function SearchBar({
           {generationOptions.map((item) => (
             <button
               key={item}
+              aria-pressed={tempGenerations.includes(item)}
               onClick={() => {
                 setTempGenerations((prev) => {
                   if (prev.includes(item)) {
@@ -148,6 +153,7 @@ export default function SearchBar({
           {TypeOptions.map((item) => (
             <button
               key={item}
+              aria-pressed={tempTypes.includes(item)}
               onClick={() => {
                 setTempTypes((prev) => {
                   if (prev.includes(item)) {
