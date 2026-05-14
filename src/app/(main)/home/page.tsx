@@ -8,7 +8,7 @@ import HomeActionCards from '@/app/(main)/home/_components/HomeActionCards';
 import HomeBanner from '@/app/(main)/home/_components/HomeBanner';
 import HomeHeader from '@/app/(main)/home/_components/HomeHeader';
 import TrainerStatusBar from '@/app/(main)/home/_components/TrainerStatusBar';
-import { useTowerProgress } from '@/shared/hooks/use-tower-progress';
+import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 

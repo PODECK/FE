@@ -8,7 +8,7 @@ import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
-import { useTowerProgress } from '@/shared/hooks/use-tower-progress';
+import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { Game } from 'phaser';
 
 const INITIAL_POKEMON: PokemonEntry[] = [
