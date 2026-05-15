@@ -10,8 +10,11 @@ import type { PokemonData } from '@/shared/types';
 import MyDeckFormation from '@/app/(main)/mydeck/_components/MydeckFormation';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
+import Pagination from '@/app/(main)/pokedex/_components/Pagination';
 
 const MAX_DECK_SIZE = 6;
+
+const ITEMS_PER_PAGE = 20;
 
 // localStorage에 저장된 트레이너 데이터를 안전하게 읽어옴
 // 브라우저 환경이 아니거나 JSON 파싱에 실패하면 null을 반환
@@ -49,6 +52,8 @@ export default function MyDeckPage() {
   const { pokemons, pokemonCount } = useMyDeckPokemons();
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedPokemonDexIds, setSelectedPokemonDexIds] = useState<number[]>(readActiveDeckDexIds);
+  const [page, setPage] = useState(1);
+  // const [search, setSearch] = useState('');
 
   const selectedPokemons = useMemo(() => {
     return selectedPokemonDexIds
@@ -66,6 +71,8 @@ export default function MyDeckPage() {
       return pokemon.koName.includes(trimmedKeyword) || pokemon.enName.toLowerCase().includes(lowerCaseKeyword);
     });
   }, [pokemons, searchKeyword]);
+
+  const totalPages = Math.ceil(filteredPokemons.length / ITEMS_PER_PAGE);
 
   const selectedSlotPokemonIds = useMemo(() => {
     return new Set(selectedPokemonDexIds);
@@ -118,6 +125,8 @@ export default function MyDeckPage() {
       ) : (
         <EmptyMyDeck />
       )}
+
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </main>
   );
 }
