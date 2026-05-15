@@ -53,7 +53,6 @@ export default function MyDeckPage() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedPokemonDexIds, setSelectedPokemonDexIds] = useState<number[]>(readActiveDeckDexIds);
   const [page, setPage] = useState(1);
-  // const [search, setSearch] = useState('');
 
   const selectedPokemons = useMemo(() => {
     return selectedPokemonDexIds
@@ -73,13 +72,20 @@ export default function MyDeckPage() {
   }, [pokemons, searchKeyword]);
 
   const totalPages = Math.ceil(filteredPokemons.length / ITEMS_PER_PAGE);
+  const currentPage = totalPages < 1 ? 1 : Math.min(Math.max(page, 1), totalPages);
 
   const selectedSlotPokemonIds = useMemo(() => {
     return new Set(selectedPokemonDexIds);
   }, [selectedPokemonDexIds]);
 
+  const pagedPokemons = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredPokemons.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredPokemons, currentPage]);
+
   const handleResetSearchKeyword = () => {
     setSearchKeyword('');
+    setPage(1);
   };
 
   const handleAddPokemon = useCallback((pokemon: PokemonData) => {
@@ -112,13 +118,16 @@ export default function MyDeckPage() {
       <MyDeckFilterBar
         pokemonCount={pokemonCount}
         searchKeyword={searchKeyword}
-        onChangeSearchKeyword={setSearchKeyword}
+        onChangeSearchKeyword={(keyword) => {
+          setSearchKeyword(keyword);
+          setPage(1);
+        }}
         onResetSearchKeyword={handleResetSearchKeyword}
       />
 
       {pokemonCount > 0 ? (
         <MyDeckPokemonGrid
-          pokemons={filteredPokemons}
+          pokemons={pagedPokemons}
           selectedSlotPokemonIds={selectedSlotPokemonIds}
           onAddPokemon={handleAddPokemon}
         />
@@ -126,7 +135,7 @@ export default function MyDeckPage() {
         <EmptyMyDeck />
       )}
 
-      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+      <Pagination page={currentPage} setPage={setPage} totalPages={totalPages} />
     </main>
   );
 }
