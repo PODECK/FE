@@ -3,6 +3,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { getTypeBadgeColor } from '@/shared/constants/type-colors';
 
 export interface PokemonEntry {
   dexId: number;
@@ -17,26 +18,6 @@ interface Props {
   pokemon: PokemonEntry[];
   onClose: () => void;
 }
-
-const TYPE_COLORS: Record<string, string> = {
-  fire: 'rgba(200,48,16,1)',
-  water: 'rgba(20,96,200,1)',
-  grass: 'rgba(32,128,64,1)',
-  electric: 'rgba(180,140,10,1)',
-  ice: 'rgba(30,150,180,1)',
-  fighting: 'rgba(180,60,30,1)',
-  poison: 'rgba(100,30,150,1)',
-  ground: 'rgba(160,120,50,1)',
-  flying: 'rgba(80,100,200,1)',
-  psychic: 'rgba(72,40,160,1)',
-  bug: 'rgba(100,130,20,1)',
-  rock: 'rgba(150,130,50,1)',
-  ghost: 'rgba(72,40,160,1)',
-  dragon: 'rgba(60,40,200,1)',
-  dark: 'rgba(60,50,50,1)',
-  steel: 'rgba(100,120,160,1)',
-  normal: 'rgba(120,130,140,1)',
-};
 
 const TYPE_KO: Record<string, string> = {
   fire: '불꽃',
@@ -67,9 +48,9 @@ const ROBOTO = { fontFamily: 'Roboto, sans-serif' } as const;
 
 function hpBarColor(current: number, max: number): string {
   const pct = max === 0 ? 0 : current / max;
-  if (pct >= 0.5) return 'rgba(67,160,71,1)';
-  if (pct >= 0.2) return 'rgba(251,140,0,1)';
-  return 'rgba(220,50,30,1)';
+  if (pct >= 0.5) return 'var(--color-battle-hp-high)';
+  if (pct >= 0.2) return 'var(--color-battle-hp-mid)';
+  return 'var(--color-battle-hp-low)';
 }
 
 function arrowBtn(disabled: boolean): React.CSSProperties {
@@ -99,7 +80,9 @@ export default function PokemonSelectModal({ pokemon, onClose }: Props) {
   const aliveCount = pokemon.filter((p) => p.status !== 'fainted').length;
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(0,0,0,0.75)', ...ROBOTO }}>
+    <div
+      style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'var(--color-battle-overlay-strong)', ...ROBOTO }}
+    >
       {/* 헤더 */}
       <div style={{ position: 'absolute', top: 20, left: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
         <button
@@ -319,7 +302,7 @@ function PokemonCard({
           {primaryType && (
             <span
               style={{
-                background: TYPE_COLORS[primaryType] ?? '#888',
+                background: getTypeBadgeColor(primaryType),
                 color: 'white',
                 fontSize: 9,
                 fontWeight: 900,

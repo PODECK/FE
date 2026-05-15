@@ -33,9 +33,41 @@
   --color-type-bug: #9fa424;
   --color-type-rock: #bcb889;
   --color-type-fight: #ffa202;
+  --color-type-fighting: #ffa202;
   --color-type-poison: #994dcf;
   --color-type-dragon: #5462d6;
   --color-type-normal: #999999;
+
+  /* 배틀 UI 토큰 */
+  --color-battle-navy: rgb(8 20 52);
+  --color-battle-panel: rgb(13 16 36);
+  --color-battle-panel-soft: rgb(8 20 52 / 0.36);
+  --color-battle-overlay: rgb(0 0 0 / 0.65);
+  --color-battle-overlay-strong: rgb(0 0 0 / 0.75);
+  --color-battle-life-active: rgb(255 234 0);
+  --color-battle-life-empty: rgb(0 0 0 / 0.25);
+  --color-battle-hp-high: rgb(67 160 71);
+  --color-battle-hp-mid: rgb(251 140 0);
+  --color-battle-hp-low: rgb(220 50 30);
+
+  /* 타입 배지 토큰 */
+  --color-type-badge-normal: #9da2a4;
+  --color-type-badge-fire: #ff6c31;
+  --color-type-badge-water: #4590f0;
+  --color-type-badge-electric: #f0d030;
+  --color-type-badge-grass: #42bf24;
+  --color-type-badge-ice: #74cec0;
+  --color-type-badge-fighting: #c03028;
+  --color-type-badge-poison: #994dcf;
+  --color-type-badge-ground: #e0c068;
+  --color-type-badge-flying: #89b1f5;
+  --color-type-badge-psychic: #ff519b;
+  --color-type-badge-bug: #90c127;
+  --color-type-badge-rock: #b8a038;
+  --color-type-badge-ghost: #735898;
+  --color-type-badge-dragon: #7038f8;
+  --color-type-badge-dark: #705848;
+  --color-type-badge-steel: #b8b8d0;
 
   /* ─── 그라디언트 배경 ─── */
   --gradient-bg: linear-gradient(180deg, #ffd45e 0%, #f6b400 100%);

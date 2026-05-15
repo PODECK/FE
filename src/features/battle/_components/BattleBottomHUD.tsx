@@ -6,30 +6,11 @@ import Image from 'next/image';
 import { useMemo, useSyncExternalStore } from 'react';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
+import { getTypeBadgeColor } from '@/shared/constants/type-colors';
 import type { PokemonEntry } from './PokemonStateModal';
 
 const NUNITO = { fontFamily: 'Nunito, sans-serif' } as const;
 const ROBOTO = { fontFamily: 'Roboto, sans-serif' } as const;
-
-const typeBadgeColors: Record<string, string> = {
-  normal: '#9DA2A4',
-  fire: '#FF6C31',
-  water: '#4590F0',
-  electric: '#F0D030',
-  grass: '#42BF24',
-  ice: '#74CEC0',
-  fighting: '#C03028',
-  poison: '#994DCF',
-  ground: '#E0C068',
-  flying: '#89B1F5',
-  psychic: '#FF519B',
-  bug: '#90C127',
-  rock: '#B8A038',
-  ghost: '#735898',
-  dragon: '#7038F8',
-  dark: '#705848',
-  steel: '#B8B8D0',
-};
 
 interface Props {
   playerPokemon: PokemonEntry[];
@@ -71,7 +52,7 @@ export default function BattleBottomHUD({ playerPokemon, playerLives, battleLogs
 
   return (
     <div className="absolute inset-0 z-20">
-      <div className="absolute bottom-[50px] left-12 z-[1] h-[114px] w-[180px] overflow-hidden rounded-xl bg-[rgba(8,20,52,0.36)]">
+      <div className="absolute bottom-[50px] left-12 z-[1] h-[114px] w-[180px] overflow-hidden rounded-xl bg-[var(--color-battle-panel-soft)]">
         <div className="absolute top-[11px] left-[11px] text-[9px] font-black text-white/45" style={NUNITO}>
           트레이너
         </div>
@@ -93,10 +74,7 @@ export default function BattleBottomHUD({ playerPokemon, playerLives, battleLogs
                 className="absolute top-0 flex h-[20px] w-[20px] items-center justify-center overflow-hidden rounded-full"
                 style={{
                   left: i * 24,
-                  background:
-                    primaryType && !fainted
-                      ? (typeBadgeColors[primaryType] ?? 'rgba(255,255,255,0.2)')
-                      : 'rgba(255,255,255,0.08)',
+                  background: primaryType && !fainted ? getTypeBadgeColor(primaryType) : 'rgba(255,255,255,0.08)',
                   border: fainted ? '1px solid rgba(255,255,255,0.15)' : 'none',
                   opacity: fainted ? 0.4 : 1,
                   transition: 'opacity 0.4s ease',
@@ -122,7 +100,7 @@ export default function BattleBottomHUD({ playerPokemon, playerLives, battleLogs
         )}
       </div>
 
-      <div className="pointer-events-auto absolute right-4 bottom-4 h-[405px] w-[200px] overflow-hidden rounded-xl bg-[rgba(8,20,52,0.32)]">
+      <div className="pointer-events-auto absolute right-4 bottom-4 h-[405px] w-[200px] overflow-hidden rounded-xl bg-[var(--color-battle-panel-soft)]">
         <span className="absolute top-[11px] left-[11px] w-[80px] text-[9px] font-black text-white/40" style={NUNITO}>
           포켓몬 상태
         </span>
@@ -158,7 +136,7 @@ export default function BattleBottomHUD({ playerPokemon, playerLives, battleLogs
         </button>
       </div>
 
-      <div className="absolute bottom-4 left-4 z-[2] h-[46px] w-[244px] overflow-hidden rounded-xl bg-[rgb(8,20,52)]">
+      <div className="absolute bottom-4 left-4 z-[2] h-[46px] w-[244px] overflow-hidden rounded-xl bg-[var(--color-battle-navy)]">
         <span
           className="absolute top-[13px] left-[26px] text-[15px] leading-none font-black text-white"
           style={NUNITO}
@@ -171,7 +149,9 @@ export default function BattleBottomHUD({ playerPokemon, playerLives, battleLogs
             <div
               key={i}
               className="h-[20px] w-[22px] rounded-[10px]"
-              style={{ background: i < playerLives ? 'rgba(255,234,0,1)' : 'rgba(0,0,0,0.25)' }}
+              style={{
+                background: i < playerLives ? 'var(--color-battle-life-active)' : 'var(--color-battle-life-empty)',
+              }}
             />
           ))}
         </div>

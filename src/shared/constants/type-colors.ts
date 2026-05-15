@@ -24,3 +24,29 @@ export const typeGradients: Record<PokemonType, TypeGradient> = {
   dark: { from: '#9A8878', to: '#302020' },
   steel: { from: '#D4E0E8', to: '#4888A8' },
 };
+
+export const typeBadgeColors: Record<PokemonType, string> = {
+  normal: 'var(--color-type-badge-normal)',
+  fire: 'var(--color-type-badge-fire)',
+  water: 'var(--color-type-badge-water)',
+  electric: 'var(--color-type-badge-electric)',
+  grass: 'var(--color-type-badge-grass)',
+  ice: 'var(--color-type-badge-ice)',
+  fighting: 'var(--color-type-badge-fighting)',
+  poison: 'var(--color-type-badge-poison)',
+  ground: 'var(--color-type-badge-ground)',
+  flying: 'var(--color-type-badge-flying)',
+  psychic: 'var(--color-type-badge-psychic)',
+  bug: 'var(--color-type-badge-bug)',
+  rock: 'var(--color-type-badge-rock)',
+  ghost: 'var(--color-type-badge-ghost)',
+  dragon: 'var(--color-type-badge-dragon)',
+  dark: 'var(--color-type-badge-dark)',
+  steel: 'var(--color-type-badge-steel)',
+};
+
+export function getTypeBadgeColor(type: string | undefined): string {
+  if (!type || !(type in typeBadgeColors)) return 'var(--color-base-1)';
+
+  return typeBadgeColors[type as PokemonType];
+}
