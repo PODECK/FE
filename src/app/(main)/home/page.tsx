@@ -71,22 +71,20 @@ export default function HomePage() {
   const totalPokemonCount = Object.keys(pokemonData).length;
 
   return (
-    <main className="min-h-dvh overflow-x-hidden bg-[var(--color-base-3)] text-[var(--color-base-1)]">
+    <main className="flex min-h-dvh flex-col overflow-x-hidden bg-[var(--color-base-3)] text-[var(--color-base-1)]">
       <HomeHeader />
-      <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pt-14 pb-8">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-14 pb-8">
         <HomeBanner />
-
         <TrainerStatusBar
           trainerName={parsedTrainerData.nickname}
           cardPackCount={5}
           towerProgress={12}
           battleRecord="8승 3패"
         />
-
         <HomeActionCards selectedPokemonCount={selectedPokemonCount} totalPokemonCount={totalPokemonCount} />
       </div>
 
-      <footer className="pb-6 text-center text-sm text-[#888888]">© 2026 Team 로켓단. All rights Reserved</footer>
+      <footer className="pb-6 text-center text-sm text-[#888888]">© 2026 Team 로켓단. All rights Reserved.</footer>
     </main>
   );
 }
