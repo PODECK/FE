@@ -8,20 +8,27 @@ import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
+import pokemonDataJson from '../../../../data/pokemon.json';
+import { PLAYER_DECK_DEX_IDS } from '@/features/battle/game/battle-scene-constants';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
+import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
 
-const INITIAL_POKEMON: PokemonEntry[] = [
-  { dexId: 6, koName: '리자몽', types: ['fire', 'flying'], currentHp: 78, maxHp: 78, status: 'available' },
-  { dexId: 1, koName: '이상해씨', types: ['grass', 'poison'], currentHp: 45, maxHp: 45, status: 'available' },
-  { dexId: 2, koName: '이상해풀', types: ['grass', 'poison'], currentHp: 60, maxHp: 60, status: 'available' },
-  { dexId: 3, koName: '이상해꽃', types: ['grass', 'poison'], currentHp: 80, maxHp: 80, status: 'available' },
-  { dexId: 4, koName: '파이리', types: ['fire'], currentHp: 39, maxHp: 39, status: 'available' },
-  { dexId: 5, koName: '리자드', types: ['fire'], currentHp: 58, maxHp: 58, status: 'available' },
-];
+const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
 function createInitialPokemon(): PokemonEntry[] {
-  return INITIAL_POKEMON.map((pokemon) => ({ ...pokemon }));
+  return PLAYER_DECK_DEX_IDS.map((dexId) => {
+    const pokemon = pokemonDataById[String(dexId)];
+
+    return {
+      dexId,
+      koName: pokemon.koName,
+      types: pokemon.types,
+      currentHp: pokemon.baseStats.hp,
+      maxHp: pokemon.baseStats.hp,
+      status: 'available',
+    };
+  });
 }
 
 const NUNITO = { fontFamily: 'Nunito, sans-serif' } as const;
