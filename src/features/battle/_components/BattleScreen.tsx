@@ -211,28 +211,6 @@ export default function BattleScreen() {
           </span>
         </button>
       </div>
-      <style>{`
-        .turn-button-count-text {
-          display: inline-block;
-          animation: turnButtonCount 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        @keyframes turnButtonCount {
-          0% {
-            opacity: 0;
-            transform: translateY(-130%);
-          }
-          55% {
-            opacity: 1;
-            transform: translateY(8%);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
-
       {skillModal && (
         <SkillModal
           data={skillModal}

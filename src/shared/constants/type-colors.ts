@@ -4,25 +4,25 @@ import type { PokemonType } from '@/shared/types/pokemon';
 
 export type TypeGradient = { from: string; to: string };
 
-// card.svg grass 타입 그라디언트: #A9E288 → #308400 기준으로 전 타입 설계
+// 실제 색상값은 globals.css @theme의 --color-type-gradient-* 변수가 SSOT
 export const typeGradients: Record<PokemonType, TypeGradient> = {
-  normal: { from: '#D4D0CB', to: '#7A7668' },
-  fire: { from: '#FFBA88', to: '#C83010' },
-  water: { from: '#90D0FF', to: '#1068C8' },
-  electric: { from: '#FFEC70', to: '#C89800' },
-  grass: { from: '#A9E288', to: '#308400' },
-  ice: { from: '#B8EEFF', to: '#18A0C0' },
-  fighting: { from: '#FFB878', to: '#A83000' },
-  poison: { from: '#DCB0E8', to: '#6A2090' },
-  ground: { from: '#ECD888', to: '#906020' },
-  flying: { from: '#CCDFFF', to: '#5878C8' },
-  psychic: { from: '#FFC0C8', to: '#C02050' },
-  bug: { from: '#D4E870', to: '#607020' },
-  rock: { from: '#DDD8A8', to: '#807040' },
-  ghost: { from: '#C0A8D0', to: '#482860' },
-  dragon: { from: '#A8B0F0', to: '#2030A8' },
-  dark: { from: '#9A8878', to: '#302020' },
-  steel: { from: '#D4E0E8', to: '#4888A8' },
+  normal: { from: 'var(--color-type-gradient-normal-from)', to: 'var(--color-type-gradient-normal-to)' },
+  fire: { from: 'var(--color-type-gradient-fire-from)', to: 'var(--color-type-gradient-fire-to)' },
+  water: { from: 'var(--color-type-gradient-water-from)', to: 'var(--color-type-gradient-water-to)' },
+  electric: { from: 'var(--color-type-gradient-electric-from)', to: 'var(--color-type-gradient-electric-to)' },
+  grass: { from: 'var(--color-type-gradient-grass-from)', to: 'var(--color-type-gradient-grass-to)' },
+  ice: { from: 'var(--color-type-gradient-ice-from)', to: 'var(--color-type-gradient-ice-to)' },
+  fighting: { from: 'var(--color-type-gradient-fighting-from)', to: 'var(--color-type-gradient-fighting-to)' },
+  poison: { from: 'var(--color-type-gradient-poison-from)', to: 'var(--color-type-gradient-poison-to)' },
+  ground: { from: 'var(--color-type-gradient-ground-from)', to: 'var(--color-type-gradient-ground-to)' },
+  flying: { from: 'var(--color-type-gradient-flying-from)', to: 'var(--color-type-gradient-flying-to)' },
+  psychic: { from: 'var(--color-type-gradient-psychic-from)', to: 'var(--color-type-gradient-psychic-to)' },
+  bug: { from: 'var(--color-type-gradient-bug-from)', to: 'var(--color-type-gradient-bug-to)' },
+  rock: { from: 'var(--color-type-gradient-rock-from)', to: 'var(--color-type-gradient-rock-to)' },
+  ghost: { from: 'var(--color-type-gradient-ghost-from)', to: 'var(--color-type-gradient-ghost-to)' },
+  dragon: { from: 'var(--color-type-gradient-dragon-from)', to: 'var(--color-type-gradient-dragon-to)' },
+  dark: { from: 'var(--color-type-gradient-dark-from)', to: 'var(--color-type-gradient-dark-to)' },
+  steel: { from: 'var(--color-type-gradient-steel-from)', to: 'var(--color-type-gradient-steel-to)' },
 };
 
 export const typeBadgeColors: Record<PokemonType, string> = {

@@ -50,6 +50,42 @@
   --color-battle-hp-mid: rgb(251 140 0);
   --color-battle-hp-low: rgb(220 50 30);
 
+  /* 타입 그라디언트 토큰 */
+  --color-type-gradient-normal-from: #d4d0cb;
+  --color-type-gradient-normal-to: #7a7668;
+  --color-type-gradient-fire-from: #ffba88;
+  --color-type-gradient-fire-to: #c83010;
+  --color-type-gradient-water-from: #90d0ff;
+  --color-type-gradient-water-to: #1068c8;
+  --color-type-gradient-electric-from: #ffec70;
+  --color-type-gradient-electric-to: #c89800;
+  --color-type-gradient-grass-from: #a9e288;
+  --color-type-gradient-grass-to: #308400;
+  --color-type-gradient-ice-from: #b8eeff;
+  --color-type-gradient-ice-to: #18a0c0;
+  --color-type-gradient-fighting-from: #ffb878;
+  --color-type-gradient-fighting-to: #a83000;
+  --color-type-gradient-poison-from: #dcb0e8;
+  --color-type-gradient-poison-to: #6a2090;
+  --color-type-gradient-ground-from: #ecd888;
+  --color-type-gradient-ground-to: #906020;
+  --color-type-gradient-flying-from: #ccdfff;
+  --color-type-gradient-flying-to: #5878c8;
+  --color-type-gradient-psychic-from: #ffc0c8;
+  --color-type-gradient-psychic-to: #c02050;
+  --color-type-gradient-bug-from: #d4e870;
+  --color-type-gradient-bug-to: #607020;
+  --color-type-gradient-rock-from: #ddd8a8;
+  --color-type-gradient-rock-to: #807040;
+  --color-type-gradient-ghost-from: #c0a8d0;
+  --color-type-gradient-ghost-to: #482860;
+  --color-type-gradient-dragon-from: #a8b0f0;
+  --color-type-gradient-dragon-to: #2030a8;
+  --color-type-gradient-dark-from: #9a8878;
+  --color-type-gradient-dark-to: #302020;
+  --color-type-gradient-steel-from: #d4e0e8;
+  --color-type-gradient-steel-to: #4888a8;
+
   /* 타입 배지 토큰 */
   --color-type-badge-normal: #9da2a4;
   --color-type-badge-fire: #ff6c31;
@@ -131,6 +167,27 @@
 
 body {
   font-family: 'Roboto', sans-serif;
+}
+
+/* ─── 배틀 턴 버튼 애니메이션 ─── */
+.turn-button-count-text {
+  display: inline-block;
+  animation: turnButtonCount 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes turnButtonCount {
+  0% {
+    opacity: 0;
+    transform: translateY(-130%);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(8%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ─── 배틀 볼륨 슬라이더 ─── */
