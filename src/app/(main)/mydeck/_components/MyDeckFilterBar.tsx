@@ -20,7 +20,8 @@ export default function MyDeckFilterBar({
           type="search"
           value={searchKeyword}
           onChange={(event) => onChangeSearchKeyword(event.target.value)}
-          placeholder="포켓몬 이름을 입력하세요."
+          onFocus={(event) => (event.currentTarget.style.borderColor = 'var(--color-primary)')}
+          placeholder="포켓몬 이름을 입력하세요"
           className="h-10 flex-1 rounded-full border border-gray-200 px-4 text-sm outline-none"
         />
         <button
