@@ -13,10 +13,10 @@ export default function MyDeckFormation({ selectedPokemons, onRemovePokemon }: M
   const slots = Array.from({ length: MAX_DECK_SIZE }, (_, index) => selectedPokemons[index] ?? null);
 
   return (
-    <section className="bg-gradient-primary mx-auto mt-4 max-w-[1150px] rounded-[20px] px-6 py-5">
+    <section className="bg-gradient-primary mx-auto mt-15 max-w-[1150px] rounded-[20px] px-6 py-5">
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-[var(--color-base-3)]">내 덱 편성</h2>
+          <h2 className="text-lg font-extrabold text-[var(--color-base-3)]">내 덱 편성</h2>
           <p className="text-sm font-semibold text-[var(--color-base-3)]">
             {selectedPokemons.length} / {MAX_DECK_SIZE}
           </p>
@@ -35,7 +35,7 @@ export default function MyDeckFormation({ selectedPokemons, onRemovePokemon }: M
                     alt={pokemon.koName}
                     width={140}
                     height={140}
-                    className="h-[110px] w-[110px] object-contain"
+                    className="mb-5 h-[110px] w-[110px] object-contain"
                   />
 
                   <button
@@ -47,12 +47,12 @@ export default function MyDeckFormation({ selectedPokemons, onRemovePokemon }: M
                     <X className="h-4 w-4" />
                   </button>
 
-                  <span className="absolute bottom-2 max-w-[80%] truncate text-sm font-semibold text-[var(--color-base-3)]">
+                  <span className="absolute bottom-2 max-w-[80%] truncate text-sm font-bold text-[var(--color-base-3)]">
                     {pokemon.koName}
                   </span>
                 </>
               ) : (
-                <span className="text-3xl font-bold text-[var(--color-base-3)]/60">+</span>
+                <span className="text-3xl font-bold text-[var(--color-primary)]">+</span>
               )}
             </div>
           ))}
