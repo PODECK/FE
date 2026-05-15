@@ -1,3 +1,5 @@
+// 홈 액션 카드 그리드 — 배틀/덱/도감 카드 3종 목록
+
 import { homeActionCards } from '@/app/(main)/home/_constants/home';
 import HomeActionCard from '@/app/(main)/home/_components/HomeActionCard';
 

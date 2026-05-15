@@ -48,7 +48,7 @@ describe('buildAiDeck', () => {
       pokemonPool: [1, 2],
     };
 
-    expect(() => buildAiDeck(invalidFloor as any, createRng(1))).toThrow(InvariantError);
+    expect(() => buildAiDeck(invalidFloor, createRng(1))).toThrow(InvariantError);
   });
 
   it('각 포켓몬은 고유한 instanceId를 갖는다', () => {

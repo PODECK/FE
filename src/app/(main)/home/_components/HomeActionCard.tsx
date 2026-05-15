@@ -1,5 +1,7 @@
 'use client';
 
+// 홈 액션 카드 — 배틀/덱/도감 진입 카드 컴포넌트
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';

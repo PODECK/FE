@@ -1,25 +1,25 @@
 'use client';
 
+// 홈 페이지 — 트레이너 데이터 확인 후 배너, 상태바, 액션 카드 렌더링
+
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import HomeActionCards from '@/app/(main)/home/_components/HomeActionCards';
 import HomeBanner from '@/app/(main)/home/_components/HomeBanner';
-import HomeHeader from '@/shared/components/HomeHeader';
+import HomeHeader from '@/app/(main)/home/_components/HomeHeader';
 import TrainerStatusBar from '@/app/(main)/home/_components/TrainerStatusBar';
+import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 import pokemonData from '../../../../data/pokemon.json';
 
-/* hydration error 방지 */
 const subscribeTrainerStorage = (onStoreChange: () => void) => {
   window.addEventListener('storage', onStoreChange);
-
   return () => {
     window.removeEventListener('storage', onStoreChange);
   };
 };
 
-/* 브라우저에서 현재 localStorage 값을 읽는 함수 */
 const getTrainerSnapshot = () => {
   try {
     return localStorage.getItem(storageKeys.TRAINER_DATA);
@@ -29,15 +29,14 @@ const getTrainerSnapshot = () => {
   }
 };
 
-/* 서버에서 localStorage 확인 */
 const getServerTrainerSnapshot = () => undefined;
 
 export default function HomePage() {
   const router = useRouter();
+  const { progress } = useTowerProgress();
 
   const trainerData = useSyncExternalStore(subscribeTrainerStorage, getTrainerSnapshot, getServerTrainerSnapshot);
 
-  /* localstorage에서 가져온 JSON 문자열을 실제 객체로 변환 */
   const parsedTrainerData = useMemo(() => {
     if (trainerData === undefined || trainerData === null) {
       return trainerData;
@@ -58,7 +57,7 @@ export default function HomePage() {
     parsedTrainerData.nickname.trim().length > 0;
 
   useEffect(() => {
-    // /home 직접 접근 시 트레이너 데이터가 없으면 /로 돌리는 가드 역할
+    // /home 직접 접근 시 트레이너 데이터가 없으면 /로 리다이렉트
     if (parsedTrainerData === null) {
       router.replace('/');
     }
@@ -77,7 +76,7 @@ export default function HomePage() {
         <HomeBanner />
         <TrainerStatusBar
           trainerName={parsedTrainerData.nickname}
-          cardPackCount={5}
+          cardPackCount={progress.cardPackCount}
           towerProgress={12}
           battleRecord="8승 3패"
         />

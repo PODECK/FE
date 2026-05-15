@@ -19,6 +19,8 @@ export const TowerProgress = z.object({
   currentFloor: z.number().int().min(1).max(10),
   maxClearedFloor: z.number().int().min(0).max(10).default(0), // 현재는 10층이 최대
   playerLives: z.number().int().min(0).max(4).default(4), // 플레이어 목숨
+  cardPackCount: z.number().int().min(0).default(0),
+  pendingRewardFloor: z.number().int().min(1).max(10).nullable().default(null),
 });
 
 export const TowerClearResult = z.object({

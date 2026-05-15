@@ -1,3 +1,5 @@
+// 홈 화면 내비게이션, 액션 카드, 배너 데이터 상수
+
 import type { HomeActionCardData, HomeNavItem } from '@/app/(main)/home/_types/home';
 import { LucideBook, LucideCardSim, LucideHome, LucideSwords } from 'lucide-react';
 
@@ -11,19 +13,19 @@ export const homeNavItems: HomeNavItem[] = [
   {
     id: 'pokedex',
     label: '도감',
-    href: '/pokedex', // 임의로 지정
+    href: '/pokedex',
     icon: LucideBook,
   },
   {
     id: 'mydeck',
     label: '내 덱 관리',
-    href: '/mydeck', // 임의로 지정
+    href: '/mydeck',
     icon: LucideCardSim,
   },
   {
     id: 'battle',
     label: '배틀',
-    href: '/battle', // 임의로 지정
+    href: '/battle',
     icon: LucideSwords,
   },
 ];
