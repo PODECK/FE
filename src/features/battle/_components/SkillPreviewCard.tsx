@@ -22,7 +22,7 @@ import {
   mutedMoveDotStyle,
   pokemonImageStyle,
   typeBadgeIconSize,
-} from './skill-preview-card-styles';
+} from './styles/skill-preview-card.style';
 import type { SkillModalData } from './skill-modal-types';
 
 interface Props {

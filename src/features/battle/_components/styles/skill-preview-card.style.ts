@@ -1,6 +1,6 @@
 // 스킬 모달 포켓몬 카드의 레이아웃과 스타일 계산을 담당한다.
 
-import { CARD_H, CARD_W, SX, SY } from './skill-modal-constants';
+import { CARD_H, CARD_W, SX, SY } from '../skill-modal-constants';
 
 import type { TypeGradient } from '@/shared/constants/type-colors';
 import type { CSSProperties } from 'react';
