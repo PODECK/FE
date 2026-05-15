@@ -6,19 +6,25 @@ import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { POKEMON_CARD_LAYOUT } from '../src/shared/config/pokemon-card-layout.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
 const OUT_DIR = path.join(ROOT, 'public', 'images', 'pokemon-cards');
 
-// config.ts 기준 카드 치수
-const CARD_W = 140;
-const CARD_H = 200;
-const TEX = 2;
+const CARD_FONTS = {
+  latin: "'Roboto', sans-serif",
+  korean: "'Roboto', 'KoreanFont', sans-serif",
+};
+
+const CARD_W = POKEMON_CARD_LAYOUT.width;
+const CARD_H = POKEMON_CARD_LAYOUT.height;
+const TEX = POKEMON_CARD_LAYOUT.scale;
 const SX = CARD_W / 255;
 const SY = CARD_H / 355;
 
-// type-colors.ts 인라인
+// Node.js 캔버스는 CSS 변수를 읽을 수 없어 hex 값을 직접 사용함.
+// 색상 변경 시 globals.css의 --color-type-gradient-* 변수도 함께 수정 필요.
 const typeGradients = {
   normal: { from: '#D4D0CB', to: '#7A7668' },
   fire: { from: '#FFBA88', to: '#C83010' },
@@ -40,23 +46,23 @@ const typeGradients = {
 };
 
 const typeBadgeColors = {
-  normal: '#9DA2A4',
-  fire: '#FF6C31',
-  water: '#4590F0',
-  electric: '#F0D030',
+  normal: '#999',
+  fire: '#FF612C',
+  water: '#2992FF',
+  electric: '#FFDB00',
   grass: '#42BF24',
-  ice: '#74CEC0',
-  fighting: '#C03028',
+  ice: '#42D8FF',
+  fighting: '#FFA202',
   poison: '#994DCF',
-  ground: '#E0C068',
-  flying: '#89B1F5',
-  psychic: '#FF519B',
-  bug: '#90C127',
-  rock: '#B8A038',
-  ghost: '#735898',
-  dragon: '#7038F8',
-  dark: '#705848',
-  steel: '#B8B8D0',
+  ground: '#AB7939',
+  flying: '#95C9FF',
+  psychic: '#FF637F',
+  bug: '#9FA424',
+  rock: '#BCB889',
+  ghost: '#6E4570',
+  dragon: '#5462D6',
+  dark: '#4F4747',
+  steel: '#6AAED3',
 };
 
 function registerFonts() {
@@ -125,13 +131,10 @@ async function generateCard(dexId, pokemon, moveNames, badgeImages, watermarkImg
 
   const primaryType = pokemon.types[0];
   const { from, to } = typeGradients[primaryType] ?? { from: '#999', to: '#666' };
-  // 숫자·영문(덱스번호, HP, 영문이름): Roboto 전용
-  const FONT_LATIN = "'Roboto', sans-serif";
-  // 한국어(포켓몬명, 기술명): SkillModal과 동일한 폴백 체계
-  const FONT_KOREAN = "'Roboto', 'KoreanFont', sans-serif";
+  const { header, watermark, ellipse, artwork, typePill, moveRow, cornerRadius } = POKEMON_CARD_LAYOUT;
 
   // 외곽 라운드 클리핑
-  clipRoundedRect(ctx, 0, 0, CARD_W, CARD_H, 12 * SX);
+  clipRoundedRect(ctx, 0, 0, CARD_W, CARD_H, cornerRadius * SX);
   ctx.clip();
 
   // 타입 그라디언트 배경
@@ -143,105 +146,111 @@ async function generateCard(dexId, pokemon, moveNames, badgeImages, watermarkImg
 
   // 워터마크 (sim.svg)
   if (watermarkImg) {
-    ctx.drawImage(watermarkImg, 78 * SX, -24 * SY, 210 * SX, 210 * SX);
+    ctx.drawImage(watermarkImg, watermark.x * SX, watermark.y * SY, watermark.w * SX, watermark.h * SX);
   }
 
   // 흰색 타원
   ctx.fillStyle = 'rgba(255,255,255,1)';
   ctx.beginPath();
-  ctx.ellipse(121.5 * SX, 306.5 * SY, 205.5 * SX, 159.5 * SY, 0, 0, Math.PI * 2);
+  ctx.ellipse(ellipse.cx * SX, ellipse.cy * SY, ellipse.rx * SX, ellipse.ry * SY, 0, 0, Math.PI * 2);
   ctx.fill();
 
   // 포켓몬 공식 아트워크
   const artworkUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dexId}.png`;
   const spriteImg = await loadImageSafe(artworkUrl);
   if (spriteImg) {
-    ctx.drawImage(spriteImg, 50 * SX, 60 * SY, 144 * SX, 144 * SX);
+    ctx.drawImage(spriteImg, artwork.x * SX, artwork.y * SY, artwork.w * SX, artwork.h * SX);
   }
 
   ctx.textBaseline = 'top';
 
   // 덱스 번호
-  ctx.font = `bold ${Math.round(14 * SY)}px ${FONT_LATIN}`;
+  ctx.font = `bold ${Math.round(header.dexFontSize * SY)}px ${CARD_FONTS.latin}`;
   ctx.fillStyle = 'rgba(255,255,255,1)';
   ctx.textAlign = 'left';
-  ctx.fillText(`#${dexId}`, 23 * SX, 12 * SY);
+  ctx.fillText(`#${dexId}`, header.dexX * SX, header.dexY * SY);
 
   // HP (최대 HP — 정적 표기)
-  ctx.font = `bold ${Math.round(14 * SY)}px ${FONT_LATIN}`;
+  ctx.font = `bold ${Math.round(header.hpFontSize * SY)}px ${CARD_FONTS.latin}`;
   ctx.fillStyle = 'rgba(255,255,255,1)';
   ctx.textAlign = 'right';
-  ctx.fillText(`HP ${pokemon.baseStats.hp}`, 230 * SX, 17 * SY);
+  ctx.fillText(`HP ${pokemon.baseStats.hp}`, header.hpX * SX, header.hpY * SY);
 
   // 한국어 이름
-  ctx.font = `bold ${Math.round(24 * SY)}px ${FONT_KOREAN}`;
+  ctx.font = `bold ${Math.round(header.koNameFontSize * SY)}px ${CARD_FONTS.korean}`;
   ctx.fillStyle = 'rgba(255,255,255,1)';
   ctx.textAlign = 'left';
-  ctx.fillText(pokemon.koName, 23 * SX, 39 * SY);
+  ctx.fillText(pokemon.koName, header.koNameX * SX, header.koNameY * SY);
 
   // 영문 이름
-  ctx.font = `bold ${Math.round(13 * SY)}px ${FONT_LATIN}`;
+  ctx.font = `bold ${Math.round(header.enNameFontSize * SY)}px ${CARD_FONTS.latin}`;
   ctx.fillStyle = 'rgba(255,255,255,0.6)';
   const enName = pokemon.enName
     .split(' ')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
-  ctx.fillText(enName, 25 * SX, 63 * SY);
+  ctx.fillText(enName, header.enNameX * SX, header.enNameY * SY);
 
   // 타입 뱃지 pill
   const types = pokemon.types;
-  const pillW = 100 * SX;
-  const pillH = 22 * SY;
-  const pillXs = types.length === 1 ? [77.5 * SX] : [23 * SX, 128 * SX];
+  const pillW = typePill.w * SX;
+  const pillH = typePill.h * SY;
+  const pillXs = types.length === 1 ? [typePill.singleX * SX] : typePill.dualXs.map((x) => x * SX);
 
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
-    const bx = pillXs[i] ?? 77.5 * SX;
+    const bx = pillXs[i] ?? typePill.singleX * SX;
 
     ctx.save();
-    clipRoundedRect(ctx, bx, 207 * SY, pillW, pillH, pillH / 2);
+    clipRoundedRect(ctx, bx, typePill.y * SY, pillW, pillH, pillH / 2);
     ctx.clip();
     ctx.fillStyle = typeBadgeColors[type] ?? '#888888';
-    ctx.fillRect(bx, 207 * SY, pillW, pillH);
+    ctx.fillRect(bx, typePill.y * SY, pillW, pillH);
     ctx.restore();
 
     const badgeImg = badgeImages[type];
     if (badgeImg) {
       const iconSize = pillH * 0.75;
-      ctx.drawImage(badgeImg, bx + (pillW - iconSize) / 2, 207 * SY + (pillH - iconSize) / 2, iconSize, iconSize);
+      ctx.drawImage(
+        badgeImg,
+        bx + (pillW - iconSize) / 2,
+        typePill.y * SY + (pillH - iconSize) / 2,
+        iconSize,
+        iconSize,
+      );
     }
   }
 
   // 기술 4개 행
-  const dotR = 5 * SX;
-  const moveSize = Math.round(11 * SY);
-  [242, 265, 288, 311].forEach((rowY, i) => {
+  const dotR = moveRow.dotR * SX;
+  const moveSize = Math.round(moveRow.fontSize * SY);
+  const rowH = moveRow.h * SY;
+  moveRow.ys.forEach((rowY, i) => {
     const name = moveNames[i];
     if (!name) return;
     const y = rowY * SY;
-    const rowH = 20 * SY;
 
     ctx.save();
-    clipRoundedRect(ctx, 23 * SX, y, 205 * SX, rowH, rowH / 2);
+    clipRoundedRect(ctx, moveRow.x * SX, y, moveRow.w * SX, rowH, rowH / 2);
     ctx.clip();
     ctx.fillStyle = 'rgba(0,0,0,0.07)';
-    ctx.fillRect(23 * SX, y, 205 * SX, rowH);
+    ctx.fillRect(moveRow.x * SX, y, moveRow.w * SX, rowH);
     ctx.restore();
 
     ctx.beginPath();
-    ctx.arc(33 * SX, y + rowH / 2, dotR, 0, Math.PI * 2);
+    ctx.arc(moveRow.dot1X * SX, y + rowH / 2, dotR, 0, Math.PI * 2);
     ctx.fillStyle = to;
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(45 * SX, y + rowH / 2, dotR, 0, Math.PI * 2);
+    ctx.arc(moveRow.dot2X * SX, y + rowH / 2, dotR, 0, Math.PI * 2);
     ctx.fillStyle = '#D9D9D9';
     ctx.fill();
 
-    ctx.font = `bold ${moveSize}px ${FONT_KOREAN}`;
+    ctx.font = `bold ${moveSize}px ${CARD_FONTS.korean}`;
     ctx.fillStyle = '#212121';
     ctx.textAlign = 'left';
-    ctx.fillText(name, 90 * SX, y + 5 * SY);
+    ctx.fillText(name, moveRow.textX * SX, y + moveRow.textY * SY);
   });
 
   return canvas.encode('png');
