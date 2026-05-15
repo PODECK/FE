@@ -44,32 +44,27 @@ export function SoundSettingsDropdown({
         type="button"
         className={cn(
           'pointer-events-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border-0',
-          isDark ? '' : 'border border-gray-200 bg-white/90 shadow-sm hover:bg-gray-50',
+          isDark
+            ? menuOpen
+              ? 'bg-white/18'
+              : 'bg-white/10'
+            : 'border-base-2 bg-base-3/10 hover:bg-base-2/30 border shadow-sm transition',
         )}
-        style={isDark ? { background: menuOpen ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)' } : undefined}
         aria-expanded={menuOpen}
         aria-haspopup="true"
         aria-label="설정"
         onClick={() => setMenuOpen((v) => !v)}
       >
-        <span
-          className={cn('text-[20px] leading-none', isDark ? 'text-white/75' : 'text-gray-600')}
-          style={{ lineHeight: 1 }}
-        >
-          ⚙
-        </span>
+        <span className={cn('text-[20px] leading-none', isDark ? 'text-base-3/75' : 'text-base-0')}>⚙</span>
       </button>
 
       {menuOpen && (
         <div
           className={cn(
-            'pointer-events-auto absolute top-[50px] z-50 overflow-hidden rounded-xl',
+            'pointer-events-auto absolute top-[50px] z-50 w-[min(100vw-2rem,280px)] overflow-hidden rounded-xl shadow-[0_8px_24px_var(--color-dimmed)] sm:w-[260px]',
             align === 'right' ? 'right-0' : 'left-0',
-            isDark
-              ? 'w-[min(100vw-2rem,280px)] shadow-[0_8px_24px_rgba(0,0,0,0.5)] sm:w-[260px]'
-              : 'w-[min(100vw-2rem,280px)] border border-gray-200 bg-white shadow-lg sm:w-[260px]',
+            isDark ? 'bg-battle-panel' : 'bg-base-3/20',
           )}
-          style={isDark ? { background: 'rgb(13,16,36)' } : undefined}
         >
           <SoundController tone={isDark ? 'dark' : 'light'} />
           {typeof menuFooter === 'function' ? menuFooter({ closeMenu: () => setMenuOpen(false) }) : menuFooter}

@@ -23,14 +23,16 @@ interface VolumeSliderProps {
 function VolumeSlider({ label, volume, isMuted, tone, onVolumeChange, onMuteToggle }: VolumeSliderProps) {
   const displayPct = Math.round(volume * 100);
   const isDark = tone === 'dark';
-  const iconClass = isDark ? 'text-white' : 'text-gray-700';
-  const labelClass = isDark ? 'text-white/50' : 'text-gray-500';
-  const pctClass = isDark ? 'text-white/50' : 'text-gray-500';
+  const iconClass = isDark ? 'text-base-3' : 'text-base-0';
+  const labelClass = isDark ? 'text-base-3/50' : 'text-base-0';
+  const pctClass = isDark ? 'text-base-3/50' : 'text-base-0';
 
-  const trackMuted = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const trackMuted = isDark
+    ? 'color-mix(in srgb, var(--color-base-3) 10%, transparent)'
+    : 'color-mix(in srgb, var(--color-base-0) 8%, transparent)';
   const trackFill = isDark
-    ? `linear-gradient(to right, rgba(255,255,255,0.85) ${displayPct}%, rgba(255,255,255,0.15) ${displayPct}%)`
-    : `linear-gradient(to right, rgba(55,65,81,0.45) ${displayPct}%, rgba(0,0,0,0.08) ${displayPct}%)`;
+    ? `linear-gradient(to right, color-mix(in srgb, var(--color-base-3) 85%, transparent) ${displayPct}%, color-mix(in srgb, var(--color-base-3) 15%, transparent) ${displayPct}%)`
+    : `linear-gradient(to right, color-mix(in srgb, var(--color-secondary-1) 45%, transparent) ${displayPct}%, color-mix(in srgb, var(--color-base-0) 8%, transparent) ${displayPct}%)`;
 
   return (
     <div className="mb-3">
@@ -55,12 +57,10 @@ function VolumeSlider({ label, volume, isMuted, tone, onVolumeChange, onMuteTogg
           value={displayPct}
           disabled={isMuted}
           onChange={(e) => onVolumeChange(Number(e.target.value) / 100)}
-          className="battle-volume-slider"
+          className={cn('battle-volume-slider flex-1', isMuted && 'opacity-30')}
           style={{
-            flex: 1,
             background: isMuted ? trackMuted : trackFill,
             cursor: isMuted ? 'not-allowed' : 'pointer',
-            opacity: isMuted ? 0.3 : 1,
           }}
         />
         <span className={cn('w-7 text-right text-[11px]', pctClass)}>{isMuted ? '-' : `${displayPct}%`}</span>
@@ -86,7 +86,8 @@ export function SoundController({ tone = 'dark' }: SoundControllerProps) {
         type="button"
         className={cn(
           'block w-full cursor-pointer border-0 bg-transparent px-5 py-4 text-center text-[15px] font-black',
-          isDark ? 'text-white hover:bg-white/5' : 'text-gray-900 hover:bg-gray-50',
+          isDark ? 'text-base-3 hover:bg-base-3/5' : 'text-base-0/90 hover:bg-base-0/5',
+          soundOpen && (isDark ? 'bg-base-3/5' : 'bg-base-0/5'),
         )}
         onClick={() => setSoundOpen((v) => !v)}
       >
