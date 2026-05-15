@@ -5,6 +5,7 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { TOWER_FLOORS } from '@/shared/config/tower-floors';
+import { SoundController } from '@/shared/components/SoundController';
 
 const NUNITO = { fontFamily: 'Nunito, sans-serif' } as const;
 
@@ -17,8 +18,6 @@ interface Props {
 
 export default function BattleTopBar({ currentFloor, aiPokemon }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [soundOpen, setSoundOpen] = useState(false);
-  const [volume, setVolume] = useState(80);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const floorConfig = TOWER_FLOORS.find((f) => f.floor === currentFloor) ?? TOWER_FLOORS[0]!;
@@ -99,46 +98,7 @@ export default function BattleTopBar({ currentFloor, aiPokemon }: Props) {
             className="pointer-events-auto absolute top-[50px] right-0 overflow-hidden rounded-xl"
             style={{ width: 200, background: 'rgb(13,16,36)', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
           >
-            <button
-              className="block w-full border-0 bg-transparent px-5 py-4 text-center text-[15px] font-black text-white hover:bg-white/5"
-              style={{ ...NUNITO, cursor: 'pointer' }}
-              onClick={() => setSoundOpen((v) => !v)}
-            >
-              사운드 설정
-            </button>
-
-            {soundOpen && (
-              <div style={{ padding: '0 20px 16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>
-                    {volume === 0 ? '🔇' : volume < 50 ? '🔉' : '🔊'}
-                  </span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={volume}
-                    onChange={(e) => setVolume(Number(e.target.value))}
-                    className="battle-volume-slider"
-                    style={{
-                      flex: 1,
-                      background: `linear-gradient(to right, rgba(255,255,255,0.85) ${volume}%, rgba(255,255,255,0.15) ${volume}%)`,
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: 11,
-                      color: 'rgba(255,255,255,0.5)',
-                      fontFamily: 'Inter, sans-serif',
-                      width: 28,
-                      textAlign: 'right',
-                    }}
-                  >
-                    {volume}%
-                  </span>
-                </div>
-              </div>
-            )}
+            <SoundController />
 
             <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '0 16px' }} />
             <button

@@ -1,18 +1,24 @@
 'use client';
 
-import { useGameStore } from '@/shared/stores/gameStore';
-import { useCallback } from 'react';
+import { useSoundStore } from '@/shared/stores/soundStore';
+import { useCallback, useEffect } from 'react';
 import { sfx } from '../lib/bgm';
 
 export function useSfx() {
-  const isMuted = useGameStore((s) => s.setting.isMuted);
+  const sfxVolume = useSoundStore((s) => s.setting.sfxVolume);
+  const isSfxMuted = useSoundStore((s) => s.setting.isSfxMuted);
+
+  useEffect(() => {
+    sfx.volume(sfxVolume);
+    sfx.mute(isSfxMuted);
+  }, [sfxVolume, isSfxMuted]);
 
   const play = useCallback(
-    (src: string, volume: number = 1.0) => {
-      if (isMuted) return;
-      sfx.play(src, volume);
+    (src: string) => {
+      if (isSfxMuted) return;
+      sfx.play(src, sfxVolume);
     },
-    [isMuted],
+    [isSfxMuted, sfxVolume],
   );
 
   return { play };

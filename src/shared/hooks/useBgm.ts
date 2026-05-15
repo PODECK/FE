@@ -1,15 +1,16 @@
 'use client';
 
-import { useGameStore } from '@/shared/stores/gameStore';
+import { useSoundStore } from '@/shared/stores/soundStore';
 import { useEffect } from 'react';
 import { bgm } from '../lib/bgm';
 
 export function useBgm(src: string) {
-  const bgmVolume = useGameStore((s) => s.setting.bgmVolume);
-  const isMuted = useGameStore((s) => s.setting.isMuted);
+  const bgmVolume = useSoundStore((s) => s.setting.bgmVolume);
+  const isBgmMuted = useSoundStore((s) => s.setting.isBgmMuted);
 
   useEffect(() => {
     bgm.play(src, bgmVolume);
+    bgm.mute(isBgmMuted);
 
     return () => {
       bgm.stop();
@@ -18,6 +19,6 @@ export function useBgm(src: string) {
 
   useEffect(() => {
     bgm.volume(bgmVolume);
-    bgm.mute(isMuted);
-  }, [bgmVolume, isMuted]);
+    bgm.mute(isBgmMuted);
+  }, [bgmVolume, isBgmMuted]);
 }
