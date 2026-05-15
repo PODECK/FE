@@ -1,0 +1,45 @@
+// 포켓몬 카드 레이아웃 수치 정의 — 빌드 스크립트와 React 컴포넌트의 공통 SSOT
+
+/** @type {{ width: number, height: number, scale: number, cornerRadius: number, header: { dexX: number, dexY: number, dexFontSize: number, hpX: number, hpY: number, hpFontSize: number, koNameX: number, koNameY: number, koNameFontSize: number, enNameX: number, enNameY: number, enNameFontSize: number }, watermark: { x: number, y: number, w: number, h: number }, ellipse: { cx: number, cy: number, rx: number, ry: number }, artwork: { x: number, y: number, w: number, h: number }, typePill: { y: number, w: number, h: number, singleX: number, dualXs: number[] }, moveRow: { ys: number[], x: number, w: number, h: number, fontSize: number, dotR: number, dot1X: number, dot2X: number, textX: number, textY: number } }} */
+export const POKEMON_CARD_LAYOUT = {
+  width: 140,
+  height: 200,
+  scale: 2,
+  cornerRadius: 12,
+  header: {
+    dexX: 23,
+    dexY: 12,
+    dexFontSize: 14,
+    hpX: 230,
+    hpY: 17,
+    hpFontSize: 14,
+    koNameX: 23,
+    koNameY: 39,
+    koNameFontSize: 24,
+    enNameX: 25,
+    enNameY: 63,
+    enNameFontSize: 13,
+  },
+  watermark: { x: 78, y: -24, w: 210, h: 210 },
+  ellipse: { cx: 121.5, cy: 306.5, rx: 205.5, ry: 159.5 },
+  artwork: { x: 50, y: 60, w: 144, h: 144 },
+  typePill: {
+    y: 207,
+    w: 100,
+    h: 22,
+    singleX: 77.5,
+    dualXs: [23, 128],
+  },
+  moveRow: {
+    ys: [242, 265, 288, 311],
+    x: 23,
+    w: 205,
+    h: 20,
+    fontSize: 11,
+    dotR: 5,
+    dot1X: 33,
+    dot2X: 45,
+    textX: 90,
+    textY: 5,
+  },
+};

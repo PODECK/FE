@@ -22,6 +22,7 @@
  * - 9층 포켓몬 풀: 후딘 (에스퍼), 팬텀 (고스트/독), 코뿌리 (땅/바위), 라프라스 (물/얼음), 잠만보 (노말), 헬가 (악/불꽃)
  * - 10층 포켓몬 풀: 프테라 (바위/비행), 잠만보 (노말), 망나뇽 (드래곤/비행), 마기라스 (바위/악), 보만다 (드래곤/비행), 한카리아스 (드래곤/땅)
  */
+// 무한의 탑 층별 AI 구성 설정
 
 import type { FloorConfig } from '@/shared/types/tower';
 
@@ -118,7 +119,6 @@ export const TOWER_FLOORS: FloorConfig[] = [
   },
 ];
 
-// 층 설정 조회
 export function getFloorConfig(floor: number): FloorConfig {
   const config = TOWER_FLOORS.find((f) => f.floor === floor);
   if (!config) throw new Error(`[TowerFloors] 존재하지 않는 층: ${floor}`);

@@ -6,7 +6,7 @@ type LoadingBackgroundProps = {
 
 export default function LoadingBackground({ children }: LoadingBackgroundProps) {
   return (
-    <main className="fixed inset-0 z-50 flex min-h-screen items-center justify-center overflow-hidden bg-white px-4">
+    <main className="fixed inset-0 z-50 flex min-h-screen items-center justify-center overflow-hidden bg-[var(--color-base-3)] px-4">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-2.5"

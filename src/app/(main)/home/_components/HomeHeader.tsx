@@ -1,3 +1,5 @@
+// 홈 화면 상단 헤더 — 로고 + 네비게이션
+
 import Image from 'next/image';
 import Link from 'next/link';
 
