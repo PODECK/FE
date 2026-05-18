@@ -9,7 +9,7 @@ import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
 import pokemonDataJson from '../../../../data/pokemon.json';
-import { hasActivePlayerDeck, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
+import { hasCompletePlayerDeck, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
@@ -64,7 +64,7 @@ export default function BattleScreen() {
   };
 
   useEffect(() => {
-    if (hasActivePlayerDeck()) return;
+    if (hasCompletePlayerDeck()) return;
 
     router.replace('/mydeck');
   }, [router]);
@@ -147,7 +147,7 @@ export default function BattleScreen() {
 
   useEffect(() => {
     if (!containerRef.current || gameRef.current) return;
-    if (!hasActivePlayerDeck()) return;
+    if (!hasCompletePlayerDeck()) return;
 
     let cancelled = false;
     let game: Game;

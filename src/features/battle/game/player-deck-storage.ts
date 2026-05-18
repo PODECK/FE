@@ -2,7 +2,7 @@
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 
-const MAX_PLAYER_DECK_SIZE = 6;
+export const REQUIRED_PLAYER_DECK_SIZE = 6;
 
 function sanitizeDexIds(dexIds: unknown): number[] {
   if (!Array.isArray(dexIds)) return [];
@@ -16,7 +16,7 @@ function sanitizeDexIds(dexIds: unknown): number[] {
       seen.add(dexId);
       return true;
     })
-    .slice(0, MAX_PLAYER_DECK_SIZE);
+    .slice(0, REQUIRED_PLAYER_DECK_SIZE);
 }
 
 export function readActivePlayerDeckDexIds(): number[] {
@@ -33,6 +33,6 @@ export function readActivePlayerDeckDexIds(): number[] {
   }
 }
 
-export function hasActivePlayerDeck(): boolean {
-  return readActivePlayerDeckDexIds().length > 0;
+export function hasCompletePlayerDeck(): boolean {
+  return readActivePlayerDeckDexIds().length === REQUIRED_PLAYER_DECK_SIZE;
 }

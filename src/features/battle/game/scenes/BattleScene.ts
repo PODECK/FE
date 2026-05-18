@@ -31,7 +31,7 @@ import {
   SCALE,
   ZONE_CFG,
 } from '../battle-scene-constants';
-import { readActivePlayerDeckDexIds } from '../player-deck-storage';
+import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '../player-deck-storage';
 import type { Rng } from '@/shared/lib/rng';
 import type { BattlePokemon, BattleMove } from '@/shared/types/pokemon';
 import type { FloorConfig } from '@/shared/types/tower';
@@ -169,7 +169,7 @@ export class BattleScene extends Phaser.Scene {
     }
     try {
       this.playerDeckDexIds = readActivePlayerDeckDexIds();
-      if (this.playerDeckDexIds.length === 0) return;
+      if (this.playerDeckDexIds.length !== REQUIRED_PLAYER_DECK_SIZE) return;
 
       this.playerDeck = this.playerDeckDexIds.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
     } catch (e) {
