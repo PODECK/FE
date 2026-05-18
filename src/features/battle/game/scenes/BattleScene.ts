@@ -130,6 +130,30 @@ export class BattleScene extends Phaser.Scene {
     window.dispatchEvent(new CustomEvent('battle:turn-phase', { detail: { phase } }));
   }
 
+  private getResponsiveScreenScale(W: number, H: number) {
+    const baseScreenScale = Math.min(1, W / REF_W, H / REF_H);
+    const shortScreenScale = H < 820 ? 0.96 : 1;
+
+    return baseScreenScale * shortScreenScale;
+  } // 노트북 환경에서 카드 겹치는 UI 수정
+
+  private getResponsiveZoneCardScaleLimit(W: number, H: number) {
+    const heightLimit = H < 820 ? 0.92 : H < 980 ? 0.96 : 1;
+    const widthLimit = W < 1440 ? 0.96 : 1;
+
+    return this.screenScale * Math.min(heightLimit, widthLimit);
+  }
+
+  private getResponsivePlayerZoneYOffset(H: number) {
+    return -Phaser.Math.Clamp((REF_H - H) * 0.5, 0, 72) * this.screenScale;
+  }
+
+  private getResponsiveOpponentZoneY(H: number) {
+    if (H < 820) return H * 0.24;
+    if (H < 980) return H * 0.26;
+    return H * 0.315;
+  }
+
   constructor() {
     super({ key: 'BattleScene' });
   }
@@ -138,8 +162,8 @@ export class BattleScene extends Phaser.Scene {
     const W = this.scale.width;
     const H = this.scale.height;
 
-    this.screenScale = Math.min(1, W / REF_W, H / REF_H);
-    this.zoneCardScaleLimit = this.screenScale;
+    this.screenScale = this.getResponsiveScreenScale(W, H);
+    this.zoneCardScaleLimit = this.getResponsiveZoneCardScaleLimit(W, H);
 
     this.drawX = W * 0.92;
     this.drawY = H * 0.83;
@@ -208,7 +232,8 @@ export class BattleScene extends Phaser.Scene {
     const W = this.scale.width;
     const H = this.scale.height;
 
-    this.screenScale = Math.min(1, W / REF_W, H / REF_H);
+    this.screenScale = this.getResponsiveScreenScale(W, H);
+    this.zoneCardScaleLimit = this.getResponsiveZoneCardScaleLimit(W, H);
 
     this.drawX = W * 0.92;
     this.drawY = H * 0.83;
@@ -313,8 +338,9 @@ export class BattleScene extends Phaser.Scene {
     const slotW = ZONE_CFG.width * s;
     const slotH = ZONE_CFG.height * s;
     const cx = W * 0.5;
-    const playerZoneY = H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s;
-    const opponentZoneY = H * 0.315;
+    const playerZoneY =
+      H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s + this.getResponsivePlayerZoneYOffset(H);
+    const opponentZoneY = this.getResponsiveOpponentZoneY(H);
 
     this.playerZone?.setPosition(cx, playerZoneY);
     this.playerZone?.setSize(slotW, slotH);
@@ -323,8 +349,10 @@ export class BattleScene extends Phaser.Scene {
 
     if (this.playerPlayedCard) {
       const py = playerZoneY + ZONE_CFG.cardOffsetY * s;
+
       const pScaleX = ZONE_CFG.cardScale * cardS;
       const pScaleY = ZONE_CFG.cardScale * ZONE_CFG.cardScaleY * cardS;
+
       this.playerPlayedCard.setPosition(cx, py);
       this.playerPlayedCard.setScale(pScaleX, pScaleY);
       const ps = this.playerPlayedCard.getData('zoneShadow') as Phaser.GameObjects.Image | undefined;
@@ -931,8 +959,9 @@ export class BattleScene extends Phaser.Scene {
     const slotH = ZONE_CFG.height * s;
     const cx = W * 0.5;
 
-    const playerZoneY = H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s;
-    const opponentZoneY = H * 0.315;
+    const playerZoneY =
+      H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s + this.getResponsivePlayerZoneYOffset(H);
+    const opponentZoneY = this.getResponsiveOpponentZoneY(H);
 
     this._opponentZone = this.add.zone(cx, opponentZoneY, slotW, slotH);
     this.playerZone = this.add.zone(cx, playerZoneY, slotW, slotH);
@@ -995,7 +1024,7 @@ export class BattleScene extends Phaser.Scene {
     card.setData('shadow', undefined);
 
     const targetX = this.playerZone.x;
-    const targetY = this.playerZone.y + ZONE_CFG.cardOffsetY;
+    const targetY = this.playerZone.y + ZONE_CFG.cardOffsetY * this.screenScale;
 
     this.tweens.killTweensOf(card);
 
