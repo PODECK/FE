@@ -111,7 +111,7 @@ export default function GachaLoading({ onPull, onComplete }: Props) {
         <div className="flex justify-center py-[40px]">
           <button
             onClick={handlePull}
-            className="rounded-xl text-lg font-bold"
+            className="cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 hover:opacity-70"
             style={{ width: 180, height: 65, backgroundColor: 'var(--color-primary)', color: 'var(--color-base-3)' }}
           >
             뽑기

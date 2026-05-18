@@ -73,7 +73,7 @@ export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
           type="button"
           aria-label="닫기"
           onClick={handleClose}
-          className="absolute top-6 right-6 text-[var(--color-base-1)] transition"
+          className="absolute top-6 right-6 cursor-pointer text-[var(--color-base-1)] transition-opacity duration-200 hover:opacity-70"
         >
           <X size={36} strokeWidth={1.8} />
         </button>
@@ -93,7 +93,7 @@ export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
             <div className="flex justify-center py-[40px]">
               <button
                 onClick={handleClose}
-                className="rounded-xl text-lg font-bold"
+                className="cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 hover:opacity-70"
                 style={{ width: 180, height: 65, backgroundColor: 'var(--color-base-2)', color: 'var(--color-base-0)' }}
               >
                 닫기

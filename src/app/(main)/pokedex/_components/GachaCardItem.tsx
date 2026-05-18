@@ -16,7 +16,7 @@ export default function GachaCardItem({ card, isRevealed, onClick }: Props) {
     <button
       type="button"
       onClick={onClick}
-      className="relative cursor-pointer"
+      className={`relative ${isRevealed ? 'pointer-events-none cursor-default' : 'cursor-pointer'}`}
       style={{ width: 120, height: 168, perspective: 1000 }}
       aria-label={`${card.pokemon.koName} 카드 ${isRevealed ? '정보' : '공개'}`}
     >

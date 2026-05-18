@@ -51,14 +51,14 @@ export default function GachaReveal({ cards, onComplete }: Props) {
         <button
           onClick={handleRevealAll}
           disabled={revealed.every(Boolean)}
-          className="rounded-xl text-lg font-bold disabled:opacity-50"
+          className="cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 enabled:hover:opacity-70 disabled:opacity-50"
           style={{ width: 180, height: 65, backgroundColor: 'var(--color-primary)', color: 'var(--color-base-3)' }}
         >
           모두 공개
         </button>
         <button
           onClick={onComplete}
-          className="rounded-xl text-lg font-bold"
+          className="cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 hover:opacity-70"
           style={{ width: 180, height: 65, backgroundColor: 'var(--color-secondary-1)', color: 'var(--color-base-3)' }}
         >
           다음

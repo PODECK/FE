@@ -67,7 +67,7 @@ export default function GachaResult({ cards, packCount, onPullAgain, onClose }: 
           <button
             onClick={onPullAgain}
             disabled={packCount === 0}
-            className="rounded-xl text-lg font-bold disabled:opacity-40"
+            className="cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 enabled:hover:opacity-70 disabled:opacity-40"
             style={{ width: 180, height: 65, backgroundColor: 'var(--color-primary)', color: 'var(--color-base-3)' }}
           >
             한 번 더 뽑기
@@ -76,7 +76,7 @@ export default function GachaResult({ cards, packCount, onPullAgain, onClose }: 
 
         <button
           onClick={onClose}
-          className="rounded-xl text-lg font-bold"
+          className="cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 hover:opacity-70"
           style={{ width: 180, height: 65, backgroundColor: 'var(--color-base-2)', color: 'var(--color-secondary-1)' }}
         >
           닫기
