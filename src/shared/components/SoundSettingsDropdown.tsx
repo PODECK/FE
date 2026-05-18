@@ -46,8 +46,8 @@ export function SoundSettingsDropdown({
           'pointer-events-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border-0',
           isDark
             ? menuOpen
-              ? 'bg-white/18'
-              : 'bg-white/10'
+              ? 'bg-base-3/18'
+              : 'bg-base-3/10'
             : 'border-base-2 bg-base-3/10 hover:bg-base-2/30 border shadow-sm transition',
         )}
         aria-expanded={menuOpen}
