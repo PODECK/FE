@@ -4,13 +4,46 @@
 
 import { useRouter } from 'next/navigation';
 
+import { storageKeys } from '@/app/(main)/(start)/_constants/key';
+import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import HomeHeader from '@/shared/components/HomeHeader';
 import SilhouetteBackground from '@/shared/components/SilhouetteBackground';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
+import { useMemo, useSyncExternalStore } from 'react';
+
+const subscribeTrainerStorage = (onStoreChange: () => void) => {
+  window.addEventListener('storage', onStoreChange);
+  window.addEventListener('trainer-data-updated', onStoreChange);
+
+  return () => {
+    window.removeEventListener('storage', onStoreChange);
+    window.removeEventListener('trainer-data-updated', onStoreChange);
+  };
+};
+
+const getTrainerSnapshot = () => {
+  try {
+    return localStorage.getItem(storageKeys.TRAINER_DATA);
+  } catch {
+    return null;
+  }
+};
+
+const getServerTrainerSnapshot = () => null;
 
 export default function Page() {
   const router = useRouter();
   const { progress } = useTowerProgress();
+  const trainerDataJson = useSyncExternalStore(subscribeTrainerStorage, getTrainerSnapshot, getServerTrainerSnapshot);
+  const cardPackCount = useMemo(() => {
+    if (!trainerDataJson) return 0;
+
+    try {
+      return (JSON.parse(trainerDataJson) as TrainerData).cardPackCount ?? 0;
+    } catch {
+      return 0;
+    }
+  }, [trainerDataJson]);
 
   return (
     <main className="relative h-screen overflow-hidden bg-gradient-to-b from-[#F9F9F9] to-[#E1E1E1]">
@@ -33,7 +66,7 @@ export default function Page() {
           <div className="mt-6 flex items-center justify-center gap-6 text-xs font-medium text-[var(--color-base-1)]">
             <span>남은 라이프 {progress.playerLives}/4</span>
             <span className="h-3 w-px bg-black/20" />
-            <span>보유 카드팩 {progress.cardPackCount}개</span>
+            <span>보유 카드팩 {cardPackCount}개</span>
           </div>
 
           <div className="mt-8 flex justify-center gap-3">
