@@ -45,6 +45,7 @@ export default function BattleScreen() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game | null>(null);
+  const hasShownDeckAlertRef = useRef(false);
   const [skillModal, setSkillModal] = useState<SkillModalData | null>(null);
   const [pokemonSelectOpen, setPokemonSelectOpen] = useState(false);
   const [confirmQuit, setConfirmQuit] = useState(false);
@@ -65,7 +66,10 @@ export default function BattleScreen() {
 
   useEffect(() => {
     if (hasCompletePlayerDeck()) return;
+    if (hasShownDeckAlertRef.current) return;
 
+    hasShownDeckAlertRef.current = true;
+    window.alert('포켓몬 6마리를 선택해주세요 !');
     router.replace('/mydeck');
   }, [router]);
 
