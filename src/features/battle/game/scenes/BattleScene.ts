@@ -25,7 +25,6 @@ import {
   HIT_MOTION_THRESHOLDS,
   LERP,
   LIFT_MS_AFTER_FAINT,
-  PLAYER_DECK_DEX_IDS,
   PLAYER_LEVEL,
   REF_H,
   REF_W,
@@ -169,7 +168,9 @@ export class BattleScene extends Phaser.Scene {
       console.warn('[BattleScene] AI deck build failed:', e);
     }
     try {
-      this.playerDeckDexIds = readActivePlayerDeckDexIds(PLAYER_DECK_DEX_IDS);
+      this.playerDeckDexIds = readActivePlayerDeckDexIds();
+      if (this.playerDeckDexIds.length === 0) return;
+
       this.playerDeck = this.playerDeckDexIds.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
     } catch (e) {
       console.warn('[BattleScene] Player deck build failed:', e);

@@ -2,7 +2,6 @@
 
 import Phaser from 'phaser';
 import { CARD_W, CARD_H } from '../config';
-import { PLAYER_DECK_DEX_IDS } from '../battle-scene-constants';
 import { readActivePlayerDeckDexIds } from '../player-deck-storage';
 
 export class PreloadScene extends Phaser.Scene {
@@ -16,7 +15,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.json('pokemon-moves-data', '/api/data/pokemon-moves.json');
     this.load.image('battle-field', '/images/battle/trainer-tower-field.png');
 
-    readActivePlayerDeckDexIds(PLAYER_DECK_DEX_IDS).forEach((dexId) => {
+    readActivePlayerDeckDexIds().forEach((dexId) => {
       this.load.image(`card-${dexId}`, `/images/pokemon-cards/${dexId}.png`);
     });
 

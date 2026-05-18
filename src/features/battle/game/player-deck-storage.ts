@@ -19,18 +19,20 @@ function sanitizeDexIds(dexIds: unknown): number[] {
     .slice(0, MAX_PLAYER_DECK_SIZE);
 }
 
-export function readActivePlayerDeckDexIds(fallbackDexIds: readonly number[]): number[] {
-  if (typeof window === 'undefined') return [...fallbackDexIds];
+export function readActivePlayerDeckDexIds(): number[] {
+  if (typeof window === 'undefined') return [];
 
   try {
     const rawData = window.localStorage.getItem(storageKeys.TRAINER_DATA);
-    if (!rawData) return [...fallbackDexIds];
+    if (!rawData) return [];
 
     const trainerData = JSON.parse(rawData) as TrainerData;
-    const activeDeckDexIds = sanitizeDexIds(trainerData.activeDeckDexIds);
-
-    return activeDeckDexIds.length > 0 ? activeDeckDexIds : [...fallbackDexIds];
+    return sanitizeDexIds(trainerData.activeDeckDexIds);
   } catch {
-    return [...fallbackDexIds];
+    return [];
   }
+}
+
+export function hasActivePlayerDeck(): boolean {
+  return readActivePlayerDeckDexIds().length > 0;
 }

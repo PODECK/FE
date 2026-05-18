@@ -9,8 +9,7 @@ import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
 import pokemonDataJson from '../../../../data/pokemon.json';
-import { PLAYER_DECK_DEX_IDS } from '@/features/battle/game/battle-scene-constants';
-import { readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
+import { hasActivePlayerDeck, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
@@ -18,17 +17,20 @@ import type { Game } from 'phaser';
 const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
 function createInitialPokemon(): PokemonEntry[] {
-  return readActivePlayerDeckDexIds(PLAYER_DECK_DEX_IDS).map((dexId) => {
+  return readActivePlayerDeckDexIds().flatMap((dexId) => {
     const pokemon = pokemonDataById[String(dexId)];
+    if (!pokemon) return [];
 
-    return {
-      dexId,
-      koName: pokemon.koName,
-      types: pokemon.types,
-      currentHp: pokemon.baseStats.hp,
-      maxHp: pokemon.baseStats.hp,
-      status: 'available',
-    };
+    return [
+      {
+        dexId,
+        koName: pokemon.koName,
+        types: pokemon.types,
+        currentHp: pokemon.baseStats.hp,
+        maxHp: pokemon.baseStats.hp,
+        status: 'available',
+      },
+    ];
   });
 }
 
@@ -60,6 +62,12 @@ export default function BattleScreen() {
     if (!isPlayerTurn) return;
     window.dispatchEvent(new CustomEvent('battle:turn-ended'));
   };
+
+  useEffect(() => {
+    if (hasActivePlayerDeck()) return;
+
+    router.replace('/mydeck');
+  }, [router]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -139,6 +147,7 @@ export default function BattleScreen() {
 
   useEffect(() => {
     if (!containerRef.current || gameRef.current) return;
+    if (!hasActivePlayerDeck()) return;
 
     let cancelled = false;
     let game: Game;
