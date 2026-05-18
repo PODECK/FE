@@ -13,6 +13,7 @@ import { PLAYER_DECK_DEX_IDS } from '@/features/battle/game/battle-scene-constan
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
+import { useBgm } from '@/shared/hooks/useBgm';
 
 const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
@@ -54,6 +55,8 @@ export default function BattleScreen() {
   const currentFloor = progress.currentFloor;
   const isPlayerTurn = turnPhase === 'player';
   const turnButtonLabel = isPlayerTurn ? '턴 종료' : turnPhase === 'ai' ? '상대 턴' : '대기';
+
+  useBgm('bgm/battle-wild.mp3');
 
   const handleTurnEnd = () => {
     if (!isPlayerTurn) return;

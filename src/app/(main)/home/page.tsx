@@ -6,12 +6,12 @@ import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import HomeActionCards from '@/app/(main)/home/_components/HomeActionCards';
 import HomeBanner from '@/app/(main)/home/_components/HomeBanner';
-import HomeHeader from '@/app/(main)/home/_components/HomeHeader';
 import TrainerStatusBar from '@/app/(main)/home/_components/TrainerStatusBar';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 import pokemonData from '../../../../data/pokemon.json';
+import HomeHeader from '@/shared/components/HomeHeader';
 
 const subscribeTrainerStorage = (onStoreChange: () => void) => {
   window.addEventListener('storage', onStoreChange);
