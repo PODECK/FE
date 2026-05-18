@@ -172,8 +172,10 @@ export class BattleScene extends Phaser.Scene {
       if (this.playerDeckDexIds.length !== REQUIRED_PLAYER_DECK_SIZE) return;
 
       this.playerDeck = this.playerDeckDexIds.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
+      if (this.playerDeck.length !== REQUIRED_PLAYER_DECK_SIZE) return;
     } catch (e) {
       console.warn('[BattleScene] Player deck build failed:', e);
+      return;
     }
 
     this.createDropZones();

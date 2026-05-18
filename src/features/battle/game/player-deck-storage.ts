@@ -32,7 +32,3 @@ export function readActivePlayerDeckDexIds(): number[] {
     return [];
   }
 }
-
-export function hasCompletePlayerDeck(): boolean {
-  return readActivePlayerDeckDexIds().length === REQUIRED_PLAYER_DECK_SIZE;
-}
