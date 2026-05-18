@@ -23,7 +23,6 @@ import {
   HEALTH_BAR_H_BASE,
   HIT_MOTION,
   HIT_MOTION_THRESHOLDS,
-  INITIAL_CARDS,
   LERP,
   LIFT_MS_AFTER_FAINT,
   PLAYER_DECK_DEX_IDS,
@@ -33,6 +32,7 @@ import {
   SCALE,
   ZONE_CFG,
 } from '../battle-scene-constants';
+import { readActivePlayerDeckDexIds } from '../player-deck-storage';
 import type { Rng } from '@/shared/lib/rng';
 import type { BattlePokemon, BattleMove } from '@/shared/types/pokemon';
 import type { FloorConfig } from '@/shared/types/tower';
@@ -80,6 +80,7 @@ export class BattleScene extends Phaser.Scene {
   private aiLineupY = 0;
 
   private playerDeck: BattlePokemon[] = [];
+  private playerDeckDexIds: number[] = [];
   private playerActiveIndex = -1;
   private aiDeck: BattlePokemon[] = [];
   private aiActiveIndex = 0;
@@ -168,7 +169,8 @@ export class BattleScene extends Phaser.Scene {
       console.warn('[BattleScene] AI deck build failed:', e);
     }
     try {
-      this.playerDeck = PLAYER_DECK_DEX_IDS.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
+      this.playerDeckDexIds = readActivePlayerDeckDexIds(PLAYER_DECK_DEX_IDS);
+      this.playerDeck = this.playerDeckDexIds.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
     } catch (e) {
       console.warn('[BattleScene] Player deck build failed:', e);
     }
@@ -407,10 +409,11 @@ export class BattleScene extends Phaser.Scene {
 
   // 플레이어 손패를 드로우 위치에서 라인업을 거쳐 부채꼴로 펼침
   private drawInitialCards() {
-    const total = INITIAL_CARDS.length;
+    const initialCards = this.createInitialCards();
+    const total = initialCards.length;
     const stagger = 50;
 
-    INITIAL_CARDS.forEach((cardData, i) => {
+    initialCards.forEach((cardData, i) => {
       this.time.delayedCall(i * stagger, () => {
         const card = this.add
           .image(this.drawX, this.drawY, cardData.texture)
@@ -425,6 +428,14 @@ export class BattleScene extends Phaser.Scene {
     });
 
     this.time.delayedCall((total - 1) * stagger + ANIM.cardFly + 150, () => this.fanOutHand());
+  }
+
+  private createInitialCards(): CardData[] {
+    return this.playerDeckDexIds.map((dexId, index) => ({
+      id: `card${index + 1}`,
+      texture: `card-${dexId}`,
+      name: `pokemon-${dexId}`,
+    }));
   }
 
   private calcLineupPos(index: number, total: number): { x: number; y: number } {

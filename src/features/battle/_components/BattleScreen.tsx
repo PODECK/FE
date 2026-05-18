@@ -10,6 +10,7 @@ import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
 import pokemonDataJson from '../../../../data/pokemon.json';
 import { PLAYER_DECK_DEX_IDS } from '@/features/battle/game/battle-scene-constants';
+import { readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
@@ -17,7 +18,7 @@ import type { Game } from 'phaser';
 const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
 function createInitialPokemon(): PokemonEntry[] {
-  return PLAYER_DECK_DEX_IDS.map((dexId) => {
+  return readActivePlayerDeckDexIds(PLAYER_DECK_DEX_IDS).map((dexId) => {
     const pokemon = pokemonDataById[String(dexId)];
 
     return {
