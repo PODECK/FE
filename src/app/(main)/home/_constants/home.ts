@@ -40,7 +40,7 @@ export const homeActionCards: HomeActionCardData[] = [
     imageAlt: '배틀 시작 이미지',
     backgroundClassName: 'bg-[#F77F66]',
     imageClassName: 'right-0 top-1/2 h-[170px] w-[170px] -translate-y-1/2',
-    silhouetteClassName: '!opacity-30',
+    silhouetteClassName: 'opacity-30!',
   },
   {
     id: 'mydeck',
@@ -51,7 +51,7 @@ export const homeActionCards: HomeActionCardData[] = [
     imageAlt: '내 덱 관리 이미지',
     backgroundClassName: 'bg-[#FFCB3E]',
     imageClassName: 'right-0 top-1/2 h-[150px] w-[150px] -translate-y-1/2',
-    silhouetteClassName: '!opacity-45',
+    silhouetteClassName: 'opacity-45!',
   },
   {
     id: 'pokedex',
@@ -62,7 +62,7 @@ export const homeActionCards: HomeActionCardData[] = [
     imageAlt: '도감 이미지',
     backgroundClassName: 'bg-[#70A9FF]',
     imageClassName: 'right-[-10px] top-1/2 h-[170px] w-[170px] -translate-y-1/2',
-    silhouetteClassName: '!opacity-30',
+    silhouetteClassName: 'opacity-30!',
   },
 ];
 
@@ -73,6 +73,5 @@ export const homeHeroMain = [
     description: '6마리로 덱을 구성하여 AI 상대와 턴제 카드 배틀을 펼치세요',
     trainerImageSrc: '/images/home/jiwoo.svg',
     pokeballImageSrc: '/images/home/pokeball.svg',
-    // backgroundImageSrc: '/images/home/bannerbackground.svg',
   },
 ];
