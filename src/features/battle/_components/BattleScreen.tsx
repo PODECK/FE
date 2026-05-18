@@ -2,14 +2,14 @@
 
 // Phaser 배틀 화면, React HUD, 결과 라우팅 연결 컨테이너
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
 import pokemonDataJson from '../../../../data/pokemon.json';
-import { PLAYER_DECK_DEX_IDS } from '@/features/battle/game/battle-scene-constants';
+import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
@@ -18,17 +18,23 @@ import { useBgm } from '@/shared/hooks/useBgm';
 const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
 function createInitialPokemon(): PokemonEntry[] {
-  return PLAYER_DECK_DEX_IDS.map((dexId) => {
+  return readActivePlayerDeckDexIds().flatMap((dexId) => {
     const pokemon = pokemonDataById[String(dexId)];
+    if (!pokemon) {
+      console.warn(`[BattleScreen] pokemon.json에 dexId=${dexId} 데이터가 없습니다.`);
+      return [];
+    }
 
-    return {
-      dexId,
-      koName: pokemon.koName,
-      types: pokemon.types,
-      currentHp: pokemon.baseStats.hp,
-      maxHp: pokemon.baseStats.hp,
-      status: 'available',
-    };
+    return [
+      {
+        dexId,
+        koName: pokemon.koName,
+        types: pokemon.types,
+        currentHp: pokemon.baseStats.hp,
+        maxHp: pokemon.baseStats.hp,
+        status: 'available',
+      },
+    ];
   });
 }
 
@@ -43,6 +49,7 @@ export default function BattleScreen() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game | null>(null);
+  const hasShownDeckAlertRef = useRef(false);
   const [skillModal, setSkillModal] = useState<SkillModalData | null>(null);
   const [pokemonSelectOpen, setPokemonSelectOpen] = useState(false);
   const [confirmQuit, setConfirmQuit] = useState(false);
@@ -54,6 +61,7 @@ export default function BattleScreen() {
   const { progress, loseLife, markWinRewardPending } = useTowerProgress();
   const currentFloor = progress.currentFloor;
   const isPlayerTurn = turnPhase === 'player';
+  const hasCompleteBattleDeck = pokemonList.length === REQUIRED_PLAYER_DECK_SIZE;
   const turnButtonLabel = isPlayerTurn ? '턴 종료' : turnPhase === 'ai' ? '상대 턴' : '대기';
 
   useBgm('bgm/battle-wild.mp3');
@@ -62,6 +70,25 @@ export default function BattleScreen() {
     if (!isPlayerTurn) return;
     window.dispatchEvent(new CustomEvent('battle:turn-ended'));
   };
+
+  const handleIncompleteDeck = useCallback(() => {
+    if (hasShownDeckAlertRef.current) return;
+
+    hasShownDeckAlertRef.current = true;
+    window.alert('포켓몬 6마리를 선택해 주세요 !');
+    router.replace('/mydeck');
+  }, [router]);
+
+  useEffect(() => {
+    if (hasCompleteBattleDeck) return;
+
+    handleIncompleteDeck();
+  }, [handleIncompleteDeck, hasCompleteBattleDeck]);
+
+  useEffect(() => {
+    window.addEventListener('battle:player-deck-invalid', handleIncompleteDeck);
+    return () => window.removeEventListener('battle:player-deck-invalid', handleIncompleteDeck);
+  }, [handleIncompleteDeck]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -141,6 +168,7 @@ export default function BattleScreen() {
 
   useEffect(() => {
     if (!containerRef.current || gameRef.current) return;
+    if (!hasCompleteBattleDeck) return;
 
     let cancelled = false;
     let game: Game;
@@ -170,7 +198,7 @@ export default function BattleScreen() {
       game?.destroy(true);
       gameRef.current = null;
     };
-  }, []);
+  }, [hasCompleteBattleDeck]);
 
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>

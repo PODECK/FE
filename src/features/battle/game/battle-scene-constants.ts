@@ -2,8 +2,6 @@
 
 import { CARD_W, CARD_H, GAME_WIDTH, GAME_HEIGHT } from './config';
 
-import type { CardData } from './battle-scene-types';
-
 export const AI_CARD_COUNT = 6;
 export const AI_CARD_SCALE_X = CARD_W / 271;
 export const AI_CARD_SCALE_Y = CARD_H / 371;
@@ -96,17 +94,7 @@ export const FIELD_CRYSTAL_GLOWS = [
   { x: 0.89, y: 0.765, width: 0.09, height: 0.16, delay: 520 },
 ] as const;
 
-export const PLAYER_DECK_DEX_IDS = [1, 2, 3, 4, 5, 6];
 export const PLAYER_LEVEL = 5;
-
-export const INITIAL_CARDS: CardData[] = [
-  { id: 'card1', texture: 'card-1', name: 'pokemon-1' },
-  { id: 'card2', texture: 'card-2', name: 'pokemon-2' },
-  { id: 'card3', texture: 'card-3', name: 'pokemon-3' },
-  { id: 'card4', texture: 'card-4', name: 'pokemon-4' },
-  { id: 'card5', texture: 'card-5', name: 'pokemon-5' },
-  { id: 'card6', texture: 'card-6', name: 'pokemon-6' },
-];
 
 export const REF_W = GAME_WIDTH;
 export const REF_H = GAME_HEIGHT;
