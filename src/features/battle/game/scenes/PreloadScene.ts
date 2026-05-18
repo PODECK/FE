@@ -1,7 +1,7 @@
 // 배틀 화면 이미지와 데이터 사전 로드 Scene
 
 import Phaser from 'phaser';
-import { CARD_W, CARD_H } from '../config';
+import { CARD_W, CARD_H, CARD_TEXTURE_SCALE } from '../config';
 import { readActivePlayerDeckDexIds } from '../player-deck-storage';
 
 export class PreloadScene extends Phaser.Scene {
@@ -29,7 +29,7 @@ export class PreloadScene extends Phaser.Scene {
 
   // 기본 카드 뒷면 텍스처가 없을 때 사용하는 안전한 fallback
   private createCardBack() {
-    const s = 2;
+    const s = CARD_TEXTURE_SCALE;
     const g = this.add.graphics();
     g.fillStyle(0x0d1433);
     g.fillRoundedRect(0, 0, CARD_W * s, CARD_H * s, 10 * s);
