@@ -1,7 +1,7 @@
 ﻿// Phaser 기반 카드 배틀 진행 Scene
 
 import Phaser from 'phaser';
-import { CARD_W, CARD_H } from '../config';
+import { CARD_RENDER_SCALE, CARD_TEXTURE_H, CARD_TEXTURE_W, CARD_W, CARD_H } from '../config';
 import { buildAiDeck } from '@/shared/temp-ai/deck-builder';
 import { chooseForceSwap, chooseMove } from '@/shared/temp-ai/strategy';
 import { createRng, generateSeed, damageRoll, chance } from '@/shared/lib/rng';
@@ -333,7 +333,7 @@ export class BattleScene extends Phaser.Scene {
         ps.setScale(pScaleX, pScaleY);
       }
       if (this.playerHealthBar) {
-        const pHalfH = ((CARD_H * 2) / 2) * pScaleY;
+        const pHalfH = (CARD_TEXTURE_H / 2) * pScaleY;
         this.redrawHealthBar(this.playerHealthBar, cx, py + pHalfH + HEALTH_BAR_GAP_BASE * cardS, pScaleX);
       }
     }
@@ -349,7 +349,7 @@ export class BattleScene extends Phaser.Scene {
         os.setScale(oScaleX, oScaleY);
       }
       if (this.opponentHealthBar) {
-        const oHalfH = ((CARD_H * 2) / 2) * oScaleY;
+        const oHalfH = (CARD_TEXTURE_H / 2) * oScaleY;
         this.redrawHealthBar(this.opponentHealthBar, cx, oy + oHalfH + HEALTH_BAR_GAP_BASE * cardS, oScaleX);
       }
     }
@@ -1163,8 +1163,8 @@ export class BattleScene extends Phaser.Scene {
       targets: card,
       x: targetX,
       y: targetY,
-      scaleX: 1.07,
-      scaleY: 1.07,
+      scaleX: SCALE.modal,
+      scaleY: SCALE.modal,
       duration: FLIGHT_MS,
       ease: 'Cubic.easeOut',
       onComplete: () => {
@@ -1176,7 +1176,7 @@ export class BattleScene extends Phaser.Scene {
       this.tweens.killTweensOf(card);
 
       card.setPosition(targetX, targetY);
-      card.setScale(1.07);
+      card.setScale(SCALE.modal);
       card.setAngle(0);
       card.setAlpha(0);
 
@@ -1279,8 +1279,9 @@ export class BattleScene extends Phaser.Scene {
 
   // HP 바를 Phaser 그래픽 객체로 유지하고 리사이즈와 데미지에 맞춰 다시 그림
   private redrawHealthBar(bar: ZoneHealthBar, cx: number, cy: number, scale: number) {
-    const w = CARD_W * scale * 1.7;
-    const h = Math.max(6, HEALTH_BAR_H_BASE * scale);
+    const logicalScale = scale / CARD_RENDER_SCALE;
+    const w = CARD_TEXTURE_W * scale * 0.85;
+    const h = Math.max(6, HEALTH_BAR_H_BASE * logicalScale);
     const r = h / 2;
     const ratio = Math.max(0, Math.min(1, bar.currentHp / bar.maxHp));
 
@@ -1295,7 +1296,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     bar.label.setText(`HP ${bar.currentHp} / ${bar.maxHp}`);
-    bar.label.setPosition(cx, cy + h + 4 * scale);
+    bar.label.setPosition(cx, cy + h + 4 * logicalScale);
   }
 
   // 드롭존 카드 아래에 현재 HP를 표시하는 전용 바를 생성함
@@ -1310,7 +1311,7 @@ export class BattleScene extends Phaser.Scene {
     existing?.label.destroy();
 
     const s = this.getZoneCardScale();
-    const cardHalfH = ((CARD_H * 2) / 2) * card.scaleY;
+    const cardHalfH = (CARD_TEXTURE_H / 2) * card.scaleY;
     const cy = card.y + cardHalfH + HEALTH_BAR_GAP_BASE * s;
     const depth = card.depth + 1;
 
@@ -1339,7 +1340,7 @@ export class BattleScene extends Phaser.Scene {
     if (!bar || !card) return;
     bar.currentHp = Math.max(0, hp);
     const s = this.getZoneCardScale();
-    const cardHalfH = ((CARD_H * 2) / 2) * card.scaleY;
+    const cardHalfH = (CARD_TEXTURE_H / 2) * card.scaleY;
     const cy = card.y + cardHalfH + HEALTH_BAR_GAP_BASE * s;
     this.redrawHealthBar(bar, card.x, cy, ZONE_CFG.cardScale * s);
 

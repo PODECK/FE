@@ -53,7 +53,8 @@ export default function BattleScreen() {
   const [skillModal, setSkillModal] = useState<SkillModalData | null>(null);
   const [pokemonSelectOpen, setPokemonSelectOpen] = useState(false);
   const [confirmQuit, setConfirmQuit] = useState(false);
-  const [pokemonList, setPokemonList] = useState<PokemonEntry[]>(createInitialPokemon);
+  const [pokemonList, setPokemonList] = useState<PokemonEntry[]>([]);
+  const [isDeckLoaded, setIsDeckLoaded] = useState(false);
   const [aiPokemon, setAiPokemon] = useState<AiPokemonStatus[]>([]);
   const [battleLogs, setBattleLogs] = useState<BattleLogEntry[]>([]);
   const [turnPhase, setTurnPhase] = useState<TurnPhase>('setup');
@@ -61,7 +62,7 @@ export default function BattleScreen() {
   const { progress, loseLife, markWinRewardPending } = useTowerProgress();
   const currentFloor = progress.currentFloor;
   const isPlayerTurn = turnPhase === 'player';
-  const hasCompleteBattleDeck = pokemonList.length === REQUIRED_PLAYER_DECK_SIZE;
+  const hasCompleteBattleDeck = isDeckLoaded && pokemonList.length === REQUIRED_PLAYER_DECK_SIZE;
   const turnButtonLabel = isPlayerTurn ? '턴 종료' : turnPhase === 'ai' ? '상대 턴' : '대기';
 
   useBgm('bgm/battle-wild.mp3');
@@ -80,10 +81,25 @@ export default function BattleScreen() {
   }, [router]);
 
   useEffect(() => {
-    if (hasCompleteBattleDeck) return;
+    let cancelled = false;
+
+    queueMicrotask(() => {
+      if (cancelled) return;
+
+      setPokemonList(createInitialPokemon());
+      setIsDeckLoaded(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isDeckLoaded || hasCompleteBattleDeck) return;
 
     handleIncompleteDeck();
-  }, [handleIncompleteDeck, hasCompleteBattleDeck]);
+  }, [handleIncompleteDeck, hasCompleteBattleDeck, isDeckLoaded]);
 
   useEffect(() => {
     window.addEventListener('battle:player-deck-invalid', handleIncompleteDeck);

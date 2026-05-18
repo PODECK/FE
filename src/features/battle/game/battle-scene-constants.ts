@@ -1,6 +1,6 @@
 // BattleScene의 카드 배치, 필드 효과, 애니메이션 기준값
 
-import { CARD_W, CARD_H, GAME_WIDTH, GAME_HEIGHT } from './config';
+import { CARD_W, CARD_H, CARD_RENDER_SCALE, GAME_WIDTH, GAME_HEIGHT } from './config';
 
 export const AI_CARD_COUNT = 6;
 export const AI_CARD_SCALE_X = CARD_W / 271;
@@ -24,20 +24,25 @@ export const EASE = {
   rearrange: 'Sine.easeInOut',
 } as const;
 
-export const SCALE = { normal: 0.5, hover: 1.0, drag: 0.625 } as const;
+export const SCALE = {
+  normal: 0.5 * CARD_RENDER_SCALE,
+  hover: 1.0 * CARD_RENDER_SCALE,
+  drag: 0.625 * CARD_RENDER_SCALE,
+  modal: 1.07 * CARD_RENDER_SCALE,
+} as const;
 export const FAN_CFG = { anglePerCard: 8, maxAngle: 60 } as const;
 export const LERP = 0.08;
 
 export const ZONE_CFG = {
   width: CARD_W * 2.0,
   height: CARD_H * 2.0,
-  cardScale: 0.85,
+  cardScale: 0.85 * CARD_RENDER_SCALE,
   cardScaleY: 0.95,
   cardOffsetY: -5,
   gap: 30,
   opponentOffset: 80,
   playerOffset: 50,
-  opponentCardScale: 0.7,
+  opponentCardScale: 0.7 * CARD_RENDER_SCALE,
   opponentCardScaleY: 0.95,
   opponentCardOffsetY: 5,
 } as const;
