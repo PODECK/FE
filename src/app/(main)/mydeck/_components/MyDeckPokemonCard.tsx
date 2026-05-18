@@ -9,7 +9,7 @@ type MyDeckPokemonCardProps = {
   onAddPokemon: (pokemon: PokemonData) => void;
 };
 
-export default function MyDeckPoekmonCard({ pokemon, isSelected, onAddPokemon }: MyDeckPokemonCardProps) {
+export default function MyDeckPokemonCard({ pokemon, isSelected, onAddPokemon }: MyDeckPokemonCardProps) {
   return (
     <article className="rounded-[20px] border border-gray-200 bg-[var(--color-base-3)] p-3 shadow-sm">
       <div className="flex h-32 items-center justify-center rounded-[10px] bg-gray-50">
@@ -22,23 +22,23 @@ export default function MyDeckPoekmonCard({ pokemon, isSelected, onAddPokemon }:
         />
       </div>
 
-      <p className="mt-3 text-xs text-[var(--color-base-1)]">#{String(pokemon.dexId).padStart(5, '0')}</p>
+      <p className="mt-3 font-mono text-xs text-[var(--color-base-1)]">#{String(pokemon.dexId).padStart(3, '0')}</p>
 
-      <h3 className="text-sm font-semibold text-[var(--color-base-0)]">{pokemon.koName}</h3>
+      <h3 className="text-lg font-extrabold text-[var(--color-base-0)]">{pokemon.koName}</h3>
 
       <p className="mt-1 text-xs text-[var(--color-base-1)]">{pokemon.category}</p>
 
       {/* 타입은 검색/필터 기능에서도 재사용될 데이터라 배열 그대로 렌더링합니다. */}
-      <div className="mt-3 flex flex-wrap gap-1">
+      <div className="mt-4 flex flex-wrap gap-2">
         {pokemon.types.map((type) => (
           <span
             key={type}
-            className={`flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-bold text-[var(--color-base-3)] ${
+            className={`flex h-6 w-16 items-center justify-center gap-1 rounded-full text-xs font-bold text-[var(--color-base-3)] ${
               typeColorMap[type] ?? 'bg-gray-400'
             }`}
           >
-            <Image src={typeIconMap[type]} alt="" width={14} height={14} />
-            {typeLabelMap[type] ?? type}
+            <Image src={typeIconMap[type]} alt="" width={14} height={14} className="shrink-0" />
+            <span className="leading-none">{typeLabelMap[type] ?? type}</span>
           </span>
         ))}
         <button
@@ -48,7 +48,9 @@ export default function MyDeckPoekmonCard({ pokemon, isSelected, onAddPokemon }:
           className="ml-auto flex h-9 w-9 items-center justify-center rounded-full disabled:opacity-40"
           aria-label={`${pokemon.koName} 덱에 추가`}
         >
-          <CirclePlus className="h-6 w-6 text-[var(--color-base-0)]" />
+          <CirclePlus
+            className={`mb-3 h-6 w-6 ${isSelected ? 'text-[var(--color-base-1)]' : 'text-[var(--color-primary)]'}`}
+          />
         </button>
       </div>
     </article>

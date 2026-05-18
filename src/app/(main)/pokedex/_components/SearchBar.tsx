@@ -61,12 +61,12 @@ export default function SearchBar({
             onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
             onBlur={(e) => (e.currentTarget.style.borderColor = '#DEDEDE')}
             placeholder="포켓몬 이름을 입력하세요"
-            className="flex-1 rounded-full border bg-white px-5 outline-none"
+            className="flex-1 rounded-full border bg-[var(--color-base-3)] px-5 outline-none"
             style={{ height: '40px', borderColor: '#DEDEDE' }}
           />
           <button
             onClick={handleSearch}
-            className="shrink-0 cursor-pointer rounded-full font-bold text-white transition-opacity duration-200"
+            className="shrink-0 cursor-pointer rounded-full font-bold text-[var(--color-base-3)] transition-opacity duration-200"
             style={{
               height: '40px',
               padding: '0 30px',
@@ -79,7 +79,7 @@ export default function SearchBar({
           </button>
           <button
             onClick={handleReset}
-            className="shrink-0 cursor-pointer rounded-full font-bold text-white transition-opacity duration-200"
+            className="shrink-0 cursor-pointer rounded-full font-bold text-[var(--color-base-3)] transition-opacity duration-200"
             style={{
               height: '40px',
               padding: '0 25px',

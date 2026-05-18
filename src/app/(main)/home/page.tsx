@@ -83,7 +83,7 @@ export default function HomePage() {
         <HomeActionCards selectedPokemonCount={selectedPokemonCount} totalPokemonCount={totalPokemonCount} />
       </div>
 
-      <footer className="pb-6 text-center text-sm text-[#888888]">© 2026 Team 로켓단. All rights Reserved.</footer>
+      <footer className="pb-6 text-center text-sm text-[#888888]">© 2026 Team 로켓단. All rights reserved.</footer>
     </main>
   );
 }

@@ -59,7 +59,7 @@ export default function NicknameStep() {
       </div>
 
       {/* 카드 뒤 뿌연 효과 & 간단한 소개 글*/}
-      <DialogBox className="mb-5" contentClassName="min-h-24 pr-14 text-center leading-8 whitespace-pre-line font-bold">
+      <DialogBox className="mb-5" contentClassName="min-h-24  text-center leading-6 whitespace-pre-line font-bold">
         <Typewriter
           options={{
             strings: [landingMessages.nicknameGuide],
@@ -79,7 +79,7 @@ export default function NicknameStep() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative w-full overflow-hidden rounded-[13px] border border-white bg-[var(--color-base-3)] p-6 backdrop-blur-md"
+          className="relative w-full overflow-hidden rounded-[13px] border border-[var(--color-base-3)] bg-[var(--color-base-3)] p-6 backdrop-blur-md"
         >
           <div className="relative z-10">
             <TextField
