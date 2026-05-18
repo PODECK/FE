@@ -69,7 +69,7 @@ export default function BattleScreen() {
     if (hasShownDeckAlertRef.current) return;
 
     hasShownDeckAlertRef.current = true;
-    window.alert('포켓몬 6마리를 선택해주세요 !');
+    window.alert('포켓몬 6마리를 선택해 주세요 !');
     router.replace('/mydeck');
   }, [router]);
 
