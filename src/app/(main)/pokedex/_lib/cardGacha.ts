@@ -24,7 +24,7 @@ const GACHA_EXCLUDED_IDS = new Set([
 
 // 뽑기 풀 — 빌드 타임 고정값이므로 모듈 레벨에서 한 번만 계산
 const GACHA_POOL = (Object.values(pokemonData) as PokemonData[]).filter(
-  (p) => p.evolutionStage === 1 && !GACHA_EXCLUDED_IDS.has(p.dexId),
+  (p) => p.dexId <= 493 && p.evolutionStage === 1 && !GACHA_EXCLUDED_IDS.has(p.dexId),
 );
 
 function getTrainerData(): TrainerData | null {
@@ -59,6 +59,7 @@ export function pullGacha(): GachaCard[] {
 export function saveGachaResult(gachaCards: GachaCard[]): void {
   const trainerData = getTrainerData();
   if (!trainerData) return;
+  if ((trainerData.cardPackCount ?? 0) <= 0) return;
 
   const newPokemons = gachaCards.filter((c) => c.isNew).map((c) => c.pokemon);
 

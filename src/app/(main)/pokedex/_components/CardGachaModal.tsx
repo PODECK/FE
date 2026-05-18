@@ -23,9 +23,14 @@ export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
   if (!isOpen) return null;
 
   const handlePull = () => {
-    const result = pullGacha();
-    saveGachaResult(result);
-    setCards(result);
+    try {
+      const result = pullGacha();
+      saveGachaResult(result);
+      setCards(result);
+    } catch {
+      setCards([]);
+      setStep(1);
+    }
   };
 
   const handlePullAgain = () => {
@@ -42,6 +47,9 @@ export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="card-gacha-modal-title"
       style={{ backgroundColor: 'var(--color-dimmed)' }}
       onClick={handleClose}
     >
@@ -52,7 +60,11 @@ export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
       >
         {/* 헤더 */}
         <div className="mb-6">
-          <h2 className="text-lg leading-none font-bold" style={{ color: 'var(--color-base-0)' }}>
+          <h2
+            id="card-gacha-modal-title"
+            className="text-lg leading-none font-bold"
+            style={{ color: 'var(--color-base-0)' }}
+          >
             카드 뽑기
           </h2>
         </div>

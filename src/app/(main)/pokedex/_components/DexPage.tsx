@@ -59,7 +59,9 @@ export default function DexPage() {
   const cardPackCount = useMemo(() => {
     if (!trainerDataJson) return 0;
     try {
-      return (JSON.parse(trainerDataJson) as { cardPackCount?: number }).cardPackCount ?? 0;
+      const raw = (JSON.parse(trainerDataJson) as { cardPackCount?: number }).cardPackCount;
+      if (!Number.isFinite(raw)) return 0;
+      return Math.max(0, Math.floor(raw ?? 0));
     } catch {
       return 0;
     }

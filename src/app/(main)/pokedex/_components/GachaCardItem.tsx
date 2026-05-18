@@ -13,7 +13,13 @@ type Props = {
 
 export default function GachaCardItem({ card, isRevealed, onClick }: Props) {
   return (
-    <div className="relative cursor-pointer" style={{ width: 120, height: 168, perspective: 1000 }} onClick={onClick}>
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative cursor-pointer"
+      style={{ width: 120, height: 168, perspective: 1000 }}
+      aria-label={`${card.pokemon.koName} 카드 ${isRevealed ? '정보' : '공개'}`}
+    >
       <motion.div
         animate={{ rotateY: isRevealed ? 180 : 0, y: 0 }}
         whileHover={!isRevealed ? { y: 10, transition: { duration: 0.15 } } : {}}
@@ -89,6 +95,6 @@ export default function GachaCardItem({ card, isRevealed, onClick }: Props) {
           <div className={styles.shine} />
         </div>
       )}
-    </div>
+    </button>
   );
 }

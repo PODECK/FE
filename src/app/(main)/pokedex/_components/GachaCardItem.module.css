@@ -1,4 +1,4 @@
-@keyframes cardShine {
+@keyframes card-shine {
   0% {
     transform: translateX(-60%);
   }
@@ -16,5 +16,5 @@
   background: linear-gradient(115deg, transparent 15%, rgba(255, 255, 255, 0.3) 50%, transparent 85%);
   width: 200%;
   left: -100%;
-  animation: cardShine 5s ease-in-out 1s infinite;
+  animation: card-shine 5s ease-in-out 1s infinite;
 }
