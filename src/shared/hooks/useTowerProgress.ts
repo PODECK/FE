@@ -58,12 +58,11 @@ export function useTowerProgress() {
 
   const advanceFloor = useCallback(() => {
     const current = readProgress();
-    const canClaimReward = current.pendingRewardFloor === current.currentFloor;
     const next: TowerProgress = {
       ...current,
       currentFloor: Math.min(MAX_FLOOR, current.currentFloor + 1),
       maxClearedFloor: Math.max(current.maxClearedFloor, current.currentFloor),
-      cardPackCount: canClaimReward ? current.cardPackCount + 1 : current.cardPackCount,
+      cardPackCount: current.cardPackCount,
       pendingRewardFloor: null,
     };
     return save(next);
