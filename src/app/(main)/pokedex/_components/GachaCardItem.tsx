@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import type { GachaCard } from '@/app/(main)/pokedex/_lib/cardGacha';
-import styles from './GachaCardItem.module.css';
 
 type Props = {
   card: GachaCard;
@@ -92,7 +91,7 @@ export default function GachaCardItem({ card, isRevealed, onClick }: Props) {
       {/* 신규 카드 shine 효과 */}
       {isRevealed && card.isNew && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
-          <div className={styles.shine} />
+          <div className="shine" />
         </div>
       )}
     </button>

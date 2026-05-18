@@ -19,14 +19,15 @@ type Step = 1 | 2 | 3;
 export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
   const [step, setStep] = useState<Step>(1);
   const [cards, setCards] = useState<GachaCard[]>([]);
+  const isEmptyPackState = packCount === 0 && step === 1 && cards.length === 0;
 
   if (!isOpen) return null;
 
   const handlePull = () => {
     try {
       const result = pullGacha();
-      saveGachaResult(result);
       setCards(result);
+      saveGachaResult(result);
     } catch {
       setCards([]);
       setStep(1);
@@ -79,7 +80,7 @@ export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
         </button>
 
         {/* 보유 카드팩 없을 때 */}
-        {packCount === 0 ? (
+        {isEmptyPackState ? (
           <div className="flex flex-1 flex-col">
             <div className="flex flex-1 flex-col items-center justify-center gap-2">
               <AlertCircle size={52} style={{ color: '#ccc' }} className="mb-2" />
