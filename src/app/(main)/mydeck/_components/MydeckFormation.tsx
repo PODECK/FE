@@ -47,7 +47,7 @@ export default function MyDeckFormation({ selectedPokemons, onRemovePokemon }: M
                     <X className="h-4 w-4" />
                   </button>
 
-                  <span className="text-s absolute bottom-6 max-w-[80%] truncate font-extrabold text-[var(--color-base-3)]">
+                  <span className="absolute bottom-6 max-w-[80%] truncate text-sm font-extrabold text-[var(--color-base-3)]">
                     {pokemon.koName}
                   </span>
                 </>
