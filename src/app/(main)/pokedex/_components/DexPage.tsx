@@ -13,6 +13,7 @@ import Pagination from './Pagination';
 import FloatingButton from '@/app/(main)/pokedex/_components/FloatingButton';
 import PokemonDetailModal from '@/shared/components/pokemon/PokemonDetailModal';
 import HomeHeader from '@/shared/components/HomeHeader';
+import CardGachaModal from './CardGachaModal';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -51,12 +52,18 @@ export default function DexPage() {
   const [types, setTypes] = useState<PokemonType[]>([] as PokemonType[]);
   const [page, setPage] = useState(1);
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonData | null>(null);
+  const [isGachaOpen, setIsGachaOpen] = useState(false);
   const trainerDataJson = useSyncExternalStore(subscribeToStorage, getTrainerDataSnapshot, getServerSnapshot);
   const ownedPokemonIds = useMemo(() => parseOwnedPokemonIds(trainerDataJson), [trainerDataJson]);
   const selectedPokemonCount = ownedPokemonIds.length;
-
-  //임시 - 카드 뽑기 기능 작업 후 로컬스토리지 연동 예정
-  const [cardPackCount] = useState(5);
+  const cardPackCount = useMemo(() => {
+    if (!trainerDataJson) return 0;
+    try {
+      return (JSON.parse(trainerDataJson) as { cardPackCount?: number }).cardPackCount ?? 0;
+    } catch {
+      return 0;
+    }
+  }, [trainerDataJson]);
 
   //필터 변경 시 페이지 초기화
   const handleSetSearch = (value: string) => {
@@ -114,10 +121,9 @@ export default function DexPage() {
           onClose={() => setSelectedPokemon(null)}
         />
 
-        <FloatingButton
-          cardPackCount={cardPackCount}
-          onClick={() => console.log('카드뽑기 모달 열기')} //임시
-        />
+        <FloatingButton cardPackCount={cardPackCount} onClick={() => setIsGachaOpen(true)} />
+
+        <CardGachaModal isOpen={isGachaOpen} onClose={() => setIsGachaOpen(false)} packCount={cardPackCount} />
       </main>
     </div>
   );
