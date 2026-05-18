@@ -1,15 +1,14 @@
 // 포켓몬 타입별 카드 배경 그라디언트 색상 (card.svg 풀 타입 기준 설계)
 
-import type { PokemonType } from '@/shared/types/pokemon';
-
 export type TypeGradient = { from: string; to: string };
 
 // 실제 색상값은 globals.css @theme의 --color-type-gradient-* 변수가 SSOT
-export const typeGradients: Record<PokemonType, TypeGradient> = {
+export const typeGradients: Record<string, TypeGradient> = {
   normal: { from: 'var(--color-type-gradient-normal-from)', to: 'var(--color-type-gradient-normal-to)' },
   fire: { from: 'var(--color-type-gradient-fire-from)', to: 'var(--color-type-gradient-fire-to)' },
   water: { from: 'var(--color-type-gradient-water-from)', to: 'var(--color-type-gradient-water-to)' },
   electric: { from: 'var(--color-type-gradient-electric-from)', to: 'var(--color-type-gradient-electric-to)' },
+  fairy: { from: 'var(--color-type-gradient-fairy-from)', to: 'var(--color-type-gradient-fairy-to)' },
   grass: { from: 'var(--color-type-gradient-grass-from)', to: 'var(--color-type-gradient-grass-to)' },
   ice: { from: 'var(--color-type-gradient-ice-from)', to: 'var(--color-type-gradient-ice-to)' },
   fighting: { from: 'var(--color-type-gradient-fighting-from)', to: 'var(--color-type-gradient-fighting-to)' },
@@ -25,11 +24,12 @@ export const typeGradients: Record<PokemonType, TypeGradient> = {
   steel: { from: 'var(--color-type-gradient-steel-from)', to: 'var(--color-type-gradient-steel-to)' },
 };
 
-export const typeBadgeColors: Record<PokemonType, string> = {
+export const typeBadgeColors: Record<string, string> = {
   normal: 'var(--color-type-badge-normal)',
   fire: 'var(--color-type-badge-fire)',
   water: 'var(--color-type-badge-water)',
   electric: 'var(--color-type-badge-electric)',
+  fairy: 'var(--color-type-badge-fairy)',
   grass: 'var(--color-type-badge-grass)',
   ice: 'var(--color-type-badge-ice)',
   fighting: 'var(--color-type-badge-fighting)',
@@ -48,5 +48,5 @@ export const typeBadgeColors: Record<PokemonType, string> = {
 export function getTypeBadgeColor(type: string | undefined): string {
   if (!type || !(type in typeBadgeColors)) return 'var(--color-base-1)';
 
-  return typeBadgeColors[type as PokemonType];
+  return typeBadgeColors[type];
 }
