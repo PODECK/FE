@@ -35,7 +35,7 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
         </button>
 
         {/* 포켓몬 카드 뒷면 */}
-        <div className="h-[390px] w-[260px] items-center justify-center self-center rounded-[12px] bg-[var(--color-secondary-2)] p-3 shadow-[0_0_16px_rgba(0,0,0,0.18)]">
+        <div className="flex h-[390px] w-[260px] items-center justify-center self-center rounded-[12px] bg-[var(--color-secondary-2)] p-3 shadow-[0_0_16px_rgba(0,0,0,0.18)]">
           <div className="bg-gradient-primary relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm">
             <div className="absolute inset-2 border-4 border-[var(--color-secondary-2)]" />
             <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-[var(--color-secondary-2)]/60">
