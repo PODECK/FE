@@ -101,6 +101,10 @@ export class BattleScene extends Phaser.Scene {
     );
   }
 
+  private dispatchPlayerDeckInvalid() {
+    window.dispatchEvent(new CustomEvent('battle:player-deck-invalid'));
+  }
+
   private readonly handleMoveSelected = (e: Event) => {
     const { moveIndex } = (e as CustomEvent<{ moveIndex: number }>).detail;
     if (this.isModalOpen) {
@@ -169,12 +173,19 @@ export class BattleScene extends Phaser.Scene {
     }
     try {
       this.playerDeckDexIds = readActivePlayerDeckDexIds();
-      if (this.playerDeckDexIds.length !== REQUIRED_PLAYER_DECK_SIZE) return;
+      if (this.playerDeckDexIds.length !== REQUIRED_PLAYER_DECK_SIZE) {
+        this.dispatchPlayerDeckInvalid();
+        return;
+      }
 
       this.playerDeck = this.playerDeckDexIds.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
-      if (this.playerDeck.length !== REQUIRED_PLAYER_DECK_SIZE) return;
+      if (this.playerDeck.length !== REQUIRED_PLAYER_DECK_SIZE) {
+        this.dispatchPlayerDeckInvalid();
+        return;
+      }
     } catch (e) {
       console.warn('[BattleScene] Player deck build failed:', e);
+      this.dispatchPlayerDeckInvalid();
       return;
     }
 

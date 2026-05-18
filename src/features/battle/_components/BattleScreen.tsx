@@ -2,7 +2,7 @@
 
 // Phaser 배틀 화면, React HUD, 결과 라우팅 연결 컨테이너
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
@@ -68,14 +68,24 @@ export default function BattleScreen() {
     window.dispatchEvent(new CustomEvent('battle:turn-ended'));
   };
 
-  useEffect(() => {
-    if (hasCompleteBattleDeck) return;
+  const handleIncompleteDeck = useCallback(() => {
     if (hasShownDeckAlertRef.current) return;
 
     hasShownDeckAlertRef.current = true;
     window.alert('포켓몬 6마리를 선택해 주세요 !');
     router.replace('/mydeck');
-  }, [hasCompleteBattleDeck, router]);
+  }, [router]);
+
+  useEffect(() => {
+    if (hasCompleteBattleDeck) return;
+
+    handleIncompleteDeck();
+  }, [handleIncompleteDeck, hasCompleteBattleDeck]);
+
+  useEffect(() => {
+    window.addEventListener('battle:player-deck-invalid', handleIncompleteDeck);
+    return () => window.removeEventListener('battle:player-deck-invalid', handleIncompleteDeck);
+  }, [handleIncompleteDeck]);
 
   useEffect(() => {
     const handler = (e: Event) => {
