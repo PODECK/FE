@@ -8,7 +8,7 @@ import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import HomeHeader from '@/shared/components/HomeHeader';
 import SilhouetteBackground from '@/shared/components/SilhouetteBackground';
-import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
+import { readProgress, useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 
 const TRAINER_DATA_UPDATED_EVENT = 'trainer-data-updated';
@@ -70,7 +70,9 @@ export default function Page() {
     if (isClaimingReward) return;
     setIsClaimingReward(true);
 
-    if (hasPendingReward) {
+    const currentProgress = readProgress(); // 최신 저장소 기준
+    const shouldClaimReward = currentProgress.pendingRewardFloor === currentProgress.currentFloor;
+    if (shouldClaimReward) {
       addCardPackReward();
     }
 
