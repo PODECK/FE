@@ -954,7 +954,7 @@
   "35": {
     "dexId": 35,
     "enName": "clefairy",
-    "types": ["normal"],
+    "types": ["fairy"],
     "baseStats": {
       "hp": 70,
       "attack": 45,
@@ -982,7 +982,7 @@
   "36": {
     "dexId": 36,
     "enName": "clefable",
-    "types": [],
+    "types": ["fairy"],
     "baseStats": {
       "hp": 95,
       "attack": 70,
@@ -1066,7 +1066,7 @@
   "39": {
     "dexId": 39,
     "enName": "jigglypuff",
-    "types": ["normal"],
+    "types": ["fairy", "normal"],
     "baseStats": {
       "hp": 115,
       "attack": 45,
@@ -1094,7 +1094,7 @@
   "40": {
     "dexId": 40,
     "enName": "wigglytuff",
-    "types": ["normal"],
+    "types": ["fairy", "normal"],
     "baseStats": {
       "hp": 140,
       "attack": 70,
@@ -3390,7 +3390,7 @@
   "122": {
     "dexId": 122,
     "enName": "mr-mime",
-    "types": ["psychic"],
+    "types": ["psychic", "fairy"],
     "baseStats": {
       "hp": 40,
       "attack": 45,
@@ -4818,7 +4818,7 @@
   "173": {
     "dexId": 173,
     "enName": "cleffa",
-    "types": [],
+    "types": ["fairy"],
     "baseStats": {
       "hp": 50,
       "attack": 25,
@@ -4846,7 +4846,7 @@
   "174": {
     "dexId": 174,
     "enName": "igglybuff",
-    "types": ["normal"],
+    "types": ["fairy", "normal"],
     "baseStats": {
       "hp": 90,
       "attack": 30,
@@ -4874,7 +4874,7 @@
   "175": {
     "dexId": 175,
     "enName": "togepi",
-    "types": [],
+    "types": ["fairy"],
     "baseStats": {
       "hp": 35,
       "attack": 20,
@@ -4902,7 +4902,7 @@
   "176": {
     "dexId": 176,
     "enName": "togetic",
-    "types": ["flying"],
+    "types": ["flying", "fairy"],
     "baseStats": {
       "hp": 55,
       "attack": 40,
@@ -5098,7 +5098,7 @@
   "183": {
     "dexId": 183,
     "enName": "marill",
-    "types": ["water"],
+    "types": ["water", "fairy"],
     "baseStats": {
       "hp": 70,
       "attack": 20,
@@ -5126,7 +5126,7 @@
   "184": {
     "dexId": 184,
     "enName": "azumarill",
-    "types": ["water"],
+    "types": ["water", "fairy"],
     "baseStats": {
       "hp": 100,
       "attack": 50,
@@ -5826,7 +5826,7 @@
   "209": {
     "dexId": 209,
     "enName": "snubbull",
-    "types": [],
+    "types": ["fairy"],
     "baseStats": {
       "hp": 60,
       "attack": 80,
@@ -5854,7 +5854,7 @@
   "210": {
     "dexId": 210,
     "enName": "granbull",
-    "types": [],
+    "types": ["fairy"],
     "baseStats": {
       "hp": 90,
       "attack": 120,
@@ -7814,7 +7814,7 @@
   "280": {
     "dexId": 280,
     "enName": "ralts",
-    "types": ["psychic"],
+    "types": ["psychic", "fairy"],
     "baseStats": {
       "hp": 28,
       "attack": 25,
@@ -7842,7 +7842,7 @@
   "281": {
     "dexId": 281,
     "enName": "kirlia",
-    "types": ["psychic"],
+    "types": ["psychic", "fairy"],
     "baseStats": {
       "hp": 38,
       "attack": 35,
@@ -7870,7 +7870,7 @@
   "282": {
     "dexId": 282,
     "enName": "gardevoir",
-    "types": ["psychic"],
+    "types": ["psychic", "fairy"],
     "baseStats": {
       "hp": 68,
       "attack": 65,
@@ -8318,7 +8318,7 @@
   "298": {
     "dexId": 298,
     "enName": "azurill",
-    "types": ["normal"],
+    "types": ["fairy", "normal"],
     "baseStats": {
       "hp": 50,
       "attack": 20,
@@ -8458,7 +8458,7 @@
   "303": {
     "dexId": 303,
     "enName": "mawile",
-    "types": ["steel"],
+    "types": ["steel", "fairy"],
     "baseStats": {
       "hp": 50,
       "attack": 85,
@@ -12266,7 +12266,7 @@
   "439": {
     "dexId": 439,
     "enName": "mime-jr",
-    "types": ["psychic"],
+    "types": ["psychic", "fairy"],
     "baseStats": {
       "hp": 20,
       "attack": 25,
@@ -13078,7 +13078,7 @@
   "468": {
     "dexId": 468,
     "enName": "togekiss",
-    "types": ["flying"],
+    "types": ["flying", "fairy"],
     "baseStats": {
       "hp": 85,
       "attack": 50,
