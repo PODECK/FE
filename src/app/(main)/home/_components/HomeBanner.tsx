@@ -4,7 +4,6 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-// import SilhouetteBackground from '@/shared/components/SilhouetteBackground';
 import { homeHeroMain } from '@/app/(main)/home/_constants/home';
 
 export default function HomeBanner() {
