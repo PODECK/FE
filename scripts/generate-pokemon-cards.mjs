@@ -144,7 +144,7 @@ async function generateCard(dexId, pokemon, moveNames, badgeImages, watermarkImg
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, CARD_W, CARD_H);
 
-  // 워터마크 (sim.svg)
+  // 워터마크
   if (watermarkImg) {
     ctx.drawImage(watermarkImg, watermark.x * SX, watermark.y * SY, watermark.w * SX, watermark.h * SX);
   }
@@ -280,7 +280,7 @@ async function main() {
   }
   console.log('완료');
 
-  // 워터마크 로드 (sim.svg — 복잡한 SVG, resvg로 래스터화)
+  // 워터마크 로드
   const watermarkImg = await loadSvgAsImage(path.join(ROOT, 'public', 'sim.svg'), 420);
 
   const dexIds = Object.keys(pokemonData)
@@ -290,7 +290,7 @@ async function main() {
   let done = 0;
   let skipped = 0;
   let failed = 0;
-  const BATCH = 8;
+  const BATCH = 4;
 
   for (let i = 0; i < dexIds.length; i += BATCH) {
     const batch = dexIds.slice(i, i + BATCH);
