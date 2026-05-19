@@ -3,21 +3,32 @@ import { Howl } from 'howler';
 let bgmHowl: Howl | null = null;
 let currentBgmSrc: string | null = null;
 
+export interface BgmOptions {
+  volume?: number;
+  html5?: boolean;
+}
+
 export const bgm = {
-  play(src: string, volume: number) {
+  play(src: string, options: BgmOptions = {}) {
+    const volume = options?.volume ?? 0.2;
+    const html5 = options?.html5 ?? false;
+
     if (currentBgmSrc === src) {
       bgmHowl?.volume(volume);
       return;
     }
 
-    bgmHowl?.stop();
-    bgmHowl?.unload();
+    if (bgmHowl) {
+      bgmHowl.stop();
+      bgmHowl.unload();
+      bgmHowl = null;
+    }
 
     bgmHowl = new Howl({
       src: [src],
       loop: true,
       volume,
-      html5: true, // 스트리밍 재생 (대용량 파일 메모리 최적화)
+      html5,
     });
 
     bgmHowl.play();
