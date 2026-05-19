@@ -4,29 +4,32 @@ let bgmHowl: Howl | null = null;
 let currentBgmSrc: string | null = null;
 let audioUnlocked = false;
 let pendingPlayArgs: { src: string; options: BgmOptions } | null = null;
-let pendingMuted: boolean | null = null;
+let isMutedState = false;
 
 export interface BgmOptions {
   volume?: number;
   html5?: boolean;
 }
 
+const removeUnlockListeners = () => {
+  if (typeof window === 'undefined') return;
+  document.removeEventListener('click', unlock, true);
+  document.removeEventListener('keydown', unlock, true);
+  document.removeEventListener('touchstart', unlock, true);
+};
+
+const unlock = () => {
+  audioUnlocked = true;
+  removeUnlockListeners();
+
+  if (pendingPlayArgs) {
+    const { src, options } = pendingPlayArgs;
+    pendingPlayArgs = null;
+    bgm.play(src, options);
+  }
+};
+
 if (typeof window !== 'undefined') {
-  const unlock = () => {
-    audioUnlocked = true;
-    if (pendingPlayArgs) {
-      const { src, options } = pendingPlayArgs;
-      pendingPlayArgs = null;
-      bgm.play(src, options);
-      if (pendingMuted !== null) {
-        bgmHowl?.mute(pendingMuted);
-        pendingMuted = null;
-      }
-    }
-    document.removeEventListener('click', unlock, true);
-    document.removeEventListener('keydown', unlock, true);
-    document.removeEventListener('touchstart', unlock, true);
-  };
   document.addEventListener('click', unlock, true);
   document.addEventListener('keydown', unlock, true);
   document.addEventListener('touchstart', unlock, true);
@@ -58,6 +61,7 @@ export const bgm = {
       loop: true,
       volume,
       html5,
+      mute: isMutedState,
     });
 
     bgmHowl.play();
@@ -66,11 +70,13 @@ export const bgm = {
 
   stop() {
     pendingPlayArgs = null;
-    pendingMuted = null;
     bgmHowl?.stop();
     bgmHowl?.unload();
     bgmHowl = null;
     currentBgmSrc = null;
+    if (!audioUnlocked) {
+      removeUnlockListeners();
+    }
   },
 
   volume(volume: number) {
@@ -78,11 +84,8 @@ export const bgm = {
   },
 
   mute(muted: boolean) {
-    if (!bgmHowl) {
-      pendingMuted = muted;
-      return;
-    }
-    bgmHowl.mute(muted);
+    isMutedState = muted;
+    bgmHowl?.mute(muted);
   },
 
   pause() {
