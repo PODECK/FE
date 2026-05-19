@@ -21,7 +21,7 @@ export const useSoundStore = create<SoundState & SoundActions>()(
   persist(
     (set, get) => ({
       setting: {
-        bgmVolume: 0.5,
+        bgmVolume: 0.2,
         sfxVolume: 0.8,
         isBgmMuted: false,
         isSfxMuted: false,
