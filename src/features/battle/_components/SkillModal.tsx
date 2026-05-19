@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import SkillMovePanel from './SkillMovePanel';
 import SkillPreviewCard from './SkillPreviewCard';
 import type { SkillModalData } from './skill-modal-types';
+import { cn } from '@/shared/lib/cn';
 
 export type { SkillModalData } from './skill-modal-types';
 
@@ -61,19 +62,17 @@ export default function SkillModal({ data, onClose, onConfirmMove }: Props) {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50 }}>
+    <div className="fixed inset-0 z-50">
       <div
         onClick={handleClose}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'rgba(0,0,0,0.6)',
-          opacity: closing ? 0 : overlayVisible ? 1 : 0,
-          transition: 'opacity 300ms ease',
-        }}
+        className={cn(
+          'absolute inset-0 bg-[var(--color-base-0)]/60 transition-opacity duration-300 ease-in-out',
+          closing || !overlayVisible ? 'opacity-0' : 'opacity-100',
+        )}
       />
 
       <SkillPreviewCard data={data} isVisible={cardVisible} isClosing={closing} />
+
       <SkillMovePanel
         moves={data.moves}
         selectedIndex={selectedIndex}

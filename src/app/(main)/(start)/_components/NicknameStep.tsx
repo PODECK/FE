@@ -32,6 +32,11 @@ export default function NicknameStep() {
     const trainerData: TrainerData = {
       nickname: result.data,
       createdAt: new Date().toISOString(),
+      cardPackCount: 1, //초기 진입 시 기본 카드팩 추가
+      battleRecord: {
+        wins: 0,
+        losses: 0,
+      },
     };
 
     setTrainerData(trainerData);

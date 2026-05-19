@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { getTypeBadgeColor } from '@/shared/constants/type-colors';
+import { cn } from '@/shared/lib/cn';
 
 export interface PokemonEntry {
   dexId: number;
@@ -44,34 +45,11 @@ const CARD = {
   center: { w: 169, h: 208, imgH: 130, nameFz: 17 },
 } as const;
 
-const ROBOTO = { fontFamily: 'Roboto, sans-serif' } as const;
-
-function hpBarColor(current: number, max: number): string {
-  const pct = max === 0 ? 0 : current / max;
-  if (pct >= 0.5) return 'var(--color-battle-hp-high)';
-  if (pct >= 0.2) return 'var(--color-battle-hp-mid)';
-  return 'var(--color-battle-hp-low)';
-}
-
-function arrowBtn(disabled: boolean): React.CSSProperties {
-  return {
-    width: 48,
-    height: 48,
-    borderRadius: '50%',
-    background: 'rgba(255,255,255,0.1)',
-    border: 'none',
-    color: 'white',
-    fontSize: 26,
-    fontWeight: 900,
-    lineHeight: 1,
-    cursor: disabled ? 'default' : 'pointer',
-    opacity: disabled ? 0.3 : 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...ROBOTO,
-    flexShrink: 0,
-  };
+function arrowBtn(disabled: boolean) {
+  return cn(
+    'flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-none bg-white/10 text-[26px] leading-none font-black text-white',
+    disabled ? 'cursor-default opacity-30' : 'cursor-pointer opacity-100 hover:bg-white/20',
+  );
 }
 
 export default function PokemonSelectModal({ pokemon, onClose }: Props) {
@@ -80,121 +58,91 @@ export default function PokemonSelectModal({ pokemon, onClose }: Props) {
   const aliveCount = pokemon.filter((p) => p.status !== 'fainted').length;
 
   return (
-    <div
-      style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'var(--color-battle-overlay-strong)', ...ROBOTO }}
-    >
+    <div className="fixed inset-0 z-[60] bg-[var(--color-battle-overlay-strong)]">
       {/* 헤더 */}
-      <div style={{ position: 'absolute', top: 20, left: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
+      {/* 닫기 버튼 */}
+      <div className="absolute top-5 right-6 flex items-center gap-3">
         <button
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.12)',
-            border: 'none',
-            color: 'white',
-            fontSize: 18,
-            fontWeight: 900,
-            lineHeight: 1,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            ...ROBOTO,
-          }}
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-0 bg-[var(--color-base-3)]/10 text-lg leading-none font-black text-[var(--color-base-3)]"
         >
           X
         </button>
-        <span style={{ color: 'white', fontSize: 22, fontWeight: 900 }}>포켓몬의 상태를 확인하세요</span>
       </div>
 
-      {/* 캐러셀 */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 20,
-        }}
-      >
-        <button
-          type="button"
-          aria-label="이전 포켓몬"
-          onClick={() => setIdx((i) => Math.max(0, i - 1))}
-          disabled={idx === 0}
-          style={arrowBtn(idx === 0)}
-        >
-          {'<'}
-        </button>
+      {/* 제목 */}
+      <div className="absolute top-5 left-1/2 -translate-x-1/2">
+        <span className="text-[22px] font-black whitespace-nowrap text-[var(--color-base-3)]">
+          포켓몬의 상태를 확인하세요
+        </span>
+      </div>
 
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
-          {([-2, -1, 0, 1, 2] as const).map((offset) => {
-            const entry = pokemon[idx + offset];
-            const isCenter = offset === 0;
-            const isFar = Math.abs(offset) >= 2;
-            const sz = isCenter ? CARD.center : CARD.near;
+      {/* 캐러셀 + 푸터 */}
+      <div className="absolute top-1/2 left-1/2 flex w-full max-w-[1200px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-5 px-6">
+        {/* 카드 캐러셀 */}
+        <div className="flex w-full items-center justify-center gap-5">
+          <button
+            type="button"
+            aria-label="이전 포켓몬"
+            onClick={() => setIdx((i) => Math.max(0, i - 1))}
+            disabled={idx === 0}
+            className={arrowBtn(idx === 0)}
+          >
+            {'<'}
+          </button>
 
-            if (!entry) {
-              return <div key={offset} style={{ width: sz.w, height: sz.h, flexShrink: 0 }} />;
-            }
+          <div className="flex items-start gap-1.5">
+            {([-2, -1, 0, 1, 2] as const).map((offset) => {
+              const entry = pokemon[idx + offset];
+              const isCenter = offset === 0;
+              const isFar = Math.abs(offset) >= 2;
+              const sz = isCenter ? CARD.center : CARD.near;
 
-            return (
-              <PokemonCard
-                key={offset}
-                entry={entry}
-                sz={sz}
-                isCenter={isCenter}
-                opacity={isFar ? 0.32 : 1}
-                onClick={() => !isCenter && setIdx(idx + offset)}
-              />
-            );
-          })}
+              if (!entry) {
+                return <div key={offset} style={{ width: sz.w, height: sz.h, flexShrink: 0 }} />;
+              }
+
+              return (
+                <PokemonCard
+                  key={offset}
+                  entry={entry}
+                  sz={sz}
+                  isCenter={isCenter}
+                  opacity={isFar ? 0.32 : 1}
+                  onClick={() => !isCenter && setIdx(idx + offset)}
+                />
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            aria-label="다음 포켓몬"
+            onClick={() => setIdx((i) => Math.min(pokemon.length - 1, i + 1))}
+            disabled={idx === pokemon.length - 1}
+            className={arrowBtn(idx === pokemon.length - 1)}
+          >
+            {'>'}
+          </button>
         </div>
 
-        <button
-          type="button"
-          aria-label="다음 포켓몬"
-          onClick={() => setIdx((i) => Math.min(pokemon.length - 1, i + 1))}
-          disabled={idx === pokemon.length - 1}
-          style={arrowBtn(idx === pokemon.length - 1)}
-        >
-          {'>'}
-        </button>
-      </div>
-
-      {/* 푸터 */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 24,
-          left: 24,
-          right: 24,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+        {/* 푸터 */}
+        <div className="flex flex-col items-center">
+          <div className="mb-1.5 flex gap-1.5">
             {pokemon.map((_, i) => (
               <div
                 key={i}
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  background: i === idx ? 'white' : 'rgba(255,255,255,0.3)',
-                }}
+                className={cn(
+                  'h-2 w-2 rounded-full',
+                  i === idx ? 'bg-[var(--color-base-3)]' : 'bg-[var(--color-base-3)]/30',
+                )}
               />
             ))}
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>보유 포켓몬 {aliveCount}마리 생존</div>
+
+          <div className="text-xs text-[var(--color-base-3)]/60">보유 포켓몬 {aliveCount}마리 생존</div>
         </div>
       </div>
     </div>
@@ -227,107 +175,72 @@ function PokemonCard({
   return (
     <div
       onClick={onClick}
+      className={cn(
+        'shrink-0 overflow-hidden rounded-xl bg-[rgba(22,22,40,0.96)] transition-all duration-200 ease-in-out',
+        isCenter ? 'mt-0 cursor-default' : 'mt-5 cursor-pointer',
+      )}
       style={{
         width: sz.w,
         height: sz.h,
-        flexShrink: 0,
-        background: 'rgba(22,22,40,0.96)',
-        borderRadius: 12,
-        overflow: 'hidden',
         opacity,
-        cursor: isCenter ? 'default' : 'pointer',
-        marginTop: isCenter ? 0 : 20,
-        transition: 'all 250ms ease',
       }}
     >
       {/* 이미지 영역 */}
       <div
-        style={{
-          width: '100%',
-          height: sz.imgH,
-          background: 'rgba(255,255,255,0.04)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-        }}
+        className="relative flex w-full items-center justify-center bg-[var(--color-base-3)]/5"
+        style={{ height: sz.imgH }}
       >
-        {entry.status === 'battle' && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 7,
-              right: 8,
-              background: 'rgba(28,56,130,0.7)',
-              color: 'rgba(136,176,240,1)',
-              fontSize: 9,
-              fontWeight: 900,
-              padding: '2px 7px',
-              borderRadius: 4,
-            }}
-          >
-            배틀 중
-          </div>
-        )}
-        {entry.status === 'fainted' && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 7,
-              right: 8,
-              background: 'rgba(100,18,18,0.7)',
-              color: 'rgba(240,128,128,1)',
-              fontSize: 9,
-              fontWeight: 900,
-              padding: '2px 7px',
-              borderRadius: 4,
-            }}
-          >
-            기절
-          </div>
-        )}
+        {entry.status === 'battle' && <StatusBadge variant="battle">배틀 중</StatusBadge>}
+        {entry.status === 'fainted' && <StatusBadge variant="fainted">기절</StatusBadge>}
+
         <Image
           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${entry.dexId}.png`}
           alt={entry.koName}
           width={160}
           height={160}
-          style={{ width: '72%', height: '72%', objectFit: 'contain' }}
+          className="h-[72%] w-[72%] object-contain"
         />
       </div>
 
       {/* 정보 영역 */}
-      <div style={{ padding: '9px 11px' }}>
-        <div style={{ color: 'white', fontWeight: 900, fontSize: sz.nameFz }}>{entry.koName}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+      <div className="px-[11px] py-[9px]">
+        <div className="font-black text-[var(--color-base-3)]" style={{ fontSize: sz.nameFz }}>
+          {entry.koName}
+        </div>
+
+        <div className="mt-1 flex items-center gap-1">
           {primaryType && (
             <span
-              style={{
-                background: getTypeBadgeColor(primaryType),
-                color: 'white',
-                fontSize: 9,
-                fontWeight: 900,
-                padding: '2px 7px',
-                borderRadius: 10,
-              }}
+              className="rounded-[10px] px-[7px] py-0.5 text-[9px] font-black text-[var(--color-base-3)]"
+              style={{ background: getTypeBadgeColor(primaryType) }}
             >
               {TYPE_KO[primaryType] ?? primaryType}
             </span>
           )}
-          <span style={{ color: 'rgba(255,255,255,0.44)', fontSize: 11, fontWeight: 700 }}>
+
+          <span className="text-[11px] font-bold text-[var(--color-base-3)]/45">
             {entry.currentHp}/{entry.maxHp}
           </span>
         </div>
-        <div style={{ width: '100%', height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 2, marginTop: 6 }}>
-          <div
-            style={{
-              height: 4,
-              borderRadius: 2,
-              width: `${hpPct * 100}%`,
-              background: hpBarColor(entry.currentHp, entry.maxHp),
-            }}
-          />
+
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--color-base-3)]/15">
+          <div className="h-full rounded-full bg-green-400" style={{ width: `${hpPct * 100}%` }} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function StatusBadge({ variant, children }: { variant: 'battle' | 'fainted'; children: React.ReactNode }) {
+  return (
+    <div
+      className={cn(
+        'absolute top-[7px] right-2 rounded px-[7px] py-0.5 text-[9px] font-black',
+        variant === 'battle' && 'bg-blue-950/70 text-blue-300',
+        variant === 'fainted' && 'bg-red-950/70 text-red-300',
+      )}
+    >
+      {children}
     </div>
   );
 }
