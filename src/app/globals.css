@@ -246,3 +246,13 @@ body {
     transform: translateX(110%);
   }
 }
+
+/* overflow-y-auto 속성 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
