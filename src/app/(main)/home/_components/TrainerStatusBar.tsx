@@ -47,10 +47,9 @@ export default function TrainerStatusBar({
               type="button"
               onClick={handleMoveToPokedex}
               disabled={!hasCardPack}
-              aria-describedby={hasCardPack ? 'card-pack-tooltip' : undefined}
               className="cursor-pointer text-[#E0E0E0] transition hover:text-[var(--color-base-3)] disabled:hover:text-[#E0E0E0]"
             >
-              보유 카드팩 <strong className="text-[#FFF]">{cardPackCount}</strong> 개
+              보유 카드팩 <strong className="text-[var(--color-base-3)]">{cardPackCount}</strong> 개
             </button>
             {hasCardPack && (
               <span
