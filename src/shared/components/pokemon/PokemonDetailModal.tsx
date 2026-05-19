@@ -22,32 +22,32 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
   const mainType = pokemon.types[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-base-0)]/60 px-4">
       {/* 뒤에 배경 흐리게 */}
-      <article className="relative grid w-[800px] grid-cols-[240px_1fr] gap-15 rounded-[20px] border-4 border-[#999999] bg-[var(--color-secondary-2)] p-8">
+      <article className="relative grid w-[800px] grid-cols-[240px_1fr] gap-15 rounded-[20px] border-4 border-[#999999] bg-[var(--color-secondary-2)] p-6">
         <button
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          className="absolute top-6 right-6 text-[#999999] transition"
+          className="absolute top-6 right-6 z-20 text-[#999999] transition"
         >
           <X size={36} strokeWidth={1.8} />
         </button>
 
         {/* 포켓몬 카드 뒷면 */}
         <div className="flex h-[390px] w-[260px] items-center justify-center self-center rounded-[12px] bg-[var(--color-secondary-2)] p-3 shadow-[0_0_16px_rgba(0,0,0,0.18)]">
-          <div className="bg-gradient-primary relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm">
-            <div className="absolute inset-2 border-4 border-[var(--color-secondary-2)]" />
-            <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-[var(--color-secondary-2)]/60">
-              <div className="bg-gradient-primary absolute h-4 w-28" />
-              <div className="bg-gradient-primary z-10 flex h-12 w-12 items-center justify-center rounded-full">
-                <div className="h-6 w-6 rounded-full bg-[var(--color-secondary-2)]/70" />
-              </div>
-            </div>
+          <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm">
+            <Image
+              src={`/images/pokemon-cards/${pokemon.dexId}.png`}
+              alt={`${pokemon.koName} 카드`}
+              width={260}
+              height={390}
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
 
-        <section className="h-[390px] self-center overflow-y-auto">
+        <section className="scrollbar-hide h-[390px] self-center overflow-y-auto pr-6">
           <div className="flex items-end gap-2">
             <h2 className="text-3xl font-bold text-[var(--color-base-0)]">{pokemon.koName}</h2>
             <span className="pb-1 text-base font-bold text-[#AAAAAA]">#{String(pokemon.dexId).padStart(3, '0')}</span>
