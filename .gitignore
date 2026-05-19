@@ -27,6 +27,7 @@ npm-debug.log*
 *.swp
 
 # omc
+.omc/
 .omc/*
 
 # AI

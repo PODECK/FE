@@ -2,14 +2,43 @@ import { Howl } from 'howler';
 
 let bgmHowl: Howl | null = null;
 let currentBgmSrc: string | null = null;
+let audioUnlocked = false;
+let pendingPlayArgs: { src: string; options: BgmOptions } | null = null;
+let pendingMuted: boolean | null = null;
 
 export interface BgmOptions {
   volume?: number;
   html5?: boolean;
 }
 
+if (typeof window !== 'undefined') {
+  const unlock = () => {
+    audioUnlocked = true;
+    if (pendingPlayArgs) {
+      const { src, options } = pendingPlayArgs;
+      pendingPlayArgs = null;
+      bgm.play(src, options);
+      if (pendingMuted !== null) {
+        bgmHowl?.mute(pendingMuted);
+        pendingMuted = null;
+      }
+    }
+    document.removeEventListener('click', unlock, true);
+    document.removeEventListener('keydown', unlock, true);
+    document.removeEventListener('touchstart', unlock, true);
+  };
+  document.addEventListener('click', unlock, true);
+  document.addEventListener('keydown', unlock, true);
+  document.addEventListener('touchstart', unlock, true);
+}
+
 export const bgm = {
   play(src: string, options: BgmOptions = {}) {
+    if (!audioUnlocked) {
+      pendingPlayArgs = { src, options };
+      return;
+    }
+
     const volume = options?.volume ?? 0.2;
     const html5 = options?.html5 ?? false;
 
@@ -36,6 +65,8 @@ export const bgm = {
   },
 
   stop() {
+    pendingPlayArgs = null;
+    pendingMuted = null;
     bgmHowl?.stop();
     bgmHowl?.unload();
     bgmHowl = null;
@@ -47,7 +78,11 @@ export const bgm = {
   },
 
   mute(muted: boolean) {
-    bgmHowl?.mute(muted);
+    if (!bgmHowl) {
+      pendingMuted = muted;
+      return;
+    }
+    bgmHowl.mute(muted);
   },
 
   pause() {
