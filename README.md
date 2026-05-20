@@ -97,32 +97,64 @@ pnpm run format:check     # Prettier 검사만
 ```text
 📦 podeck (FE)
 ┣ 📂 .github
-┃ ┣ 📂 workflows        # CI (예: typecheck, lint)
+┃ ┣ 📂 workflows
 ┃ ┗ 📜 pull_request_template.md
+┣ 📂 data                    # 포켓몬·기술·타입 상성 정적 데이터
 ┣ 📂 public
-┃ ┣ 📂 images           # podeck-logo, 실루엣 등
-┃ ┗ 📂 fonts
+┃ ┣ 📂 images
+┃ ┣ 📂 fonts
+┃ ┣ 📂 bgm
+┃ ┗ 📂 sfx
+┣ 📂 scripts
+┣ 📂 test
+┃ ┗ 📂 ai-battle
 ┣ 📂 src
-┃ ┣ 📂 app              # Next.js App Router
-┃ ┃ ┣ 📂 (auth)         # login, signup 등
-┃ ┃ ┣ 📂 (main)         # 메인 앱 셸
-┃ ┃ ┃ ┣ 📂 (start)      # 랜딩·닉네임 등 (URL 그룹)
-┃ ┃ ┃ ┃ ┣ 📂 _components
-┃ ┃ ┃ ┃ ┣ 📂 _constants
-┃ ┃ ┃ ┃ ┣ 📂 _schemas
-┃ ┃ ┃ ┃ ┣ 📂 _types
+┃ ┣ 📂 app
+┃ ┃ ┣ 📜 layout.tsx
+┃ ┃ ┣ 📜 loading.tsx · error.tsx · not-found.tsx
+┃ ┃ ┣ 📂 api
+┃ ┃ ┃ ┣ 📂 health
+┃ ┃ ┃ ┃ ┗ 📜 route.ts
+┃ ┃ ┃ ┗ 📂 data/[filename]
+┃ ┃ ┃   ┗ 📜 route.ts
+┃ ┃ ┣ 📂 (main)
+┃ ┃ ┃ ┣ 📜 layout.tsx
+┃ ┃ ┃ ┣ 📂 (start)              # / 랜딩·스타터 플로우
+┃ ┃ ┃ ┃ ┣ 📜 layout.tsx
+┃ ┃ ┃ ┃ ┣ 📜 page.tsx
+┃ ┃ ┃ ┃ ┣ 📂 build-deck
+┃ ┃ ┃ ┃ ┃ ┗ 📜 page.tsx
+┃ ┃ ┃ ┃ ┗ 📂 loading
+┃ ┃ ┃ ┃   ┗ 📜 page.tsx
+┃ ┃ ┃ ┣ 📂 home
+┃ ┃ ┃ ┃ ┗ 📜 page.tsx
+┃ ┃ ┃ ┣ 📂 pokedex
 ┃ ┃ ┃ ┃ ┣ 📜 layout.tsx
 ┃ ┃ ┃ ┃ ┗ 📜 page.tsx
-┃ ┃ ┃ ┣ 📜 layout.tsx
-┃ ┃ ┃ ┗ 📂 [id]         # 동적 라우트 예시
-┃ ┃ ┣ 📂 api            # Route Handlers
-┃ ┃ ┣ 📜 layout.tsx
-┃ ┃ ┣ 📜 globals.css
-┃ ┃ ┣ 📜 error.tsx · loading.tsx · not-found.tsx
-┃ ┗ 📂 shared           # 공용 UI, 훅, 설정, 타입
+┃ ┃ ┃ ┣ 📂 mydeck
+┃ ┃ ┃ ┃ ┗ 📜 page.tsx
+┃ ┃ ┃ ┣ 📂 battle
+┃ ┃ ┃ ┃ ┣ 📜 layout.tsx
+┃ ┃ ┃ ┃ ┣ 📜 page.tsx
+┃ ┃ ┃ ┃ ┣ 📂 win
+┃ ┃ ┃ ┃ ┃ ┗ 📜 page.tsx
+┃ ┃ ┃ ┃ ┗ 📂 lose
+┃ ┃ ┃ ┃   ┗ 📜 page.tsx
+┃ ┃ ┃ ┗ 📂 [id]
+┃ ┃ ┃   ┗ 📜 page.tsx
+┃ ┃ ┗ 📂 (start)
+┃ ┃   ┗ 📂 nickname            # 라우트 예정 (page 미구현)
+┃ ┣ 📂 features
+┃ ┃ ┗ 📂 battle
+┃ ┗ 📂 shared
 ┃   ┣ 📂 components
-┃   ┣ 📂 hooks
 ┃   ┣ 📂 config
+┃   ┣ 📂 constants
+┃   ┣ 📂 data
+┃   ┣ 📂 hooks
+┃   ┣ 📂 lib
+┃   ┣ 📂 stores
+┃   ┣ 📂 temp-ai
 ┃   ┗ 📂 types
 ┣ 📜 package.json
 ┣ 📜 pnpm-lock.yaml
@@ -131,8 +163,7 @@ pnpm run format:check     # Prettier 검사만
 ┗ 📜 eslint.config.mjs
 ```
 
-- `app/(main)/(start)` — 랜딩 전용 레이아웃·`/` 닉네임 진입 등 (추후 홈·게이트는 동일 URL 정책에 맞게 확장)
-- `app/(main)/(start)/_components` — 해당 라우트에서만 쓰는 UI
-- `shared` — 여러 기능에서 재사용하는 UI·훅·설정·타입
-
-_배틀 엔진·Repository 레이어 도입에 따라 `features/`, `engine/` 등으로 확장될 수 있습니다._
+- `app/(main)/(start)` — `/` 랜딩, `/build-deck` 스타터·덱 구성, `/loading` 로딩 화면
+- `app/(main)/home` · `pokedex` · `mydeck` · `battle` — 메인 게임 화면 (`_components` 등은 각 라우트 폴더 하위)
+- `features/battle` — 배틀 도메인 UI·게임 로직
+- `shared` — 공용 컴포넌트, 훅, 스토어, 타입, 정적 데이터 헬퍼
