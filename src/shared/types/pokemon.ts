@@ -19,6 +19,7 @@ export const PokemonType = z.enum([
   'dragon',
   'dark',
   'steel',
+  'fairy',
 ]);
 
 // 기술 타입 (물리, 특수, 상태)

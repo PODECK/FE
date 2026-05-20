@@ -1,8 +1,6 @@
 // BattleScene의 카드 배치, 필드 효과, 애니메이션 기준값
 
-import { CARD_W, CARD_H, GAME_WIDTH, GAME_HEIGHT } from './config';
-
-import type { CardData } from './battle-scene-types';
+import { CARD_W, CARD_H, CARD_RENDER_SCALE, GAME_WIDTH, GAME_HEIGHT } from './config';
 
 export const AI_CARD_COUNT = 6;
 export const AI_CARD_SCALE_X = CARD_W / 271;
@@ -26,20 +24,25 @@ export const EASE = {
   rearrange: 'Sine.easeInOut',
 } as const;
 
-export const SCALE = { normal: 0.5, hover: 1.0, drag: 0.625 } as const;
+export const SCALE = {
+  normal: 0.5 * CARD_RENDER_SCALE,
+  hover: 1.0 * CARD_RENDER_SCALE,
+  drag: 0.625 * CARD_RENDER_SCALE,
+  modal: 1.07 * CARD_RENDER_SCALE,
+} as const;
 export const FAN_CFG = { anglePerCard: 8, maxAngle: 60 } as const;
 export const LERP = 0.08;
 
 export const ZONE_CFG = {
   width: CARD_W * 2.0,
   height: CARD_H * 2.0,
-  cardScale: 0.85,
+  cardScale: 0.85 * CARD_RENDER_SCALE,
   cardScaleY: 0.95,
   cardOffsetY: -5,
   gap: 30,
   opponentOffset: 80,
   playerOffset: 50,
-  opponentCardScale: 0.7,
+  opponentCardScale: 0.7 * CARD_RENDER_SCALE,
   opponentCardScaleY: 0.95,
   opponentCardOffsetY: 5,
 } as const;
@@ -96,17 +99,7 @@ export const FIELD_CRYSTAL_GLOWS = [
   { x: 0.89, y: 0.765, width: 0.09, height: 0.16, delay: 520 },
 ] as const;
 
-export const PLAYER_DECK_DEX_IDS = [1, 2, 3, 4, 5, 6];
 export const PLAYER_LEVEL = 5;
-
-export const INITIAL_CARDS: CardData[] = [
-  { id: 'card1', texture: 'card-1', name: 'pokemon-1' },
-  { id: 'card2', texture: 'card-2', name: 'pokemon-2' },
-  { id: 'card3', texture: 'card-3', name: 'pokemon-3' },
-  { id: 'card4', texture: 'card-4', name: 'pokemon-4' },
-  { id: 'card5', texture: 'card-5', name: 'pokemon-5' },
-  { id: 'card6', texture: 'card-6', name: 'pokemon-6' },
-];
 
 export const REF_W = GAME_WIDTH;
 export const REF_H = GAME_HEIGHT;

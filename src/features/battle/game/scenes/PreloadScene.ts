@@ -1,9 +1,8 @@
 // 배틀 화면 이미지와 데이터 사전 로드 Scene
 
 import Phaser from 'phaser';
-import { CARD_W, CARD_H } from '../config';
-
-const STARTER_DEX_IDS = [1, 2, 3, 4, 5, 6];
+import { CARD_W, CARD_H, CARD_TEXTURE_SCALE } from '../config';
+import { readActivePlayerDeckDexIds } from '../player-deck-storage';
 
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -16,7 +15,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.json('pokemon-moves-data', '/api/data/pokemon-moves.json');
     this.load.image('battle-field', '/images/battle/trainer-tower-field.png');
 
-    STARTER_DEX_IDS.forEach((dexId) => {
+    readActivePlayerDeckDexIds().forEach((dexId) => {
       this.load.image(`card-${dexId}`, `/images/pokemon-cards/${dexId}.png`);
     });
 
@@ -30,7 +29,7 @@ export class PreloadScene extends Phaser.Scene {
 
   // 기본 카드 뒷면 텍스처가 없을 때 사용하는 안전한 fallback
   private createCardBack() {
-    const s = 2;
+    const s = CARD_TEXTURE_SCALE;
     const g = this.add.graphics();
     g.fillStyle(0x0d1433);
     g.fillRoundedRect(0, 0, CARD_W * s, CARD_H * s, 10 * s);

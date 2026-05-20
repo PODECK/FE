@@ -4,7 +4,7 @@
 export const POKEMON_CARD_LAYOUT = {
   width: 140,
   height: 200,
-  scale: 2,
+  scale: 3,
   cornerRadius: 12,
   header: {
     dexX: 23,

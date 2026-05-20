@@ -4,13 +4,11 @@ import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import type { PokemonData } from '@/shared/types';
 import { useCallback, useSyncExternalStore, useMemo } from 'react';
-import pokemonDataJson from '../../../../../data/pokemon.json';
+import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
 
 function isPokemonData(pokemon: PokemonData | undefined): pokemon is PokemonData {
   return Boolean(pokemon);
 }
-
-const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
 export function useMyDeckPokemons() {
   const subscribeTrainerData = useCallback((onStoreChange: () => void) => {
@@ -53,7 +51,7 @@ export function useMyDeckPokemons() {
     const selectedPokemons = trainerData?.selectedPokemons ?? [];
 
     //localstorage에 저장된 포켓몬 객체에선 dexId만 사용
-    return selectedPokemons.map((pokemon) => pokemonDataById[String(pokemon.dexId)]).filter(isPokemonData);
+    return selectedPokemons.map((pokemon) => getPokemonByDexId(pokemon.dexId)).filter(isPokemonData);
   }, [trainerData]);
 
   return {

@@ -1,7 +1,7 @@
 ﻿// Phaser 기반 카드 배틀 진행 Scene
 
 import Phaser from 'phaser';
-import { CARD_W, CARD_H } from '../config';
+import { CARD_RENDER_SCALE, CARD_TEXTURE_H, CARD_TEXTURE_W, CARD_W, CARD_H } from '../config';
 import { buildAiDeck } from '@/shared/temp-ai/deck-builder';
 import { chooseForceSwap, chooseMove } from '@/shared/temp-ai/strategy';
 import { createRng, generateSeed, damageRoll, chance } from '@/shared/lib/rng';
@@ -23,16 +23,15 @@ import {
   HEALTH_BAR_H_BASE,
   HIT_MOTION,
   HIT_MOTION_THRESHOLDS,
-  INITIAL_CARDS,
   LERP,
   LIFT_MS_AFTER_FAINT,
-  PLAYER_DECK_DEX_IDS,
   PLAYER_LEVEL,
   REF_H,
   REF_W,
   SCALE,
   ZONE_CFG,
 } from '../battle-scene-constants';
+import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '../player-deck-storage';
 import type { Rng } from '@/shared/lib/rng';
 import type { BattlePokemon, BattleMove } from '@/shared/types/pokemon';
 import type { FloorConfig } from '@/shared/types/tower';
@@ -80,6 +79,7 @@ export class BattleScene extends Phaser.Scene {
   private aiLineupY = 0;
 
   private playerDeck: BattlePokemon[] = [];
+  private playerDeckDexIds: number[] = [];
   private playerActiveIndex = -1;
   private aiDeck: BattlePokemon[] = [];
   private aiActiveIndex = 0;
@@ -99,6 +99,10 @@ export class BattleScene extends Phaser.Scene {
         })),
       }),
     );
+  }
+
+  private dispatchPlayerDeckInvalid() {
+    window.dispatchEvent(new CustomEvent('battle:player-deck-invalid'));
   }
 
   private readonly handleMoveSelected = (e: Event) => {
@@ -126,6 +130,30 @@ export class BattleScene extends Phaser.Scene {
     window.dispatchEvent(new CustomEvent('battle:turn-phase', { detail: { phase } }));
   }
 
+  private getResponsiveScreenScale(W: number, H: number) {
+    const baseScreenScale = Math.min(1, W / REF_W, H / REF_H);
+    const shortScreenScale = H < 820 ? 0.96 : 1;
+
+    return baseScreenScale * shortScreenScale;
+  } // 노트북 환경에서 카드 겹치는 UI 수정
+
+  private getResponsiveZoneCardScaleLimit(W: number, H: number) {
+    const heightLimit = H < 820 ? 0.92 : H < 980 ? 0.96 : 1;
+    const widthLimit = W < 1440 ? 0.96 : 1;
+
+    return this.screenScale * Math.min(heightLimit, widthLimit);
+  }
+
+  private getResponsivePlayerZoneYOffset(H: number) {
+    return -Phaser.Math.Clamp((REF_H - H) * 0.5, 0, 72) * this.screenScale;
+  }
+
+  private getResponsiveOpponentZoneY(H: number) {
+    if (H < 820) return H * 0.24;
+    if (H < 980) return H * 0.26;
+    return H * 0.315;
+  }
+
   constructor() {
     super({ key: 'BattleScene' });
   }
@@ -134,8 +162,8 @@ export class BattleScene extends Phaser.Scene {
     const W = this.scale.width;
     const H = this.scale.height;
 
-    this.screenScale = Math.min(1, W / REF_W, H / REF_H);
-    this.zoneCardScaleLimit = this.screenScale;
+    this.screenScale = this.getResponsiveScreenScale(W, H);
+    this.zoneCardScaleLimit = this.getResponsiveZoneCardScaleLimit(W, H);
 
     this.drawX = W * 0.92;
     this.drawY = H * 0.83;
@@ -168,9 +196,21 @@ export class BattleScene extends Phaser.Scene {
       console.warn('[BattleScene] AI deck build failed:', e);
     }
     try {
-      this.playerDeck = PLAYER_DECK_DEX_IDS.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
+      this.playerDeckDexIds = readActivePlayerDeckDexIds();
+      if (this.playerDeckDexIds.length !== REQUIRED_PLAYER_DECK_SIZE) {
+        this.dispatchPlayerDeckInvalid();
+        return;
+      }
+
+      this.playerDeck = this.playerDeckDexIds.map((dexId) => dataSource.getPokemon(dexId, PLAYER_LEVEL));
+      if (this.playerDeck.length !== REQUIRED_PLAYER_DECK_SIZE) {
+        this.dispatchPlayerDeckInvalid();
+        return;
+      }
     } catch (e) {
       console.warn('[BattleScene] Player deck build failed:', e);
+      this.dispatchPlayerDeckInvalid();
+      return;
     }
 
     this.createDropZones();
@@ -192,7 +232,8 @@ export class BattleScene extends Phaser.Scene {
     const W = this.scale.width;
     const H = this.scale.height;
 
-    this.screenScale = Math.min(1, W / REF_W, H / REF_H);
+    this.screenScale = this.getResponsiveScreenScale(W, H);
+    this.zoneCardScaleLimit = this.getResponsiveZoneCardScaleLimit(W, H);
 
     this.drawX = W * 0.92;
     this.drawY = H * 0.83;
@@ -297,8 +338,9 @@ export class BattleScene extends Phaser.Scene {
     const slotW = ZONE_CFG.width * s;
     const slotH = ZONE_CFG.height * s;
     const cx = W * 0.5;
-    const playerZoneY = H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s;
-    const opponentZoneY = H * 0.315;
+    const playerZoneY =
+      H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s + this.getResponsivePlayerZoneYOffset(H);
+    const opponentZoneY = this.getResponsiveOpponentZoneY(H);
 
     this.playerZone?.setPosition(cx, playerZoneY);
     this.playerZone?.setSize(slotW, slotH);
@@ -307,8 +349,10 @@ export class BattleScene extends Phaser.Scene {
 
     if (this.playerPlayedCard) {
       const py = playerZoneY + ZONE_CFG.cardOffsetY * s;
+
       const pScaleX = ZONE_CFG.cardScale * cardS;
       const pScaleY = ZONE_CFG.cardScale * ZONE_CFG.cardScaleY * cardS;
+
       this.playerPlayedCard.setPosition(cx, py);
       this.playerPlayedCard.setScale(pScaleX, pScaleY);
       const ps = this.playerPlayedCard.getData('zoneShadow') as Phaser.GameObjects.Image | undefined;
@@ -317,7 +361,7 @@ export class BattleScene extends Phaser.Scene {
         ps.setScale(pScaleX, pScaleY);
       }
       if (this.playerHealthBar) {
-        const pHalfH = ((CARD_H * 2) / 2) * pScaleY;
+        const pHalfH = (CARD_TEXTURE_H / 2) * pScaleY;
         this.redrawHealthBar(this.playerHealthBar, cx, py + pHalfH + HEALTH_BAR_GAP_BASE * cardS, pScaleX);
       }
     }
@@ -333,7 +377,7 @@ export class BattleScene extends Phaser.Scene {
         os.setScale(oScaleX, oScaleY);
       }
       if (this.opponentHealthBar) {
-        const oHalfH = ((CARD_H * 2) / 2) * oScaleY;
+        const oHalfH = (CARD_TEXTURE_H / 2) * oScaleY;
         this.redrawHealthBar(this.opponentHealthBar, cx, oy + oHalfH + HEALTH_BAR_GAP_BASE * cardS, oScaleX);
       }
     }
@@ -407,10 +451,11 @@ export class BattleScene extends Phaser.Scene {
 
   // 플레이어 손패를 드로우 위치에서 라인업을 거쳐 부채꼴로 펼침
   private drawInitialCards() {
-    const total = INITIAL_CARDS.length;
+    const initialCards = this.createInitialCards();
+    const total = initialCards.length;
     const stagger = 50;
 
-    INITIAL_CARDS.forEach((cardData, i) => {
+    initialCards.forEach((cardData, i) => {
       this.time.delayedCall(i * stagger, () => {
         const card = this.add
           .image(this.drawX, this.drawY, cardData.texture)
@@ -425,6 +470,14 @@ export class BattleScene extends Phaser.Scene {
     });
 
     this.time.delayedCall((total - 1) * stagger + ANIM.cardFly + 150, () => this.fanOutHand());
+  }
+
+  private createInitialCards(): CardData[] {
+    return this.playerDeckDexIds.map((dexId, index) => ({
+      id: `card${index + 1}`,
+      texture: `card-${dexId}`,
+      name: `pokemon-${dexId}`,
+    }));
   }
 
   private calcLineupPos(index: number, total: number): { x: number; y: number } {
@@ -906,8 +959,9 @@ export class BattleScene extends Phaser.Scene {
     const slotH = ZONE_CFG.height * s;
     const cx = W * 0.5;
 
-    const playerZoneY = H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s;
-    const opponentZoneY = H * 0.315;
+    const playerZoneY =
+      H * 0.5 + slotH / 2 + (ZONE_CFG.gap * s) / 2 - ZONE_CFG.playerOffset * s + this.getResponsivePlayerZoneYOffset(H);
+    const opponentZoneY = this.getResponsiveOpponentZoneY(H);
 
     this._opponentZone = this.add.zone(cx, opponentZoneY, slotW, slotH);
     this.playerZone = this.add.zone(cx, playerZoneY, slotW, slotH);
@@ -970,7 +1024,7 @@ export class BattleScene extends Phaser.Scene {
     card.setData('shadow', undefined);
 
     const targetX = this.playerZone.x;
-    const targetY = this.playerZone.y + ZONE_CFG.cardOffsetY;
+    const targetY = this.playerZone.y + ZONE_CFG.cardOffsetY * this.screenScale;
 
     this.tweens.killTweensOf(card);
 
@@ -1138,8 +1192,8 @@ export class BattleScene extends Phaser.Scene {
       targets: card,
       x: targetX,
       y: targetY,
-      scaleX: 1.07,
-      scaleY: 1.07,
+      scaleX: SCALE.modal,
+      scaleY: SCALE.modal,
       duration: FLIGHT_MS,
       ease: 'Cubic.easeOut',
       onComplete: () => {
@@ -1151,7 +1205,7 @@ export class BattleScene extends Phaser.Scene {
       this.tweens.killTweensOf(card);
 
       card.setPosition(targetX, targetY);
-      card.setScale(1.07);
+      card.setScale(SCALE.modal);
       card.setAngle(0);
       card.setAlpha(0);
 
@@ -1254,8 +1308,9 @@ export class BattleScene extends Phaser.Scene {
 
   // HP 바를 Phaser 그래픽 객체로 유지하고 리사이즈와 데미지에 맞춰 다시 그림
   private redrawHealthBar(bar: ZoneHealthBar, cx: number, cy: number, scale: number) {
-    const w = CARD_W * scale * 1.7;
-    const h = Math.max(6, HEALTH_BAR_H_BASE * scale);
+    const logicalScale = scale / CARD_RENDER_SCALE;
+    const w = CARD_TEXTURE_W * scale * 0.85;
+    const h = Math.max(6, HEALTH_BAR_H_BASE * logicalScale);
     const r = h / 2;
     const ratio = Math.max(0, Math.min(1, bar.currentHp / bar.maxHp));
 
@@ -1270,7 +1325,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     bar.label.setText(`HP ${bar.currentHp} / ${bar.maxHp}`);
-    bar.label.setPosition(cx, cy + h + 4 * scale);
+    bar.label.setPosition(cx, cy + h + 4 * logicalScale);
   }
 
   // 드롭존 카드 아래에 현재 HP를 표시하는 전용 바를 생성함
@@ -1285,7 +1340,7 @@ export class BattleScene extends Phaser.Scene {
     existing?.label.destroy();
 
     const s = this.getZoneCardScale();
-    const cardHalfH = ((CARD_H * 2) / 2) * card.scaleY;
+    const cardHalfH = (CARD_TEXTURE_H / 2) * card.scaleY;
     const cy = card.y + cardHalfH + HEALTH_BAR_GAP_BASE * s;
     const depth = card.depth + 1;
 
@@ -1314,7 +1369,7 @@ export class BattleScene extends Phaser.Scene {
     if (!bar || !card) return;
     bar.currentHp = Math.max(0, hp);
     const s = this.getZoneCardScale();
-    const cardHalfH = ((CARD_H * 2) / 2) * card.scaleY;
+    const cardHalfH = (CARD_TEXTURE_H / 2) * card.scaleY;
     const cy = card.y + cardHalfH + HEALTH_BAR_GAP_BASE * s;
     this.redrawHealthBar(bar, card.x, cy, ZONE_CFG.cardScale * s);
 

@@ -36,7 +36,7 @@ export default function FloatingButton({ cardPackCount, onClick }: Props) {
           style={{
             width: '24px',
             height: '24px',
-            backgroundColor: 'var(--color-primary)',
+            backgroundColor: cardPackCount === 0 ? 'var(--color-base-1)' : 'var(--color-primary)',
             top: '-5px',
             right: '-5px',
           }}

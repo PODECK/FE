@@ -23,6 +23,7 @@
   --color-type-water: #2992ff;
   --color-type-grass: #42bf24;
   --color-type-electric: #ffdb00;
+  --color-type-fairy: #ee99ac;
   --color-type-flying: #95c9ff;
   --color-type-ground: #ab7939;
   --color-type-steel: #6aaed3;
@@ -58,6 +59,8 @@
   --color-type-gradient-water-to: #1068c8;
   --color-type-gradient-electric-from: #ffec70;
   --color-type-gradient-electric-to: #c89800;
+  --color-type-gradient-fairy-from: #ffd1e6;
+  --color-type-gradient-fairy-to: #ee99ac;
   --color-type-gradient-grass-from: #a9e288;
   --color-type-gradient-grass-to: #308400;
   --color-type-gradient-ice-from: #b8eeff;
@@ -90,6 +93,7 @@
   --color-type-badge-fire: #ff612c;
   --color-type-badge-water: #2992ff;
   --color-type-badge-electric: #ffdb00;
+  --color-type-badge-fairy: #ee99ac;
   --color-type-badge-grass: #42bf24;
   --color-type-badge-ice: #42d8ff;
   --color-type-badge-fighting: #ffa202;
@@ -217,4 +221,38 @@ body {
   cursor: pointer;
   border: none;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 카드팩 뽑기 중 카드 애니메이션 효과 */
+.shine {
+  position: absolute;
+  inset: 0;
+  left: -100%;
+  width: 200%;
+  background: linear-gradient(115deg, transparent 15%, rgba(255, 255, 255, 0.3) 50%, transparent 85%);
+  animation: card-shine 5s ease-in-out 1s infinite;
+}
+
+@keyframes card-shine {
+  0% {
+    transform: translateX(-60%);
+  }
+
+  35% {
+    transform: translateX(110%);
+  }
+
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+/* overflow-y-auto 속성 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

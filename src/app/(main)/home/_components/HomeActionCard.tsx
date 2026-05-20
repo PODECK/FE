@@ -21,13 +21,15 @@ export default function HomeActionCard({ card }: HomeActionCardProps) {
       className={`relative h-[180px] overflow-hidden rounded-[20px] p-8 text-[var(--color-secondary-2)] shadow-[0_14px_32px_rgba(0,0,0,0.12)] ${card.backgroundClassName}`}
     >
       <SilhouetteBackground
-        className="!right-[-120px] !bottom-[-80px] !left-auto rotate-45 opacity-25 sm:!right-[-150px] sm:!bottom-[-105px]"
-        imageClassName="!h-[320px] !w-[320px] sm:!h-[400px] sm:!w-[400px]"
+        className={`right-[-120px]! bottom-[-80px]! left-auto! rotate-45 sm:right-[-150px]! sm:bottom-[-105px]! ${
+          card.silhouetteClassName ?? 'opacity-45!'
+        }`}
+        imageClassName="h-[320px]! w-[320px]! sm:h-[400px]! sm:w-[400px]!"
       />
 
       <div className="relative z-10">
-        <h2 className="text-[32px] leading-tight font-extrabold">{card.title}</h2>
-        <p className="mt-2 text-base font-medium text-[var(--color-secondary-2)]">{card.description}</p>
+        <h2 className="text-[28px] leading-tight font-extrabold">{card.title}</h2>
+        <p className="mt-1 text-base font-medium text-[var(--color-secondary-2)]">{card.description}</p>
 
         <Link
           href={card.href}

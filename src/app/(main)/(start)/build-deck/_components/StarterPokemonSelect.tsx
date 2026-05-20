@@ -13,10 +13,9 @@ import StarterPokemonCard from '@/app/(main)/(start)/build-deck/_components/Star
 import type { PokemonData } from '@/shared/types/pokemon';
 import PokemonDetailModal from '@/shared/components/pokemon/PokemonDetailModal';
 import { useRouter } from 'next/navigation';
-import pokemonDataJson from '../../../../../../data/pokemon.json';
+import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
 
 const defaultTrainerName = '트레이너';
-const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 
 export default function StarterPokemonSelect() {
   const [activeGeneration, setActiveGeneration] = useState<Generation>(1);
@@ -25,7 +24,8 @@ export default function StarterPokemonSelect() {
 
   const pokemons = useMemo(() => {
     return starterPokemonDexIds
-      .map((pokemonId) => pokemonDataById[String(pokemonId)])
+      .map((pokemonId) => getPokemonByDexId(pokemonId))
+      .filter((pokemon): pokemon is PokemonData => Boolean(pokemon))
       .filter((pokemon) => pokemon.generation === activeGeneration);
   }, [activeGeneration]);
 
@@ -58,7 +58,7 @@ export default function StarterPokemonSelect() {
   );
 
   const handleOpenDetail = async (pokemonId: number) => {
-    setDetailPokemon(pokemonDataById[String(pokemonId)] ?? null);
+    setDetailPokemon(getPokemonByDexId(pokemonId) ?? null);
   };
 
   const handleCloseDetail = () => {

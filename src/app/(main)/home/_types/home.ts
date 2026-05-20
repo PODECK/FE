@@ -20,4 +20,5 @@ export interface HomeActionCardData {
   imageAlt: string;
   backgroundClassName: string;
   imageClassName?: string;
+  silhouetteClassName?: string;
 }

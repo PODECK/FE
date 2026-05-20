@@ -30,6 +30,7 @@ const typeGradients = {
   fire: { from: '#FFBA88', to: '#C83010' },
   water: { from: '#90D0FF', to: '#1068C8' },
   electric: { from: '#FFEC70', to: '#C89800' },
+  fairy: { from: '#FFD1E6', to: '#EE99AC' },
   grass: { from: '#A9E288', to: '#308400' },
   ice: { from: '#B8EEFF', to: '#18A0C0' },
   fighting: { from: '#FFB878', to: '#A83000' },
@@ -50,6 +51,7 @@ const typeBadgeColors = {
   fire: '#FF612C',
   water: '#2992FF',
   electric: '#FFDB00',
+  fairy: '#EE99AC',
   grass: '#42BF24',
   ice: '#42D8FF',
   fighting: '#FFA202',
@@ -144,7 +146,7 @@ async function generateCard(dexId, pokemon, moveNames, badgeImages, watermarkImg
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, CARD_W, CARD_H);
 
-  // 워터마크 (sim.svg)
+  // 워터마크
   if (watermarkImg) {
     ctx.drawImage(watermarkImg, watermark.x * SX, watermark.y * SY, watermark.w * SX, watermark.h * SX);
   }
@@ -259,6 +261,12 @@ async function generateCard(dexId, pokemon, moveNames, badgeImages, watermarkImg
 async function main() {
   const args = process.argv.slice(2);
   const forceRegen = args.includes('--force');
+  const dexArg = args.find((arg) => arg.startsWith('--dex='));
+  const targetDexIds = dexArg
+    ?.replace('--dex=', '')
+    .split(',')
+    .map((id) => Number(id.trim()))
+    .filter((id) => Number.isInteger(id) && id > 0);
 
   console.log('포켓몬 카드 PNG 생성 시작 (1~4세대, 493종)');
   if (forceRegen) console.log('  --force: 기존 파일도 재생성');
@@ -280,17 +288,18 @@ async function main() {
   }
   console.log('완료');
 
-  // 워터마크 로드 (sim.svg — 복잡한 SVG, resvg로 래스터화)
+  // 워터마크 로드
   const watermarkImg = await loadSvgAsImage(path.join(ROOT, 'public', 'sim.svg'), 420);
 
   const dexIds = Object.keys(pokemonData)
     .map(Number)
+    .filter((dexId) => !targetDexIds || targetDexIds.includes(dexId))
     .sort((a, b) => a - b);
 
   let done = 0;
   let skipped = 0;
   let failed = 0;
-  const BATCH = 8;
+  const BATCH = 4;
 
   for (let i = 0; i < dexIds.length; i += BATCH) {
     const batch = dexIds.slice(i, i + BATCH);
