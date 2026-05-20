@@ -3,6 +3,9 @@
 out/
 build/
 
+# TypeScript incremental cache (자동 생성, 커밋·수동 편집 불필요)
+*.tsbuildinfo
+
 # 의존성
 node_modules/
 
