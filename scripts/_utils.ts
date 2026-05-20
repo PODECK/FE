@@ -116,4 +116,5 @@ export const TYPE_MAP: Record<string, string> = {
   dragon: 'dragon',
   dark: 'dark',
   steel: 'steel',
+  fairy: 'fairy',
 };
