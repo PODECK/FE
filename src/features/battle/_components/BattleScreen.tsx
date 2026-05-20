@@ -8,18 +8,15 @@ import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
-import pokemonDataJson from '../../../../data/pokemon.json';
 import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
+import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
-import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
 import { useBgm } from '@/shared/hooks/useBgm';
 
-const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
-
 function createInitialPokemon(): PokemonEntry[] {
   return readActivePlayerDeckDexIds().flatMap((dexId) => {
-    const pokemon = pokemonDataById[String(dexId)];
+    const pokemon = getPokemonByDexId(dexId);
     if (!pokemon) {
       console.warn(`[BattleScreen] pokemon.json에 dexId=${dexId} 데이터가 없습니다.`);
       return [];
