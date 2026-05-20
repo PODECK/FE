@@ -14,13 +14,10 @@ import type { PokemonData } from '@/shared/types/pokemon';
 import PokemonDetailModal from '@/shared/components/pokemon/PokemonDetailModal';
 import { useRouter } from 'next/navigation';
 import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
-import { useBgm } from '@/shared/hooks/useBgm';
 
 const defaultTrainerName = '트레이너';
 
 export default function StarterPokemonSelect() {
-  useBgm('bgm/route-201.mp3');
-
   const [activeGeneration, setActiveGeneration] = useState<Generation>(1);
   const [detailPokemon, setDetailPokemon] = useState<PokemonData | null>(null);
   const [selectedPokemons, setSelectedPokemons] = useState<SelectedPokemon[]>([]);
