@@ -15,8 +15,10 @@ import HomeHeader from '@/shared/components/HomeHeader';
 
 const subscribeTrainerStorage = (onStoreChange: () => void) => {
   window.addEventListener('storage', onStoreChange);
+  window.addEventListener('trainer-data-updated', onStoreChange);
   return () => {
     window.removeEventListener('storage', onStoreChange);
+    window.removeEventListener('trainer-data-updated', onStoreChange);
   };
 };
 
@@ -68,6 +70,7 @@ export default function HomePage() {
   // 홈 화면 카드 섹션에서 보여줄 포유 포켓몬 갯수 관리 상수
   const selectedPokemonCount = parsedTrainerData.selectedPokemons?.length ?? 0;
   const totalPokemonCount = Object.keys(pokemonCatalog).length;
+  const battleRecord = parsedTrainerData.battleRecord ?? { wins: 0, losses: 0 };
 
   return (
     <main className="flex min-h-dvh flex-col overflow-x-hidden bg-[var(--color-base-3)] text-[var(--color-base-1)]">
@@ -76,9 +79,9 @@ export default function HomePage() {
         <HomeBanner />
         <TrainerStatusBar
           trainerName={parsedTrainerData.nickname}
-          cardPackCount={progress.cardPackCount}
-          towerProgress={12}
-          battleRecord="8승 3패"
+          cardPackCount={parsedTrainerData.cardPackCount ?? 0}
+          towerProgress={progress.currentFloor}
+          battleRecord={`${battleRecord.wins}승 ${battleRecord.losses}패`}
         />
         <HomeActionCards selectedPokemonCount={selectedPokemonCount} totalPokemonCount={totalPokemonCount} />
       </div>

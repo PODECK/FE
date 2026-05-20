@@ -8,11 +8,38 @@ import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
+import { storageKeys } from '@/app/(main)/(start)/_constants/key';
+import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
-import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { Game } from 'phaser';
 import { useBgm } from '@/shared/hooks/useBgm';
+import { cn } from '@/shared/lib/cn';
+import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
+
+const TRAINER_DATA_UPDATED_EVENT = 'trainer-data-updated';
+
+function recordBattleResult(winner: 'player' | 'enemy') {
+  try {
+    const rawTrainerData = localStorage.getItem(storageKeys.TRAINER_DATA);
+    if (!rawTrainerData) return;
+
+    const trainerData = JSON.parse(rawTrainerData) as TrainerData;
+    const battleRecord = trainerData.battleRecord ?? { wins: 0, losses: 0 };
+    const nextTrainerData: TrainerData = {
+      ...trainerData,
+      battleRecord: {
+        wins: battleRecord.wins + (winner === 'player' ? 1 : 0),
+        losses: battleRecord.losses + (winner === 'enemy' ? 1 : 0),
+      },
+    };
+
+    localStorage.setItem(storageKeys.TRAINER_DATA, JSON.stringify(nextTrainerData));
+    window.dispatchEvent(new CustomEvent(TRAINER_DATA_UPDATED_EVENT));
+  } catch (error) {
+    console.error('배틀 전적을 저장하지 못했습니다.', error);
+  }
+}
 
 function createInitialPokemon(): PokemonEntry[] {
   return readActivePlayerDeckDexIds().flatMap((dexId) => {
@@ -35,9 +62,6 @@ function createInitialPokemon(): PokemonEntry[] {
   });
 }
 
-const NUNITO = { fontFamily: 'Nunito, sans-serif' } as const;
-const ROBOTO = { fontFamily: 'Roboto, sans-serif' } as const;
-
 type AiPokemonStatus = { dexId: number; types: string[]; fainted: boolean };
 type BattleLogEntry = { id: number; message: string };
 type TurnPhase = 'setup' | 'player' | 'ai' | 'ended';
@@ -47,6 +71,7 @@ export default function BattleScreen() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game | null>(null);
   const hasShownDeckAlertRef = useRef(false);
+  const hasHandledBattleEndRef = useRef(false);
   const [skillModal, setSkillModal] = useState<SkillModalData | null>(null);
   const [pokemonSelectOpen, setPokemonSelectOpen] = useState(false);
   const [confirmQuit, setConfirmQuit] = useState(false);
@@ -62,7 +87,7 @@ export default function BattleScreen() {
   const hasCompleteBattleDeck = isDeckLoaded && pokemonList.length === REQUIRED_PLAYER_DECK_SIZE;
   const turnButtonLabel = isPlayerTurn ? '턴 종료' : turnPhase === 'ai' ? '상대 턴' : '대기';
 
-  useBgm('bgm/battle-wild.mp3');
+  useBgm('/bgm/battle-wild.mp3');
 
   const handleTurnEnd = () => {
     if (!isPlayerTurn) return;
@@ -165,7 +190,12 @@ export default function BattleScreen() {
 
   useEffect(() => {
     const handler = (e: Event) => {
+      if (hasHandledBattleEndRef.current) return;
+      hasHandledBattleEndRef.current = true;
+
       const { winner } = (e as CustomEvent<{ winner: 'player' | 'enemy' }>).detail;
+      recordBattleResult(winner);
+
       if (winner === 'player') {
         markWinRewardPending();
         router.push('/battle/win');
@@ -194,9 +224,15 @@ export default function BattleScreen() {
 
       if (cancelled) return;
 
+      const renderConfig = {
+        ...phaserConfig.render,
+        resolution: Math.min(window.devicePixelRatio || 1, 2),
+      };
+
       game = new Phaser.Game({
         ...phaserConfig,
         parent: containerRef.current!,
+        render: renderConfig,
         scene: [PreloadScene, BattleScene],
         scale: {
           mode: Phaser.Scale.RESIZE,
@@ -214,47 +250,34 @@ export default function BattleScreen() {
   }, [hasCompleteBattleDeck]);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, overflow: 'hidden' }}>
-      <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} id="phaser-container" />
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+    <div className="fixed inset-0 overflow-hidden">
+      <div ref={containerRef} id="phaser-container" className="absolute inset-0" />
+
+      <div className="pointer-events-none absolute inset-0">
         <BattleTopBar currentFloor={currentFloor} aiPokemon={aiPokemon} />
         <BattleBottomHUD playerPokemon={pokemonList} playerLives={progress.playerLives} battleLogs={battleLogs} />
+
         <button
           type="button"
           disabled={!isPlayerTurn}
           onClick={handleTurnEnd}
           aria-label={turnButtonLabel}
-          style={{
-            position: 'absolute',
-            right: 48,
-            bottom: 433,
-            width: 136,
-            height: 40,
-            clipPath: 'polygon(12% 0, 88% 0, 100% 50%, 88% 100%, 12% 100%, 0 50%)',
-            border: 'none',
-            background: isPlayerTurn
-              ? 'rgb(8,20,52)'
-              : 'linear-gradient(180deg, rgba(82,91,112,0.72) 0%, rgba(34,41,61,0.82) 100%)',
-            color: isPlayerTurn ? 'white' : 'rgba(255,255,255,0.45)',
-            textShadow: 'none',
-            cursor: isPlayerTurn ? 'pointer' : 'not-allowed',
-            fontSize: 14,
-            fontWeight: 900,
-            letterSpacing: 0,
-            overflow: 'hidden',
-            pointerEvents: 'auto',
-            boxShadow: isPlayerTurn
-              ? '0 12px 30px rgba(8,20,52,0.35), inset 0 1px 0 rgba(255,255,255,0.18)'
-              : 'inset 0 1px 0 rgba(255,255,255,0.12)',
-            transition: 'background 220ms ease, color 220ms ease, box-shadow 220ms ease',
-            ...ROBOTO,
-          }}
+          className={cn(
+            'pointer-events-auto absolute right-12 bottom-[433px] h-10 w-[136px]',
+            'border-0 text-sm font-black tracking-normal text-shadow-none',
+            'overflow-hidden transition-[background,color,box-shadow] duration-200 ease-in-out',
+            '[clip-path:polygon(12%_0,88%_0,100%_50%,88%_100%,12%_100%,0_50%)]',
+            isPlayerTurn
+              ? 'cursor-pointer bg-[rgb(8,20,52)] text-[var(--color-base-3)] shadow-[0_12px_30px_rgba(8,20,52,0.35),inset_0_1px_0_rgba(255,255,255,0.18)]'
+              : 'cursor-not-allowed bg-[linear-gradient(180deg,rgba(82,91,112,0.72)_0%,rgba(34,41,61,0.82)_100%)] text-[var(--color-base-3)]/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]',
+          )}
         >
           <span key={turnButtonLabel} className="turn-button-count-text">
             {turnButtonLabel}
           </span>
         </button>
       </div>
+
       {skillModal && (
         <SkillModal
           data={skillModal}
@@ -268,65 +291,25 @@ export default function BattleScreen() {
       {pokemonSelectOpen && <PokemonSelectModal pokemon={pokemonList} onClose={() => setPokemonSelectOpen(false)} />}
 
       {confirmQuit && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 70,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(0,0,0,0.65)',
-          }}
-        >
-          <div
-            style={{
-              background: 'rgb(13,16,36)',
-              borderRadius: 16,
-              padding: '36px 44px',
-              textAlign: 'center',
-              minWidth: 320,
-              boxShadow: '0 20px 60px rgba(0,0,0,0.7)',
-            }}
-          >
-            <div style={{ color: 'white', fontSize: 20, fontWeight: 900, marginBottom: 8, ...NUNITO }}>
-              정말 포기하시겠습니까?
-            </div>
-            <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, marginBottom: 28, ...NUNITO }}>
-              진행 중인 배틀이 종료됩니다.
-            </div>
-            <div style={{ display: 'flex', gap: 12 }}>
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/65">
+          <div className="min-w-[320px] rounded-2xl bg-[rgb(13,16,36)] px-11 py-9 text-center shadow-[0_20px_60px_rgba(0,0,0,0.7)]">
+            <div className="mb-2 text-xl font-black text-[var(--color-base-3)]">정말 포기하시겠습니까?</div>
+
+            <div className="mb-7 text-[13px] text-[var(--color-base-3)]/45">진행 중인 배틀이 종료됩니다.</div>
+
+            <div className="flex gap-3">
               <button
+                type="button"
                 onClick={() => setConfirmQuit(false)}
-                style={{
-                  flex: 1,
-                  height: 44,
-                  borderRadius: 8,
-                  border: 'none',
-                  background: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  fontSize: 15,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  ...ROBOTO,
-                }}
+                className="h-11 flex-1 cursor-pointer rounded-lg border-0 bg-[var(--color-base-3)]/10 text-[15px] font-bold text-[var(--color-base-3)]"
               >
                 취소
               </button>
+
               <button
+                type="button"
                 onClick={() => router.push('/home')}
-                style={{
-                  flex: 1,
-                  height: 44,
-                  borderRadius: 8,
-                  border: 'none',
-                  background: 'rgba(220,60,50,0.9)',
-                  color: 'white',
-                  fontSize: 15,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  ...ROBOTO,
-                }}
+                className="h-11 flex-1 cursor-pointer rounded-lg border-0 bg-[rgba(220,60,50,0.9)] text-[15px] font-bold text-[var(--color-base-3)]"
               >
                 홈으로
               </button>
