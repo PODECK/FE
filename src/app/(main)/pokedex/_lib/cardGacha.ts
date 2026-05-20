@@ -1,4 +1,4 @@
-import pokemonData from '@/../data/pokemon.json';
+import { getAllPokemon } from '@/shared/data/pokemon-catalog';
 import type { PokemonData } from '@/shared/types/pokemon';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
@@ -23,7 +23,7 @@ const GACHA_EXCLUDED_IDS = new Set([
 ]);
 
 // 뽑기 풀 — 빌드 타임 고정값이므로 모듈 레벨에서 한 번만 계산
-const GACHA_POOL = (Object.values(pokemonData) as PokemonData[]).filter(
+const GACHA_POOL = getAllPokemon().filter(
   (p) => p.dexId <= 493 && p.evolutionStage === 1 && !GACHA_EXCLUDED_IDS.has(p.dexId),
 );
 

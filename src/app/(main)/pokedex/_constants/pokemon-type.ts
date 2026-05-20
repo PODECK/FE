@@ -111,6 +111,10 @@ export const TYPE_CONFIG: Record<
     icon: '/images/pokemon-types/steel.svg',
     gradient: 'linear-gradient(180deg, color-mix(in srgb, var(--color-type-steel) 30%, white) 0%, white 100%)',
   },
-  // 페어리 타입 데이터 확인 후 수정 예정
-  // fairy:    { label: "페어리", color: "var(--color-type-fairy)",   icon: "/images/pokemon-types/fairy.svg",   gradient: "linear-gradient(180deg, white 0%, color-mix(in srgb, var(--color-type-fairy) 30%, white) 0%, white 100%)" },
+  fairy: {
+    label: '페어리',
+    color: 'var(--color-type-fairy)',
+    icon: '/images/pokemon-types/fairy.svg',
+    gradient: 'linear-gradient(180deg, color-mix(in srgb, var(--color-type-fairy) 30%, white) 0%, white 100%)',
+  },
 };

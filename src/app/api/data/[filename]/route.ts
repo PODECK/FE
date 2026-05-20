@@ -5,6 +5,8 @@ import path from 'path';
 
 import { NextResponse } from 'next/server';
 
+import { pokemonCatalog } from '@/shared/data/pokemon-catalog';
+
 const allowedDataFiles = new Set(['pokemon.json', 'moves.json', 'pokemon-moves.json']);
 
 interface RouteContext {
@@ -18,6 +20,10 @@ export async function GET(_request: Request, context: RouteContext): Promise<Nex
 
   if (!allowedDataFiles.has(filename)) {
     return NextResponse.json({ error: 'Data file not found' }, { status: 404 });
+  }
+
+  if (filename === 'pokemon.json') {
+    return NextResponse.json(pokemonCatalog);
   }
 
   const filePath = path.join(process.cwd(), 'data', filename);

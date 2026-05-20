@@ -10,7 +10,7 @@ import TrainerStatusBar from '@/app/(main)/home/_components/TrainerStatusBar';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
-import pokemonData from '../../../../data/pokemon.json';
+import { pokemonCatalog } from '@/shared/data/pokemon-catalog';
 import HomeHeader from '@/shared/components/HomeHeader';
 
 const subscribeTrainerStorage = (onStoreChange: () => void) => {
@@ -69,7 +69,7 @@ export default function HomePage() {
 
   // 홈 화면 카드 섹션에서 보여줄 포유 포켓몬 갯수 관리 상수
   const selectedPokemonCount = parsedTrainerData.selectedPokemons?.length ?? 0;
-  const totalPokemonCount = Object.keys(pokemonData).length;
+  const totalPokemonCount = Object.keys(pokemonCatalog).length;
   const battleRecord = parsedTrainerData.battleRecord ?? { wins: 0, losses: 0 };
 
   return (

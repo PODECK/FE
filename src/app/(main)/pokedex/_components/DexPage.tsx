@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useSyncExternalStore } from 'react';
 
-import pokemonData from '../../../../../data/pokemon.json';
+import { getAllPokemon } from '@/shared/data/pokemon-catalog';
 import type { PokemonData, PokemonType } from '@/shared/types/pokemon';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
@@ -83,7 +83,7 @@ export default function DexPage() {
     setPage(1);
   };
 
-  const data = Object.values(pokemonData) as PokemonData[];
+  const data = getAllPokemon();
   const filteredData = data.filter((pokemon) => {
     //이름 검색
     const matchSearch = search === '' || pokemon.koName.includes(search);

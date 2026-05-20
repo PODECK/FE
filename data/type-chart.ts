@@ -1,10 +1,10 @@
 import type { PokemonType } from '@/shared/types/pokemon';
 
 /**
- * 4세대 기준 포켓몬 타입 상성 매트릭스 (17×17, 페어리 타입 제외)
+ * 포켓몬 타입 상성 매트릭스 (18×18)
  * * @description
  * 공격 측의 타입과 방어 측의 타입을 대조하여 데미지 배율을 결정합니다.
- * 4세대(DP/PT/HGSS) 데이터를 기준으로 하며, 노말부터 악 타입까지 17개 타입을 지원합니다.
+ * 4세대 타입 상성에 6세대 페어리 타입 상성을 포함합니다.
  * * @example
  * // 불꽃 타입으로 풀 타입을 공격할 때 (2배)
  * const multiplier = TYPE_CHART['fire']['grass'];
@@ -38,6 +38,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 1,
     steel: 0.5,
+    fairy: 1,
   },
   fire: {
     normal: 1,
@@ -57,6 +58,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 0.5,
     dark: 1,
     steel: 2,
+    fairy: 1,
   },
   water: {
     normal: 1,
@@ -76,6 +78,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 0.5,
     dark: 1,
     steel: 1,
+    fairy: 1,
   },
   grass: {
     normal: 1,
@@ -95,6 +98,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 0.5,
     dark: 1,
     steel: 0.5,
+    fairy: 1,
   },
   electric: {
     normal: 1,
@@ -114,6 +118,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 0.5,
     dark: 1,
     steel: 1,
+    fairy: 1,
   },
   ice: {
     normal: 1,
@@ -133,6 +138,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 2,
     dark: 1,
     steel: 0.5,
+    fairy: 1,
   },
   fighting: {
     normal: 2,
@@ -152,6 +158,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 2,
     steel: 2,
+    fairy: 0.5,
   },
   poison: {
     normal: 1,
@@ -171,6 +178,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 1,
     steel: 0,
+    fairy: 2,
   },
   ground: {
     normal: 1,
@@ -190,6 +198,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 1,
     steel: 2,
+    fairy: 1,
   },
   flying: {
     normal: 1,
@@ -209,6 +218,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 1,
     steel: 0.5,
+    fairy: 1,
   },
   psychic: {
     normal: 1,
@@ -228,6 +238,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 0,
     steel: 0.5,
+    fairy: 1,
   },
   bug: {
     normal: 1,
@@ -247,6 +258,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 2,
     steel: 0.5,
+    fairy: 0.5,
   },
   rock: {
     normal: 1,
@@ -266,6 +278,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 1,
     steel: 0.5,
+    fairy: 1,
   },
   ghost: {
     normal: 0,
@@ -285,6 +298,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 0.5,
     steel: 0.5,
+    fairy: 1,
   },
   dragon: {
     normal: 1,
@@ -304,6 +318,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 2,
     dark: 1,
     steel: 0.5,
+    fairy: 0,
   },
   dark: {
     normal: 1,
@@ -323,6 +338,7 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 0.5,
     steel: 0.5,
+    fairy: 0.5,
   },
   steel: {
     normal: 1,
@@ -342,6 +358,27 @@ export const TYPE_CHART: Record<PokemonType, Record<PokemonType, number>> = {
     dragon: 1,
     dark: 1,
     steel: 0.5,
+    fairy: 2,
+  },
+  fairy: {
+    normal: 1,
+    fire: 0.5,
+    water: 1,
+    grass: 1,
+    electric: 1,
+    ice: 1,
+    fighting: 2,
+    poison: 0.5,
+    ground: 1,
+    flying: 1,
+    psychic: 1,
+    bug: 1,
+    rock: 1,
+    ghost: 1,
+    dragon: 2,
+    dark: 2,
+    steel: 0.5,
+    fairy: 1,
   },
 };
 

@@ -98,7 +98,7 @@ export function getGeneration(dexId: number): number {
 }
 
 // PokeAPI 내부 타입 키
-export const TYPE_MAP: Record<string, string> = {
+export const TYPE_MAP = {
   normal: 'normal',
   fire: 'fire',
   water: 'water',
@@ -116,4 +116,29 @@ export const TYPE_MAP: Record<string, string> = {
   dragon: 'dragon',
   dark: 'dark',
   steel: 'steel',
-};
+  fairy: 'fairy',
+} as const;
+
+export type ApiTypeName = keyof typeof TYPE_MAP;
+
+export function mapApiType(apiTypeName: string): (typeof TYPE_MAP)[ApiTypeName] {
+  const mapped = TYPE_MAP[apiTypeName as ApiTypeName];
+  if (!mapped) {
+    throw new Error(`알 수 없는 타입: ${apiTypeName}`);
+  }
+  return mapped;
+}
+
+export const DAMAGE_CLASS_MAP = {
+  physical: 'physical',
+  special: 'special',
+  status: 'status',
+} as const;
+
+export function mapApiDamageClass(name: string): (typeof DAMAGE_CLASS_MAP)[keyof typeof DAMAGE_CLASS_MAP] {
+  const mapped = DAMAGE_CLASS_MAP[name as keyof typeof DAMAGE_CLASS_MAP];
+  if (!mapped) {
+    throw new Error(`알 수 없는 damage_class: ${name}`);
+  }
+  return mapped;
+}

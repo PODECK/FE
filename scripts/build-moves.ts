@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { BuildPipeline } from './_pipeline';
-import { findKoName, pokeApi, TYPE_MAP } from './_utils';
+import { findKoName, mapApiDamageClass, mapApiType, pokeApi } from './_utils';
 
 import type { MoveData } from '@/shared/types';
 
@@ -29,7 +29,7 @@ class MoveBuildPipeline extends BuildPipeline<string, MoveData> {
 
     const moveNames = [...new Set(Object.values(pokemonMoves).flat())].sort();
 
-    (this.config as any).total = moveNames.length;
+    (this.config as { total: number }).total = moveNames.length;
     return moveNames;
   }
 
@@ -37,19 +37,15 @@ class MoveBuildPipeline extends BuildPipeline<string, MoveData> {
   protected async fetch(moveName: string): Promise<MoveData> {
     const data = await pokeApi.fetchMove(moveName);
 
-    const type = TYPE_MAP[data.type.name];
-    if (!type) {
-      throw new Error(`SKIP: 페어리타입: ${moveName}`);
-    }
-
+    const type = mapApiType(data.type.name);
     const koName = findKoName(data.names, moveName);
 
     return {
       id: moveName,
       koName,
       enName: moveName,
-      type: type as any,
-      damageClass: data.damage_class.name,
+      type,
+      damageClass: mapApiDamageClass(data.damage_class.name),
       power: data.power ?? 0,
       accuracy: data.accuracy ?? 0,
       pp: data.pp,

@@ -10,15 +10,13 @@ import SkillModal, { type SkillModalData } from './SkillModal';
 import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
-import pokemonDataJson from '../../../../data/pokemon.json';
 import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
-import type { PokemonData } from '@/shared/types/pokemon';
 import type { Game } from 'phaser';
 import { useBgm } from '@/shared/hooks/useBgm';
 import { cn } from '@/shared/lib/cn';
+import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
 
-const pokemonDataById = pokemonDataJson as Record<string, PokemonData>;
 const TRAINER_DATA_UPDATED_EVENT = 'trainer-data-updated';
 
 function recordBattleResult(winner: 'player' | 'enemy') {
@@ -45,7 +43,7 @@ function recordBattleResult(winner: 'player' | 'enemy') {
 
 function createInitialPokemon(): PokemonEntry[] {
   return readActivePlayerDeckDexIds().flatMap((dexId) => {
-    const pokemon = pokemonDataById[String(dexId)];
+    const pokemon = getPokemonByDexId(dexId);
     if (!pokemon) {
       console.warn(`[BattleScreen] pokemon.json에 dexId=${dexId} 데이터가 없습니다.`);
       return [];
