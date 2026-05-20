@@ -1,6 +1,6 @@
 import path from 'path';
 import { BuildPipeline } from './_pipeline';
-import { pokeApi, findKoName, findKoFlavorText, TYPE_MAP, getGeneration, findKoGenus } from './_utils';
+import { pokeApi, findKoName, findKoFlavorText, mapApiType, getGeneration, findKoGenus } from './_utils';
 
 import type { PokemonData } from '@/shared/types';
 
@@ -25,16 +25,13 @@ class PokemonBuilder {
       if (key) baseStats[key] = s.base_stat;
     }
 
-    const types = raw.types
-      .sort((a: any, b: any) => a.slot - b.slot)
-      .map((t: any) => TYPE_MAP[t.type.name])
-      .filter(Boolean);
+    const types = raw.types.sort((a: any, b: any) => a.slot - b.slot).map((t: any) => mapApiType(t.type.name));
 
     this.data = {
       ...this.data,
       dexId: raw.id,
       enName: raw.name,
-      types: types as any,
+      types,
       baseStats,
       height: raw.height / 10,
       weight: raw.weight / 10,

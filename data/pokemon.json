@@ -1066,7 +1066,7 @@
   "39": {
     "dexId": 39,
     "enName": "jigglypuff",
-    "types": ["fairy", "normal"],
+    "types": ["normal", "fairy"],
     "baseStats": {
       "hp": 115,
       "attack": 45,
@@ -1094,7 +1094,7 @@
   "40": {
     "dexId": 40,
     "enName": "wigglytuff",
-    "types": ["fairy", "normal"],
+    "types": ["normal", "fairy"],
     "baseStats": {
       "hp": 140,
       "attack": 70,
@@ -4846,7 +4846,7 @@
   "174": {
     "dexId": 174,
     "enName": "igglybuff",
-    "types": ["fairy", "normal"],
+    "types": ["normal", "fairy"],
     "baseStats": {
       "hp": 90,
       "attack": 30,
@@ -4902,7 +4902,7 @@
   "176": {
     "dexId": 176,
     "enName": "togetic",
-    "types": ["flying", "fairy"],
+    "types": ["fairy", "flying"],
     "baseStats": {
       "hp": 55,
       "attack": 40,
@@ -8318,7 +8318,7 @@
   "298": {
     "dexId": 298,
     "enName": "azurill",
-    "types": ["fairy", "normal"],
+    "types": ["normal", "fairy"],
     "baseStats": {
       "hp": 50,
       "attack": 20,
@@ -13078,7 +13078,7 @@
   "468": {
     "dexId": 468,
     "enName": "togekiss",
-    "types": ["flying", "fairy"],
+    "types": ["fairy", "flying"],
     "baseStats": {
       "hp": 85,
       "attack": 50,
