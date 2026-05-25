@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { createHologramMaterial } from './CardHologramShader';
 
 interface BattleCardProps {
   dexId: number;
@@ -26,8 +27,10 @@ export default function BattleCard({
   scale = 1,
   faceUp = true,
   fainted = false,
+  isLegendary = false,
 }: BattleCardProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const hologramMat = useRef<THREE.ShaderMaterial | null>(null);
   const [hovered, setHovered] = useState(false);
 
   const cardTexture = useTexture(`/images/pokemon-cards/${dexId}.png`);
@@ -36,7 +39,11 @@ export default function BattleCard({
   const targetRotX = useRef(rotation[0]);
   const targetRotY = useRef(rotation[1]);
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
+    if (hologramMat.current) {
+      hologramMat.current.uniforms.uTime.value += delta;
+    }
+
     if (!meshRef.current) return;
 
     if (fainted) {
@@ -67,19 +74,31 @@ export default function BattleCard({
     meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.1);
   });
 
-  const materials = useMemo(
-    () => [
+  const materials = useMemo(() => {
+    const frontMat =
+      isLegendary && faceUp
+        ? createHologramMaterial(cardTexture)
+        : faceUp
+          ? new THREE.MeshStandardMaterial({ map: cardTexture })
+          : new THREE.MeshStandardMaterial({ map: backTexture });
+
+    return [
       new THREE.MeshStandardMaterial({ color: 0x333344 }),
       new THREE.MeshStandardMaterial({ color: 0x333344 }),
       new THREE.MeshStandardMaterial({ color: 0x333344 }),
       new THREE.MeshStandardMaterial({ color: 0x333344 }),
-      faceUp
-        ? new THREE.MeshStandardMaterial({ map: cardTexture })
-        : new THREE.MeshStandardMaterial({ map: backTexture }),
+      frontMat,
       new THREE.MeshStandardMaterial({ map: backTexture }),
-    ],
-    [faceUp, cardTexture, backTexture],
-  );
+    ];
+  }, [faceUp, cardTexture, backTexture, isLegendary]);
+
+  useEffect(() => {
+    if (isLegendary && faceUp && materials[4] instanceof THREE.ShaderMaterial) {
+      hologramMat.current = materials[4] as THREE.ShaderMaterial;
+    } else {
+      hologramMat.current = null;
+    }
+  }, [isLegendary, faceUp, materials]);
 
   return (
     <mesh
