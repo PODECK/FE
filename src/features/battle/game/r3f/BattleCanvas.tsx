@@ -1,6 +1,8 @@
 'use client';
 
+import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
+import BattleField from './BattleField';
 
 export default function BattleCanvas() {
   return (
@@ -9,8 +11,11 @@ export default function BattleCanvas() {
       camera={{ position: [0, 0, 5], fov: 60 }}
       gl={{ antialias: true, alpha: true }}
     >
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} />
+      <Suspense fallback={null}>
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[5, 5, 5]} intensity={0.8} />
+        <BattleField />
+      </Suspense>
     </Canvas>
   );
 }
