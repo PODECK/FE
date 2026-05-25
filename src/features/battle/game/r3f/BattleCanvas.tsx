@@ -6,6 +6,7 @@ import BattleField from './BattleField';
 import PlayerDeckZone from './zones/PlayerDeckZone';
 import EnemyDeckZone from './zones/EnemyDeckZone';
 import DropZone from './zones/DropZone';
+import AttackParticles from './effects/AttackParticles';
 
 export default function BattleCanvas() {
   return (
@@ -22,6 +23,7 @@ export default function BattleCanvas() {
         <EnemyDeckZone />
         <DropZone position={[0, -1.2, 0]} side="player" />
         <DropZone position={[0, 1.8, 0]} side="enemy" />
+        <AttackParticles />
       </Suspense>
     </Canvas>
   );
