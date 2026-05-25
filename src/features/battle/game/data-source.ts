@@ -1,12 +1,16 @@
-// Phaser 캐시 JSON 기반 BattlePokemon 객체 생성 데이터소스
-import type Phaser from 'phaser';
+// JSON 캐시 기반 BattlePokemon 객체 생성 데이터소스
 import type { PokemonDataSource } from '@/shared/temp-ai/deck-builder';
 import type { BattlePokemon, BattleMove } from '@/shared/types/pokemon';
+
+interface JsonCacheManager {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  json: { get: (key: string) => any };
+}
 
 export class CachePokemonDataSource implements PokemonDataSource {
   private counter = 0;
 
-  constructor(private cache: Phaser.Cache.CacheManager) {}
+  constructor(private cache: JsonCacheManager) {}
 
   getPokemon(dexId: number, level: number): BattlePokemon {
     const pokemonData = this.cache.json.get('pokemon-data')?.[String(dexId)];

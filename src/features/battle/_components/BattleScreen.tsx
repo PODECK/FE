@@ -1,6 +1,6 @@
 'use client';
 
-// Phaser 배틀 화면, React HUD, 결과 라우팅 연결 컨테이너
+// R3F 배틀 화면, React HUD, 결과 라우팅 연결 컨테이너
 
 import { useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
@@ -15,13 +15,11 @@ import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
 import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
-import type { Game } from 'phaser';
 import { useBgm } from '@/shared/hooks/useBgm';
 import { cn } from '@/shared/lib/cn';
 import { useBattleStore } from '@/shared/stores/battleStore';
 
 const TRAINER_DATA_UPDATED_EVENT = 'trainer-data-updated';
-const useR3F = process.env.NEXT_PUBLIC_BATTLE_ENGINE === 'r3f';
 
 function recordBattleResult(winner: 'player' | 'enemy') {
   try {
@@ -47,8 +45,6 @@ function recordBattleResult(winner: 'player' | 'enemy') {
 
 export default function BattleScreen() {
   const router = useRouter();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const gameRef = useRef<Game | null>(null);
   const hasShownDeckAlertRef = useRef(false);
   const hasHandledBattleEndRef = useRef(false);
 
@@ -117,46 +113,6 @@ export default function BattleScreen() {
     }
   }, [hasCompleteBattleDeck, handleIncompleteDeck]);
 
-  useEffect(() => {
-    if (!containerRef.current || gameRef.current) return;
-    if (!hasCompleteBattleDeck) return;
-
-    let cancelled = false;
-    let game: Game;
-
-    (async () => {
-      const Phaser = (await import('phaser')).default;
-      const { phaserConfig } = await import('../game/config');
-      const { PreloadScene } = await import('../game/scenes/PreloadScene');
-      const { BattleScene } = await import('../game/scenes/BattleScene');
-
-      if (cancelled) return;
-
-      const renderConfig = {
-        ...phaserConfig.render,
-        resolution: Math.min(window.devicePixelRatio || 1, 2),
-      };
-
-      game = new Phaser.Game({
-        ...phaserConfig,
-        parent: containerRef.current!,
-        render: renderConfig,
-        scene: [PreloadScene, BattleScene],
-        scale: {
-          mode: Phaser.Scale.RESIZE,
-          autoCenter: Phaser.Scale.CENTER_BOTH,
-        },
-      });
-      gameRef.current = game;
-    })();
-
-    return () => {
-      cancelled = true;
-      game?.destroy(true);
-      gameRef.current = null;
-    };
-  }, [hasCompleteBattleDeck]);
-
   const pokemonList = playerTeamFromStore.map((p) => ({
     dexId: p.dexId,
     koName: p.koName,
@@ -168,7 +124,7 @@ export default function BattleScreen() {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      {useR3F ? <BattleCanvas /> : <div ref={containerRef} id="phaser-container" className="absolute inset-0" />}
+      <BattleCanvas />
 
       <div className="pointer-events-none absolute inset-0">
         <BattleTopBar currentFloor={currentFloor} aiPokemon={aiPokemon} />
