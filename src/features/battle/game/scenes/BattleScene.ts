@@ -36,6 +36,8 @@ import type { Rng } from '@/shared/lib/rng';
 import type { BattlePokemon, BattleMove } from '@/shared/types/pokemon';
 import type { FloorConfig } from '@/shared/types/tower';
 import type { CardData, FanPos, HitMotionLevel, TurnPhase, ZoneHealthBar } from '../battle-scene-types';
+import { useBattleStore } from '@/shared/stores/battleStore';
+import type { PlayerPokemonState, BattlePhase } from '@/shared/stores/battleStore';
 
 export class BattleScene extends Phaser.Scene {
   // 손패, 드롭존, 전투 상태를 Scene 생명주기 동안 유지함
@@ -90,19 +92,13 @@ export class BattleScene extends Phaser.Scene {
   private floorConfig!: FloorConfig;
 
   private dispatchAiDeckStatus() {
-    window.dispatchEvent(
-      new CustomEvent('battle:ai-deck-status', {
-        detail: this.aiDeck.map((p) => ({
-          dexId: p.dexId,
-          types: p.types,
-          fainted: p.fainted,
-        })),
-      }),
-    );
+    useBattleStore
+      .getState()
+      .setEnemyTeam(this.aiDeck.map((p) => ({ dexId: p.dexId, types: p.types, fainted: p.fainted })));
   }
 
   private dispatchPlayerDeckInvalid() {
-    window.dispatchEvent(new CustomEvent('battle:player-deck-invalid'));
+    useBattleStore.getState().setDeckInvalid(true);
   }
 
   private readonly handleMoveSelected = (e: Event) => {
@@ -127,7 +123,13 @@ export class BattleScene extends Phaser.Scene {
 
   private setTurnPhase(phase: TurnPhase) {
     this.turnPhase = phase;
-    window.dispatchEvent(new CustomEvent('battle:turn-phase', { detail: { phase } }));
+    const phaseMap: Record<TurnPhase, BattlePhase> = {
+      setup: 'setup',
+      player: 'awaiting_action',
+      ai: 'attack_resolving',
+      ended: 'ended',
+    };
+    useBattleStore.getState().setPhase(phaseMap[phase]);
   }
 
   private getResponsiveScreenScale(W: number, H: number) {
@@ -220,6 +222,19 @@ export class BattleScene extends Phaser.Scene {
     this.scale.on('resize', this.handleResize, this);
     window.addEventListener('battle:move-selected', this.handleMoveSelected);
     window.addEventListener('battle:turn-ended', this.handleTurnEnded);
+    const playerTeam: PlayerPokemonState[] = this.playerDeck.map((p) => ({
+      dexId: p.dexId,
+      koName: p.koName,
+      types: p.types,
+      currentHp: p.currentHp,
+      maxHp: p.maxHp,
+      status: 'available' as const,
+    }));
+    useBattleStore.getState().initBattle({
+      playerTeam,
+      enemyTeam: this.aiDeck.map((p) => ({ dexId: p.dexId, types: p.types, fainted: p.fainted })),
+      floor: readStoredTowerFloor(),
+    });
     this.setTurnPhase('setup');
   }
 
@@ -1155,19 +1170,17 @@ export class BattleScene extends Phaser.Scene {
       c.setData('isHovered', false);
     });
 
-    window.dispatchEvent(
-      new CustomEvent('battle:zone-card-click', {
-        detail: {
-          dexId,
-          koName: pokemon.koName,
-          enName: pokemon.enName,
-          types: pokemon.types,
-          hp,
-          moves,
-          flightDuration: FLIGHT_MS,
-        },
-      }),
-    );
+    useBattleStore
+      .getState()
+      .openSkillModal({
+        dexId,
+        koName: pokemon.koName,
+        enName: pokemon.enName,
+        types: pokemon.types,
+        hp,
+        moves,
+        flightDuration: FLIGHT_MS,
+      });
 
     if (zoneShadow) {
       this.tweens.add({ targets: zoneShadow, alpha: 0, duration: FLIGHT_MS * 0.5, ease: 'Linear' });
@@ -1278,10 +1291,15 @@ export class BattleScene extends Phaser.Scene {
           });
         },
       });
-
-      window.removeEventListener('battle:modal-close', closeHandler);
     };
-    window.addEventListener('battle:modal-close', closeHandler);
+    let unsubModal: (() => void) | null = null;
+    unsubModal = useBattleStore.subscribe((state) => {
+      if (state.skillModalData === null) {
+        unsubModal?.();
+        unsubModal = null;
+        closeHandler();
+      }
+    });
   }
 
   private createZoneShadow(card: Phaser.GameObjects.Image, ox: number, oy: number, alpha: number) {
@@ -1377,11 +1395,7 @@ export class BattleScene extends Phaser.Scene {
       const cardData = card.getData('cardData') as CardData | undefined;
       if (cardData) {
         const dexId = parseInt(cardData.texture.replace('card-', ''));
-        window.dispatchEvent(
-          new CustomEvent('battle:player-pokemon-hp-changed', {
-            detail: { dexId, currentHp: bar.currentHp },
-          }),
-        );
+        useBattleStore.getState().updatePlayerHp(dexId, bar.currentHp);
       }
     }
   }
@@ -1395,7 +1409,7 @@ export class BattleScene extends Phaser.Scene {
     const cardData = card.getData('cardData') as CardData | undefined;
     if (cardData) {
       const dexId = parseInt(cardData.texture.replace('card-', ''));
-      window.dispatchEvent(new CustomEvent('battle:pokemon-fainted', { detail: { dexId } }));
+      useBattleStore.getState().faintPlayerPokemon(dexId);
     }
 
     const zoneShadow = card.getData('zoneShadow') as Phaser.GameObjects.Image | undefined;
@@ -1744,6 +1758,7 @@ export class BattleScene extends Phaser.Scene {
 
   private dispatchBattleLog(message: string) {
     dispatchBattleLog(message);
+    useBattleStore.getState().addLog(message);
   }
 
   private dispatchAttackLog(side: BattleSide, attacker: BattlePokemon, move: BattleMove) {
@@ -1804,7 +1819,7 @@ export class BattleScene extends Phaser.Scene {
     const nextIdx = chooseForceSwap(this.aiDeck, this.aiActiveIndex, this.rng);
     if (nextIdx < 0) {
       this.setTurnPhase('ended');
-      window.dispatchEvent(new CustomEvent('battle:ended', { detail: { winner: 'player' } }));
+      useBattleStore.getState().endBattle('player');
       return;
     }
     this.aiActiveIndex = nextIdx;
@@ -1817,7 +1832,7 @@ export class BattleScene extends Phaser.Scene {
     const hasAvailablePokemon = this.playerDeck.some((p) => !p.fainted);
     if (!hasAvailablePokemon) {
       this.setTurnPhase('ended');
-      window.dispatchEvent(new CustomEvent('battle:ended', { detail: { winner: 'enemy' } }));
+      useBattleStore.getState().endBattle('enemy');
       return;
     }
 
