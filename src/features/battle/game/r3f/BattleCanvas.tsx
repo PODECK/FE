@@ -9,14 +9,12 @@ import DropZone from './zones/DropZone';
 import AttackParticles from './effects/AttackParticles';
 import HitEffect from './effects/HitEffect';
 import ScreenShake from './effects/ScreenShake';
+import BattleCamera from './camera/BattleCamera';
 
 export default function BattleCanvas() {
   return (
-    <Canvas
-      className="absolute inset-0"
-      camera={{ position: [0, 0, 5], fov: 60 }}
-      gl={{ antialias: true, alpha: true }}
-    >
+    <Canvas className="absolute inset-0" gl={{ antialias: true, alpha: true }}>
+      <BattleCamera />
       <Suspense fallback={null}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={0.8} />
