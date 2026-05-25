@@ -3,11 +3,14 @@
 // Phaser 배틀 화면, React HUD, 결과 라우팅 연결 컨테이너
 
 import { useCallback, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal from './SkillModal';
 import PokemonSelectModal from './PokemonStateModal';
+
+const BattleCanvas = dynamic(() => import('../game/r3f/BattleCanvas'), { ssr: false });
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
@@ -18,6 +21,7 @@ import { cn } from '@/shared/lib/cn';
 import { useBattleStore } from '@/shared/stores/battleStore';
 
 const TRAINER_DATA_UPDATED_EVENT = 'trainer-data-updated';
+const useR3F = process.env.NEXT_PUBLIC_BATTLE_ENGINE === 'r3f';
 
 function recordBattleResult(winner: 'player' | 'enemy') {
   try {
@@ -164,7 +168,7 @@ export default function BattleScreen() {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      <div ref={containerRef} id="phaser-container" className="absolute inset-0" />
+      {useR3F ? <BattleCanvas /> : <div ref={containerRef} id="phaser-container" className="absolute inset-0" />}
 
       <div className="pointer-events-none absolute inset-0">
         <BattleTopBar currentFloor={currentFloor} aiPokemon={aiPokemon} />
