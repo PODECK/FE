@@ -2,12 +2,12 @@
 
 // Phaser 배틀 화면, React HUD, 결과 라우팅 연결 컨테이너
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
-import SkillModal, { type SkillModalData } from './SkillModal';
-import PokemonSelectModal, { type PokemonEntry } from './PokemonStateModal';
+import SkillModal from './SkillModal';
+import PokemonSelectModal from './PokemonStateModal';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { REQUIRED_PLAYER_DECK_SIZE, readActivePlayerDeckDexIds } from '@/features/battle/game/player-deck-storage';
@@ -15,7 +15,7 @@ import { useTowerProgress } from '@/shared/hooks/useTowerProgress';
 import type { Game } from 'phaser';
 import { useBgm } from '@/shared/hooks/useBgm';
 import { cn } from '@/shared/lib/cn';
-import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
+import { useBattleStore } from '@/shared/stores/battleStore';
 
 const TRAINER_DATA_UPDATED_EVENT = 'trainer-data-updated';
 
@@ -41,57 +41,38 @@ function recordBattleResult(winner: 'player' | 'enemy') {
   }
 }
 
-function createInitialPokemon(): PokemonEntry[] {
-  return readActivePlayerDeckDexIds().flatMap((dexId) => {
-    const pokemon = getPokemonByDexId(dexId);
-    if (!pokemon) {
-      console.warn(`[BattleScreen] pokemon.json에 dexId=${dexId} 데이터가 없습니다.`);
-      return [];
-    }
-
-    return [
-      {
-        dexId,
-        koName: pokemon.koName,
-        types: pokemon.types,
-        currentHp: pokemon.baseStats.hp,
-        maxHp: pokemon.baseStats.hp,
-        status: 'available',
-      },
-    ];
-  });
-}
-
-type AiPokemonStatus = { dexId: number; types: string[]; fainted: boolean };
-type BattleLogEntry = { id: number; message: string };
-type TurnPhase = 'setup' | 'player' | 'ai' | 'ended';
-
 export default function BattleScreen() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game | null>(null);
   const hasShownDeckAlertRef = useRef(false);
   const hasHandledBattleEndRef = useRef(false);
-  const [skillModal, setSkillModal] = useState<SkillModalData | null>(null);
-  const [pokemonSelectOpen, setPokemonSelectOpen] = useState(false);
-  const [confirmQuit, setConfirmQuit] = useState(false);
-  const [pokemonList, setPokemonList] = useState<PokemonEntry[]>([]);
-  const [isDeckLoaded, setIsDeckLoaded] = useState(false);
-  const [aiPokemon, setAiPokemon] = useState<AiPokemonStatus[]>([]);
-  const [battleLogs, setBattleLogs] = useState<BattleLogEntry[]>([]);
-  const [turnPhase, setTurnPhase] = useState<TurnPhase>('setup');
 
   const { progress, loseLife, markWinRewardPending } = useTowerProgress();
   const currentFloor = progress.currentFloor;
-  const isPlayerTurn = turnPhase === 'player';
-  const hasCompleteBattleDeck = isDeckLoaded && pokemonList.length === REQUIRED_PLAYER_DECK_SIZE;
+
+  // Store selectors
+  const playerTeamFromStore = useBattleStore((state) => state.playerTeam);
+  const aiPokemon = useBattleStore((state) => state.enemyTeam);
+  const battleLogs = useBattleStore((state) => state.battleLogs);
+  const skillModal = useBattleStore((state) => state.skillModalData);
+  const pokemonSelectOpen = useBattleStore((state) => state.pokemonStatusOpen);
+  const confirmQuit = useBattleStore((state) => state.confirmQuitOpen);
+  const deckInvalid = useBattleStore((state) => state.deckInvalid);
+  const winner = useBattleStore((state) => state.winner);
+  const storePhase = useBattleStore((state) => state.phase);
+
+  const isPlayerTurn = storePhase === 'awaiting_action';
+  const turnPhase = storePhase === 'awaiting_action' ? 'player' : storePhase === 'attack_resolving' ? 'ai' : 'setup';
+
+  const hasCompleteBattleDeck = readActivePlayerDeckDexIds().length === REQUIRED_PLAYER_DECK_SIZE;
   const turnButtonLabel = isPlayerTurn ? '턴 종료' : turnPhase === 'ai' ? '상대 턴' : '대기';
 
   useBgm('/bgm/battle-wild.mp3');
 
   const handleTurnEnd = () => {
     if (!isPlayerTurn) return;
-    window.dispatchEvent(new CustomEvent('battle:turn-ended'));
+    useBattleStore.getState().endPlayerTurn();
   };
 
   const handleIncompleteDeck = useCallback(() => {
@@ -102,112 +83,35 @@ export default function BattleScreen() {
     router.replace('/mydeck');
   }, [router]);
 
+  // Battle end routing
   useEffect(() => {
-    let cancelled = false;
+    if (!winner) return;
+    if (hasHandledBattleEndRef.current) return;
+    hasHandledBattleEndRef.current = true;
 
-    queueMicrotask(() => {
-      if (cancelled) return;
+    recordBattleResult(winner);
 
-      setPokemonList(createInitialPokemon());
-      setIsDeckLoaded(true);
-    });
+    if (winner === 'player') {
+      markWinRewardPending();
+      router.push('/battle/win');
+      return;
+    }
+    loseLife();
+    router.push('/battle/lose');
+  }, [winner, loseLife, markWinRewardPending, router]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
+  // Deck invalid handling
   useEffect(() => {
-    if (!isDeckLoaded || hasCompleteBattleDeck) return;
-
+    if (!deckInvalid) return;
     handleIncompleteDeck();
-  }, [handleIncompleteDeck, hasCompleteBattleDeck, isDeckLoaded]);
+  }, [deckInvalid, handleIncompleteDeck]);
 
+  // Initial deck validation (before game starts)
   useEffect(() => {
-    window.addEventListener('battle:player-deck-invalid', handleIncompleteDeck);
-    return () => window.removeEventListener('battle:player-deck-invalid', handleIncompleteDeck);
-  }, [handleIncompleteDeck]);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const { phase } = (e as CustomEvent<{ phase: TurnPhase }>).detail;
-      setTurnPhase(phase);
-    };
-    window.addEventListener('battle:turn-phase', handler);
-    return () => window.removeEventListener('battle:turn-phase', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: Event) => setAiPokemon((e as CustomEvent<AiPokemonStatus[]>).detail);
-    window.addEventListener('battle:ai-deck-status', handler);
-    return () => window.removeEventListener('battle:ai-deck-status', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const { message } = (e as CustomEvent<{ message: string }>).detail;
-      setBattleLogs((prev) => [...prev.slice(-5), { id: Date.now() + Math.random(), message }]);
-    };
-    window.addEventListener('battle:log', handler);
-    return () => window.removeEventListener('battle:log', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: Event) => setSkillModal((e as CustomEvent<SkillModalData>).detail);
-    window.addEventListener('battle:zone-card-click', handler);
-    return () => window.removeEventListener('battle:zone-card-click', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = () => setPokemonSelectOpen(true);
-    window.addEventListener('battle:pokemon-status', handler);
-    return () => window.removeEventListener('battle:pokemon-status', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = () => setConfirmQuit(true);
-    window.addEventListener('battle:confirm-quit', handler);
-    return () => window.removeEventListener('battle:confirm-quit', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const { dexId } = (e as CustomEvent<{ dexId: number }>).detail;
-      setPokemonList((prev) => prev.map((p) => (p.dexId === dexId ? { ...p, status: 'fainted', currentHp: 0 } : p)));
-    };
-    window.addEventListener('battle:pokemon-fainted', handler);
-    return () => window.removeEventListener('battle:pokemon-fainted', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const { dexId, currentHp } = (e as CustomEvent<{ dexId: number; currentHp: number }>).detail;
-      setPokemonList((prev) => prev.map((p) => (p.dexId === dexId ? { ...p, currentHp: Math.max(0, currentHp) } : p)));
-    };
-    window.addEventListener('battle:player-pokemon-hp-changed', handler);
-    return () => window.removeEventListener('battle:player-pokemon-hp-changed', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      if (hasHandledBattleEndRef.current) return;
-      hasHandledBattleEndRef.current = true;
-
-      const { winner } = (e as CustomEvent<{ winner: 'player' | 'enemy' }>).detail;
-      recordBattleResult(winner);
-
-      if (winner === 'player') {
-        markWinRewardPending();
-        router.push('/battle/win');
-        return;
-      }
-
-      loseLife();
-      router.push('/battle/lose');
-    };
-    window.addEventListener('battle:ended', handler);
-    return () => window.removeEventListener('battle:ended', handler);
-  }, [loseLife, markWinRewardPending, router]);
+    if (!hasCompleteBattleDeck) {
+      handleIncompleteDeck();
+    }
+  }, [hasCompleteBattleDeck, handleIncompleteDeck]);
 
   useEffect(() => {
     if (!containerRef.current || gameRef.current) return;
@@ -249,6 +153,15 @@ export default function BattleScreen() {
     };
   }, [hasCompleteBattleDeck]);
 
+  const pokemonList = playerTeamFromStore.map((p) => ({
+    dexId: p.dexId,
+    koName: p.koName,
+    types: p.types,
+    currentHp: p.currentHp,
+    maxHp: p.maxHp,
+    status: p.status,
+  }));
+
   return (
     <div className="fixed inset-0 overflow-hidden">
       <div ref={containerRef} id="phaser-container" className="absolute inset-0" />
@@ -281,14 +194,20 @@ export default function BattleScreen() {
       {skillModal && (
         <SkillModal
           data={skillModal}
-          onClose={() => setSkillModal(null)}
+          onClose={() => useBattleStore.getState().closeSkillModal()}
           onConfirmMove={(moveIndex) => {
-            window.dispatchEvent(new CustomEvent('battle:move-selected', { detail: { moveIndex } }));
+            useBattleStore.getState().selectMove(moveIndex);
+            useBattleStore.getState().closeSkillModal();
           }}
         />
       )}
 
-      {pokemonSelectOpen && <PokemonSelectModal pokemon={pokemonList} onClose={() => setPokemonSelectOpen(false)} />}
+      {pokemonSelectOpen && (
+        <PokemonSelectModal
+          pokemon={pokemonList}
+          onClose={() => useBattleStore.getState().setPokemonStatusOpen(false)}
+        />
+      )}
 
       {confirmQuit && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/65">
@@ -300,7 +219,7 @@ export default function BattleScreen() {
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => setConfirmQuit(false)}
+                onClick={() => useBattleStore.getState().setConfirmQuitOpen(false)}
                 className="h-11 flex-1 cursor-pointer rounded-lg border-0 bg-[var(--color-base-3)]/10 text-[15px] font-bold text-[var(--color-base-3)]"
               >
                 취소
