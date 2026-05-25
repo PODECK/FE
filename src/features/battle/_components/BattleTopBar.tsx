@@ -5,6 +5,7 @@
 import Image from 'next/image';
 import { TOWER_FLOORS } from '@/shared/config/tower-floors';
 import { SoundSettingsDropdown } from '@/shared/components/SoundSettingsDropdown';
+import { useBattleStore } from '@/shared/stores/battleStore';
 
 type AiPokemonStatus = { dexId: number; types: string[]; fainted: boolean };
 
@@ -17,7 +18,7 @@ export default function BattleTopBar({ currentFloor, aiPokemon }: Props) {
   const floorConfig = TOWER_FLOORS.find((f) => f.floor === currentFloor) ?? TOWER_FLOORS[0]!;
 
   const handleGoHome = () => {
-    window.dispatchEvent(new CustomEvent('battle:confirm-quit'));
+    useBattleStore.getState().setConfirmQuitOpen(true);
   };
 
   return (

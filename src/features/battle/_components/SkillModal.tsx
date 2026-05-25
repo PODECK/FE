@@ -7,6 +7,7 @@ import SkillMovePanel from './SkillMovePanel';
 import SkillPreviewCard from './SkillPreviewCard';
 import type { SkillModalData } from './skill-modal-types';
 import { cn } from '@/shared/lib/cn';
+import { useBattleStore } from '@/shared/stores/battleStore';
 
 export type { SkillModalData } from './skill-modal-types';
 
@@ -50,7 +51,7 @@ export default function SkillModal({ data, onClose, onConfirmMove }: Props) {
     if (closing) return;
 
     setClosing(true);
-    window.dispatchEvent(new CustomEvent('battle:modal-close'));
+    useBattleStore.getState().closeSkillModal();
   };
 
   const handleConfirmMove = () => {

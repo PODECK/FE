@@ -8,6 +8,7 @@ import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
 import { getTypeBadgeColor } from '@/shared/constants/type-colors';
 import type { PokemonEntry } from './PokemonStateModal';
+import { useBattleStore } from '@/shared/stores/battleStore';
 
 const NUNITO = { fontFamily: 'Nunito, sans-serif' } as const;
 const ROBOTO = { fontFamily: 'Roboto, sans-serif' } as const;
@@ -125,7 +126,7 @@ export default function BattleBottomHUD({ playerPokemon, playerLives, battleLogs
         <button
           className="absolute top-[355px] left-[11px] h-[39px] w-[178px] overflow-hidden rounded-[7px] bg-white"
           style={ROBOTO}
-          onClick={() => window.dispatchEvent(new CustomEvent('battle:pokemon-status'))}
+          onClick={() => useBattleStore.getState().setPokemonStatusOpen(true)}
         >
           <span
             className="absolute top-[10px] left-[48px] text-[15px] font-black text-[rgba(12,12,22,1)]"
