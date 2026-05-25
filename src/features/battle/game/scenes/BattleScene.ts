@@ -71,6 +71,8 @@ export class BattleScene extends Phaser.Scene {
 
   private isModalOpen = false;
   private isHoverBlocked = false;
+  private _unsubMoveSelected: (() => void) | null = null;
+  private _unsubTurnEnded: (() => void) | null = null;
 
   private aiHand: Phaser.GameObjects.Image[] = [];
   private aiDrawX = 0;
@@ -109,6 +111,14 @@ export class BattleScene extends Phaser.Scene {
     }
     this.resolveTurn(moveIndex);
   };
+
+  private handleMoveSelected_store(moveIndex: number) {
+    if (this.isModalOpen) {
+      this.queuedMoveIndex = moveIndex;
+      return;
+    }
+    this.resolveTurn(moveIndex);
+  }
 
   private readonly handleTurnEnded = () => {
     if (this.turnPhase !== 'player') return;
@@ -220,8 +230,20 @@ export class BattleScene extends Phaser.Scene {
     this.drawAIInitialCards();
 
     this.scale.on('resize', this.handleResize, this);
-    window.addEventListener('battle:move-selected', this.handleMoveSelected);
-    window.addEventListener('battle:turn-ended', this.handleTurnEnded);
+    this._unsubMoveSelected = useBattleStore.subscribe((state) => {
+      const moveIndex = state.pendingMoveIndex;
+      if (moveIndex !== null) {
+        useBattleStore.getState().clearPendingMove();
+        this.handleMoveSelected_store(moveIndex);
+      }
+    });
+
+    this._unsubTurnEnded = useBattleStore.subscribe((state) => {
+      if (state.pendingTurnEnd) {
+        useBattleStore.getState().clearPendingTurnEnd();
+        this.handleTurnEnded();
+      }
+    });
     const playerTeam: PlayerPokemonState[] = this.playerDeck.map((p) => ({
       dexId: p.dexId,
       koName: p.koName,
@@ -239,8 +261,10 @@ export class BattleScene extends Phaser.Scene {
   }
 
   shutdown() {
-    window.removeEventListener('battle:move-selected', this.handleMoveSelected);
-    window.removeEventListener('battle:turn-ended', this.handleTurnEnded);
+    this._unsubMoveSelected?.();
+    this._unsubTurnEnded?.();
+    this._unsubMoveSelected = null;
+    this._unsubTurnEnded = null;
   }
 
   private handleResize() {
@@ -1170,17 +1194,15 @@ export class BattleScene extends Phaser.Scene {
       c.setData('isHovered', false);
     });
 
-    useBattleStore
-      .getState()
-      .openSkillModal({
-        dexId,
-        koName: pokemon.koName,
-        enName: pokemon.enName,
-        types: pokemon.types,
-        hp,
-        moves,
-        flightDuration: FLIGHT_MS,
-      });
+    useBattleStore.getState().openSkillModal({
+      dexId,
+      koName: pokemon.koName,
+      enName: pokemon.enName,
+      types: pokemon.types,
+      hp,
+      moves,
+      flightDuration: FLIGHT_MS,
+    });
 
     if (zoneShadow) {
       this.tweens.add({ targets: zoneShadow, alpha: 0, duration: FLIGHT_MS * 0.5, ease: 'Linear' });
@@ -1758,7 +1780,7 @@ export class BattleScene extends Phaser.Scene {
 
   private dispatchBattleLog(message: string) {
     dispatchBattleLog(message);
-    useBattleStore.getState().addLog(message);
+    // Note: addLog is now called inside dispatchBattleLog (battle-log.ts)
   }
 
   private dispatchAttackLog(side: BattleSide, attacker: BattlePokemon, move: BattleMove) {

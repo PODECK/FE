@@ -1,10 +1,11 @@
 // 배틀 로그 문장 생성 및 React HUD 전달 유틸리티
 import type { BattleMove, BattlePokemon } from '@/shared/types/pokemon';
+import { useBattleStore } from '@/shared/stores/battleStore';
 
 export type BattleSide = 'player' | 'opponent';
 
 export function dispatchBattleLog(message: string): void {
-  window.dispatchEvent(new CustomEvent('battle:log', { detail: { message } }));
+  useBattleStore.getState().addLog(message);
 }
 
 export function createAttackLogMessage(side: BattleSide, attacker: BattlePokemon, move: BattleMove): string {
