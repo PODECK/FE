@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import BattleField from './BattleField';
 import PlayerDeckZone from './zones/PlayerDeckZone';
 import EnemyDeckZone from './zones/EnemyDeckZone';
@@ -27,6 +28,9 @@ export default function BattleCanvas() {
         <HitEffect />
       </Suspense>
       <ScreenShake />
+      <EffectComposer>
+        <Bloom intensity={0.4} luminanceThreshold={0.7} luminanceSmoothing={0.3} mipmapBlur />
+      </EffectComposer>
     </Canvas>
   );
 }
