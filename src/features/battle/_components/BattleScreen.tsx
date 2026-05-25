@@ -9,6 +9,7 @@ import BattleTopBar from './BattleTopBar';
 import BattleBottomHUD from './BattleBottomHUD';
 import SkillModal from './SkillModal';
 import PokemonSelectModal from './PokemonStateModal';
+import { useBattleInit } from '@/features/battle/hooks/useBattleInit';
 
 const BattleCanvas = dynamic(() => import('../game/r3f/BattleCanvas'), { ssr: false });
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
@@ -50,6 +51,7 @@ export default function BattleScreen() {
 
   const { progress, loseLife, markWinRewardPending } = useTowerProgress();
   const currentFloor = progress.currentFloor;
+  const initStatus = useBattleInit(currentFloor);
 
   // Store selectors
   const playerTeamFromStore = useBattleStore((state) => state.playerTeam);
@@ -112,6 +114,19 @@ export default function BattleScreen() {
       handleIncompleteDeck();
     }
   }, [hasCompleteBattleDeck, handleIncompleteDeck]);
+
+  if (initStatus.status === 'loading') {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgb(8,14,40)]">
+        <span className="text-sm text-white/50">배틀 준비 중...</span>
+      </div>
+    );
+  }
+
+  if (initStatus.status === 'error') {
+    console.error('[BattleInit]', initStatus.error);
+    // 빈 씬으로 진행
+  }
 
   const pokemonList = playerTeamFromStore.map((p) => ({
     dexId: p.dexId,
