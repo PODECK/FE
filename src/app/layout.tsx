@@ -1,5 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { Inter } from 'next/font/google';
+import { cn } from '@/lib/utils';
+import { Toaster } from '@/components/ui/sonner';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://podeck.vercel.app'),
@@ -34,8 +39,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className="min-h-screen text-gray-900 antialiased">{children}</body>
+    <html lang="ko" className={cn('font-sans', inter.variable)}>
+      <body className="min-h-screen text-gray-900 antialiased">
+        {children} <Toaster richColors position="top-center" />
+      </body>
     </html>
   );
 }
