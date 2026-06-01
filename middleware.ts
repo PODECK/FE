@@ -1,6 +1,7 @@
 // middleware를 통한 페이지 접근 관리
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/shared/lib/supabase/middleware';
+import { getOnboardingPathForUser } from '@/entities/trainer/api/onboarding';
 
 const protectedPaths = ['/home', '/pokedex', '/mydeck', '/battle', '/build-deck', '/loading', '/nickname'];
 
@@ -9,7 +10,7 @@ function isPathMatched(pathname: string, paths: string[]) {
 }
 
 export async function middleware(request: NextRequest) {
-  const { response, user } = await updateSession(request);
+  const { response, user, supabase } = await updateSession(request);
   const { pathname } = request.nextUrl;
 
   const isProtectedPath = isPathMatched(pathname, protectedPaths);
@@ -21,8 +22,9 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && pathname === '/') {
+    const nextPath = await getOnboardingPathForUser(supabase, user.id);
     const url = request.nextUrl.clone();
-    url.pathname = '/home';
+    url.pathname = nextPath;
     return NextResponse.redirect(url);
   }
 

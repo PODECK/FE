@@ -30,16 +30,21 @@ export default function NicknameForm() {
     }
 
     startTransition(async () => {
-      const result = await saveNickname(nickname);
+      try {
+        const result = await saveNickname(parsed.data);
 
-      if (!result.ok) {
-        setError(result.message);
-        toast.error(result.message);
-        return;
+        if (!result.ok) {
+          setError(result.message);
+          toast.error(result.message);
+          return;
+        }
+        toast.success(result.message);
+        router.replace('/build-deck');
+      } catch {
+        const message = '닉네임 저장 중 오류가 발생했습니다';
+        setError(message);
+        toast.error(message);
       }
-
-      toast.success(result.message);
-      router.replace('/build-deck');
     });
   };
 
@@ -96,6 +101,7 @@ export default function NicknameForm() {
                 }
               }}
               onKeyDown={(event) => {
+                if (event.nativeEvent.isComposing) return;
                 if (event.key === 'Enter') {
                   handleSubmit();
                 }

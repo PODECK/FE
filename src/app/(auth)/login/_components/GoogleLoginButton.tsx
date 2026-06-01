@@ -27,7 +27,7 @@ export default function GoogleLoginButton() {
       onClick={handleGoogleLogin}
       className="flex h-[50px] w-full items-center justify-center gap-3 rounded-[10px] bg-[#F2F2F2] font-bold text-[var(--color-base-0)] transition hover:opacity-90 active:scale-95"
     >
-      <Image src="/images/login/goolge-round.svg" alt="Google 로고" width={30} height={30} />
+      <Image src="/images/login/google-round.svg" alt="Google 로고" width={30} height={30} />
       Google로 계속하기
     </button>
   );

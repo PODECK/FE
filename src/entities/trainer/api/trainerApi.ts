@@ -1,5 +1,6 @@
 import { createClient } from '@/shared/lib/supabase/server';
 import type { TrainerSummary } from '@/entities/trainer/model/types';
+import { getOnboardingPathForUser } from '@/entities/trainer/api/onboarding';
 
 export async function getCurrentUserId() {
   const supabase = await createClient();
@@ -20,18 +21,7 @@ export async function getOnboardingPath() {
 
   if (!user) return '/';
 
-  const { data: profile } = await supabase.from('profiles').select('nickname').eq('id', user.id).maybeSingle();
-
-  if (!profile?.nickname) return '/nickname';
-
-  const { count } = await supabase
-    .from('trainer_pokemons')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id);
-
-  if (!count) return '/build-deck';
-
-  return '/home';
+  return getOnboardingPathForUser(supabase, user.id);
 }
 
 export async function getTrainerSummary(): Promise<TrainerSummary | null> {
@@ -49,7 +39,7 @@ export async function getTrainerSummary(): Promise<TrainerSummary | null> {
 
   const { data: stats } = await supabase
     .from('trainer_stats')
-    .select('card_pack_count, wins, losses, current_floor')
+    .select('card_pack_count, wins, loses, current_floor')
     .eq('user_id', user.id)
     .maybeSingle();
 
@@ -70,7 +60,7 @@ export async function getTrainerSummary(): Promise<TrainerSummary | null> {
     cardPackCount: stats?.card_pack_count ?? 0,
     battleRecord: {
       wins: stats?.wins ?? 0,
-      loses: stats?.losses ?? 0,
+      loses: stats?.loses ?? 0,
     },
     ownedPokemonCount: ownedPokemonCount ?? 0,
     activeDeckDexIds: deckSlots?.map((slot) => slot.dex_id) ?? [],

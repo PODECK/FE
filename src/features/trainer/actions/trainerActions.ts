@@ -92,29 +92,12 @@ export async function selectStarterPokemons(dexIds: number[]) {
     };
   }
 
-  const { count } = await supabase
-    .from('trainer_pokemons')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id);
-
-  if (count && count > 0) {
-    return {
-      ok: false,
-      message: '이미 스타팅 포켓몬을 선택하셨습니다',
-    };
-  }
-
-  const { error } = await supabase.from('trainer_pokemons').insert(
-    uniqueDexIds.map((dexIds) => ({
-      user_id: user.id,
-      dex_id: dexIds,
-    })),
-  );
+  const { error } = await supabase.rpc('create_starter_pokemons', { p_dex_ids: uniqueDexIds });
 
   if (error) {
     return {
       ok: false,
-      message: '스타팅 포켓몬 저장에 실패했습니다',
+      message: error.code === '23505' ? '이미 스타팅 포켓몬을 선택하셨습니다' : '스타팅 포켓몬 저장에 실패했습니다',
     };
   }
 

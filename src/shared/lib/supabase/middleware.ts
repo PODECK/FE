@@ -28,5 +28,5 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return { response, user }; // 갱신된 response와 user 반환
+  return { response, user, supabase }; // 갱신된 response와 user 반환
 }
