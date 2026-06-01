@@ -2,12 +2,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export async function getOnboardingPathForUser(supabase: SupabaseClient, userId: string) {
-  const { data: profile } = await supabase.from('profiles').select('nickname').eq('id', userId).maybeSingle();
+  const { data: profile } = await supabase.from('users').select('nickname').eq('id', userId).maybeSingle();
 
   if (!profile?.nickname) return '/nickname';
 
   const { count } = await supabase
-    .from('trainer_pokemons')
+    .from('owned_pokemon')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId);
 

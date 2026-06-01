@@ -4,7 +4,7 @@ export type TrainerSummary = {
   cardPackCount: number;
   battleRecord: {
     wins: number;
-    loses: number;
+    losses: number;
   };
   ownedPokemonCount: number;
   activeDeckDexIds: number[];

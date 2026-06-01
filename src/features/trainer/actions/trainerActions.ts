@@ -27,37 +27,61 @@ export async function saveNickname(nickname: string) {
     };
   }
 
-  const { error: profileError } = await supabase.from('profiles').upsert({
-    id: user.id,
-    nickname: parsed.data,
-    avatar_url: user.user_metadata?.avatar_url ?? null,
-  });
+  // 현재 로그인한 Supabase 유저가 Google 계정으로 로그인한 유저인지 확인하고, Google 계정의 고유 식별자(sub)를 꺼내는 코드
+  const googleIdentity = user.identities?.find((identity) => identity.provider === 'google');
+  const googleSub = googleIdentity?.identity_data?.sub ?? user.user_metadata?.sub;
 
-  if (profileError) {
+  if (!googleSub) {
     return {
       ok: false,
-      message: profileError.code === '23505' ? '이미 사용 중인 닉네임입니다' : '닉네임 저장에 실패했습니다',
+      message: 'Google 계정 정보를 확인할 수 없습니다',
+    };
+  }
+
+  const { error: userError } = await supabase.from('users').upsert({
+    id: user.id,
+    google_sub: googleSub,
+    nickname: parsed.data,
+  });
+
+  if (userError) {
+    return {
+      ok: false,
+      message: userError.code === '23505' ? '이미 사용 중인 닉네임입니다' : '닉네임 저장에 실패했습니다',
+    };
+  }
+
+  // 최초 가입 기본 카드팩 생성
+  const { error: packError } = await supabase.from('pack_inventory').upsert(
+    {
+      id: user.id,
+      pack_count: 1,
+    },
+    { onConflict: 'id' },
+  );
+
+  if (packError) {
+    return {
+      ok: false,
+      message: '카드팩 정보를 생성하지 못했습니다.',
     };
   }
 
   // 최초 생성 시 기본 트레이너 상태 준비
-  const { error: statsError } = await supabase.from('trainer_stats').upsert(
+  const { error: towerError } = await supabase.from('tower_progress').upsert(
     {
       user_id: user.id,
-      card_pack_count: 1,
-      wins: 0,
-      loses: 0,
       current_floor: 1,
+      max_cleared_floor: 0,
+      player_lives: 4,
     },
     { onConflict: 'user_id' },
   );
 
-  if (statsError) {
-    console.error('trainer_stats upsert error:', statsError);
-
+  if (towerError) {
     return {
       ok: false,
-      message: '트레이너 상태 생성에 실패했습니다.',
+      message: '탑 진행도를 생성하지 못했습니다.',
     };
   }
 
