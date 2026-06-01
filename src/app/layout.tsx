@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import './globals.css';
+import { Inter } from 'next/font/google';
+import { cn } from '@/shared/lib/cn';
+import { Toaster } from 'sonner';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const mazeSnippet = `
 (function (m, a, z, e) {
@@ -64,13 +69,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={cn('font-sans', inter.variable)}>
       <head>
         <Script id="maze-universal-snippet" strategy="afterInteractive">
           {mazeSnippet}
         </Script>
       </head>
-      <body className="min-h-screen text-gray-900 antialiased">{children}</body>
+      <body className="min-h-screen text-gray-900 antialiased">
+        {children} <Toaster richColors position="top-center" />
+      </body>
     </html>
   );
 }

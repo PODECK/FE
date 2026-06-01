@@ -1,10 +1,8 @@
 'use client';
 
-import { useLocalStorage } from '@/shared/hooks/useLocalStorage';
 import type { Generation } from '../_types/pokemon';
-import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
-import { storageKeys } from '@/app/(main)/(start)/_constants/key';
-import type { TrainerData, SelectedPokemon } from '@/app/(main)/(start)/_types/trainer';
+import { useMemo, useState, useTransition } from 'react';
+import type { SelectedPokemon } from '@/app/(main)/(start)/_types/trainer';
 import { generationTabs, starterPokemonDexIds } from '@/app/(main)/(start)/build-deck/_constants/starter-pokemon';
 import DialogBox from '@/shared/components/DialogBox';
 import GenerationTabs from './GenerationTabs';
@@ -14,13 +12,22 @@ import type { PokemonData } from '@/shared/types/pokemon';
 import PokemonDetailModal from '@/shared/components/pokemon/PokemonDetailModal';
 import { useRouter } from 'next/navigation';
 import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
+import { toast } from 'sonner';
+import { selectStarterPokemons } from '@/features/trainer/actions/trainerActions';
 
-const defaultTrainerName = '트레이너';
+type StarterPokemonSelectProps = {
+  trainerName: string;
+};
 
-export default function StarterPokemonSelect() {
+export default function StarterPokemonSelect({ trainerName }: StarterPokemonSelectProps) {
   const [activeGeneration, setActiveGeneration] = useState<Generation>(1);
   const [detailPokemon, setDetailPokemon] = useState<PokemonData | null>(null);
   const [selectedPokemons, setSelectedPokemons] = useState<SelectedPokemon[]>([]);
+  const [isPending, startTransition] = useTransition();
+
+  const router = useRouter();
+
+  const maxSelectedPokemonCount = 3;
 
   const pokemons = useMemo(() => {
     return starterPokemonDexIds
@@ -30,32 +37,25 @@ export default function StarterPokemonSelect() {
   }, [activeGeneration]);
 
   const selectedPokemonIds = selectedPokemons.map((pokemon) => pokemon.dexId);
-  const maxSelectedPokemonCount = 3;
-  const router = useRouter();
 
-  const { getItem: getTrainerData, setItem: setTrainerData } = useLocalStorage<TrainerData>(storageKeys.TRAINER_DATA);
+  const handleConfirmPokemonSelection = () => {
+    if (selectedPokemons.length !== maxSelectedPokemonCount) {
+      toast.warning('포켓몬 3마리를 선택해주세요.');
+      return;
+    }
 
-  const subscribeTrainerData = useCallback((onStoreChange: () => void) => {
-    if (typeof window === 'undefined') return () => {};
+    startTransition(async () => {
+      const result = await selectStarterPokemons(selectedPokemons.map((pokemon) => pokemon.dexId));
 
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === storageKeys.TRAINER_DATA) {
-        onStoreChange();
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
       }
-    };
 
-    window.addEventListener('storage', handleStorage);
-
-    return () => {
-      window.removeEventListener('storage', handleStorage);
-    };
-  }, []); // 닉네임을 불러올 때 hydration error 방지 목적
-
-  const trainerName = useSyncExternalStore(
-    subscribeTrainerData,
-    () => getTrainerData()?.nickname ?? defaultTrainerName,
-    () => defaultTrainerName,
-  );
+      toast.success(result.message);
+      router.push('/loading');
+    });
+  };
 
   const handleOpenDetail = async (pokemonId: number) => {
     setDetailPokemon(getPokemonByDexId(pokemonId) ?? null);
@@ -83,24 +83,6 @@ export default function StarterPokemonSelect() {
 
       return [...prevSelectedPokemons, pokemon];
     });
-  };
-
-  const handleConfirmPokemonSelection = () => {
-    const trainerData = getTrainerData();
-
-    if (!trainerData) {
-      router.replace('/');
-      return;
-    }
-
-    if (selectedPokemons.length !== maxSelectedPokemonCount) return;
-
-    setTrainerData({
-      ...trainerData,
-      selectedPokemons,
-    });
-
-    router.push('/loading');
   };
 
   return (
@@ -145,10 +127,10 @@ export default function StarterPokemonSelect() {
           <motion.button
             type="button"
             onClick={handleConfirmPokemonSelection}
-            disabled={selectedPokemonIds.length !== maxSelectedPokemonCount}
+            disabled={isPending || selectedPokemonIds.length !== maxSelectedPokemonCount}
             className="h-14 w-full rounded-lg bg-[var(--color-primary)] text-xl font-bold text-[var(--color-base-3)] shadow-[0_6px_18px_rgba(251,180,29,0.25)] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            선택하기 ({selectedPokemonIds.length}/{maxSelectedPokemonCount})
+            {isPending ? '저장 중...' : `선택하기 (${selectedPokemonIds.length}/${maxSelectedPokemonCount})`}
           </motion.button>
         </section>
       </DialogBox>
