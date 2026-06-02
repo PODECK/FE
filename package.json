@@ -14,7 +14,8 @@
     "prepare": "husky",
     "test": "vitest run",
     "generate:cards": "node scripts/generate-pokemon-cards.mjs",
-    "generate:cards:force": "node scripts/generate-pokemon-cards.mjs --force"
+    "generate:cards:force": "node scripts/generate-pokemon-cards.mjs --force",
+    "seed:game-data": "tsx scripts/seed-game-data.ts"
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,jsx}": [
@@ -54,6 +55,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.1",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "eslint-config-prettier": "^10.1.8",
@@ -62,6 +64,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5",
     "vitest": "^4.1.6"
   }
