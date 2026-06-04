@@ -1,19 +1,18 @@
 import HomeActionCards from '@/app/(main)/home/_components/HomeActionCards';
 import HomeBanner from '@/app/(main)/home/_components/HomeBanner';
 import TrainerStatusBar from '@/app/(main)/home/_components/TrainerStatusBar';
-import { pokemonCatalog } from '@/shared/data/pokemon-catalog';
 import HomeHeader from '@/shared/components/HomeHeader';
 import { redirect } from 'next/navigation';
 import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';
+import { getPokemonCount } from '@/entities/pokemon/api/pokemonApi';
 
 export default async function HomePage() {
-  const trainer = await getTrainerSummary();
+  const [trainer, totalPokemonCount] = await Promise.all([getTrainerSummary(), getPokemonCount()]);
 
   if (!trainer) {
     redirect('/');
   }
 
-  const totalPokemonCount = Object.keys(pokemonCatalog).length;
   const battleRecord = trainer.battleRecord ?? { wins: 0, losses: 0 };
 
   return (
