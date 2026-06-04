@@ -1,7 +1,7 @@
 'use client';
 
 import { typeColorMap, typeIconMap, typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
-import { getTypeEffectiveness, TYPE_CHART } from '../../../../data/type-chart';
+import { useEffect, useState } from 'react';
 import type { PokemonData, PokemonType } from '@/shared/types/pokemon';
 import { X } from 'lucide-react';
 import Image from 'next/image';
@@ -13,12 +13,47 @@ interface PokemonDetailModalProps {
 }
 
 export default function PokemonDetailModal({ pokemon, isOpen, onClose }: PokemonDetailModalProps) {
+  const selectedTypesKey = isOpen && pokemon ? pokemon.types.join(',') : '';
+
+  const [weaknessResult, setWeaknessResult] = useState<{
+    typesKey: string;
+    weaknesses: PokemonType[];
+  } | null>(null);
+
+  useEffect(() => {
+    if (!selectedTypesKey) return;
+
+    const controller = new AbortController();
+
+    async function loadWeaknesses(typesKey: string) {
+      const params = new URLSearchParams({ types: typesKey });
+
+      const response = await fetch(`/api/type-weaknesses?${params.toString()}`, {
+        signal: controller.signal,
+      });
+
+      if (!response.ok) return;
+
+      const data = (await response.json()) as { weaknesses?: PokemonType[] };
+
+      setWeaknessResult({
+        typesKey,
+        weaknesses: data.weaknesses ?? [],
+      });
+    }
+
+    loadWeaknesses(selectedTypesKey).catch(() => {
+      // 모달을 닫거나 포켓몬을 바꾸며 abort된 요청은 무시한다.
+    });
+
+    return () => {
+      controller.abort();
+    };
+  }, [selectedTypesKey]);
+
   if (!isOpen || pokemon === null) return null;
 
-  const weaknesses = (Object.keys(TYPE_CHART) as PokemonType[]).filter((attackType) => {
-    return getTypeEffectiveness(attackType, pokemon.types) > 1;
-  });
-
+  const weaknesses = weaknessResult?.typesKey === selectedTypesKey ? weaknessResult.weaknesses : [];
   const mainType = pokemon.types[0];
 
   return (
