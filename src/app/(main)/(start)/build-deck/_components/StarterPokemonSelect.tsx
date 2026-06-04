@@ -3,7 +3,7 @@
 import type { Generation } from '../_types/pokemon';
 import { useMemo, useState, useTransition } from 'react';
 import type { SelectedPokemon } from '@/app/(main)/(start)/_types/trainer';
-import { generationTabs, starterPokemonDexIds } from '@/app/(main)/(start)/build-deck/_constants/starter-pokemon';
+import { generationTabs } from '@/app/(main)/(start)/build-deck/_constants/starter-pokemon';
 import DialogBox from '@/shared/components/DialogBox';
 import GenerationTabs from './GenerationTabs';
 import { motion } from 'framer-motion';
@@ -11,15 +11,15 @@ import StarterPokemonCard from '@/app/(main)/(start)/build-deck/_components/Star
 import type { PokemonData } from '@/shared/types/pokemon';
 import PokemonDetailModal from '@/shared/components/pokemon/PokemonDetailModal';
 import { useRouter } from 'next/navigation';
-import { getPokemonByDexId } from '@/shared/data/pokemon-catalog';
 import { toast } from 'sonner';
 import { selectStarterPokemons } from '@/features/trainer/actions/trainerActions';
 
 type StarterPokemonSelectProps = {
   trainerName: string;
+  starterPokemons: PokemonData[];
 };
 
-export default function StarterPokemonSelect({ trainerName }: StarterPokemonSelectProps) {
+export default function StarterPokemonSelect({ trainerName, starterPokemons }: StarterPokemonSelectProps) {
   const [activeGeneration, setActiveGeneration] = useState<Generation>(1);
   const [detailPokemon, setDetailPokemon] = useState<PokemonData | null>(null);
   const [selectedPokemons, setSelectedPokemons] = useState<SelectedPokemon[]>([]);
@@ -30,11 +30,8 @@ export default function StarterPokemonSelect({ trainerName }: StarterPokemonSele
   const maxSelectedPokemonCount = 3;
 
   const pokemons = useMemo(() => {
-    return starterPokemonDexIds
-      .map((pokemonId) => getPokemonByDexId(pokemonId))
-      .filter((pokemon): pokemon is PokemonData => Boolean(pokemon))
-      .filter((pokemon) => pokemon.generation === activeGeneration);
-  }, [activeGeneration]);
+    return starterPokemons.filter((pokemon) => pokemon.generation === activeGeneration);
+  }, [activeGeneration, starterPokemons]);
 
   const selectedPokemonIds = selectedPokemons.map((pokemon) => pokemon.dexId);
 
@@ -58,7 +55,7 @@ export default function StarterPokemonSelect({ trainerName }: StarterPokemonSele
   };
 
   const handleOpenDetail = async (pokemonId: number) => {
-    setDetailPokemon(getPokemonByDexId(pokemonId) ?? null);
+    setDetailPokemon(starterPokemons.find((pokemon) => pokemon.dexId === pokemonId) ?? null);
   };
 
   const handleCloseDetail = () => {
