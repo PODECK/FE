@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useSyncExternalStore } from 'react';
 
-import { getAllPokemon } from '@/shared/data/pokemon-catalog';
 import type { PokemonData, PokemonType } from '@/shared/types/pokemon';
 import type { TrainerData } from '@/app/(main)/(start)/_types/trainer';
 import { storageKeys } from '@/app/(main)/(start)/_constants/key';
@@ -46,7 +45,11 @@ function parseOwnedPokemonIds(raw: string | null): number[] {
   }
 }
 
-export default function DexPage() {
+type DexPageProps = {
+  pokemons: PokemonData[];
+};
+
+export default function DexPage({ pokemons }: DexPageProps) {
   const [search, setSearch] = useState('');
   const [generations, setGenerations] = useState<string[]>([]);
   const [types, setTypes] = useState<PokemonType[]>([] as PokemonType[]);
@@ -83,8 +86,7 @@ export default function DexPage() {
     setPage(1);
   };
 
-  const data = getAllPokemon();
-  const filteredData = data.filter((pokemon) => {
+  const filteredData = pokemons.filter((pokemon) => {
     //이름 검색
     const matchSearch = search === '' || pokemon.koName.includes(search);
     //세대 검색
