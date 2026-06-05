@@ -30,8 +30,10 @@
     ]
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.80",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
+    "ai": "^6.0.197",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "howler": "^2.2.4",
