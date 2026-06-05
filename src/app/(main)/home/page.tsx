@@ -7,7 +7,7 @@ import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';
 import { getPokemonCount } from '@/entities/pokemon/api/pokemonApi';
 
 export default async function HomePage() {
-  const [trainer, totalPokemonCount] = await Promise.all([getTrainerSummary(), getPokemonCount()]);
+  const [trainer, totalPokemonCount] = await Promise.all([getTrainerSummary(), getPokemonCount().catch(() => 0)]);
 
   if (!trainer) {
     redirect('/');
