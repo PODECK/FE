@@ -94,6 +94,8 @@ const PokemonSpeciesRow = z.object({
   base_hp: z.number().int(),
   base_atk: z.number().int(),
   base_def: z.number().int(),
+  base_sp_atk: z.number().int(),
+  base_sp_def: z.number().int(),
   base_spd: z.number().int(),
   generation: z.number().int(),
   evolution_stage: z.number().int(),
@@ -318,13 +320,21 @@ async function fetchMainAbility(pokemon: any) {
   return value;
 }
 
+const pokemonCache = new Map<number, any>();
+
+async function fetchPokemon(dexId: number) {
+  const cached = pokemonCache.get(dexId);
+  if (cached) return cached;
+
+  const pokemon = await fetchPokeApi<any>(`/pokemon/${dexId}`);
+  pokemonCache.set(dexId, pokemon);
+  return pokemon;
+}
+
 // PokeAPI의 pokemon + pokemon-species 응답을 pokemon_species row로 변환한다.
 // 외부 API 응답 전체가 아니라 앱에서 필요한 필드만 선별해서 저장한다.
 async function fetchPokemonSpeciesRow(dexId: number): Promise<PokemonSpeciesRow> {
-  const [pokemon, species] = await Promise.all([
-    fetchPokeApi<any>(`/pokemon/${dexId}`),
-    fetchPokeApi<any>(`/pokemon-species/${dexId}`),
-  ]);
+  const [pokemon, species] = await Promise.all([fetchPokemon(dexId), fetchPokeApi<any>(`/pokemon-species/${dexId}`)]);
 
   return PokemonSpeciesRow.parse({
     dex_id: dexId,
@@ -335,6 +345,8 @@ async function fetchPokemonSpeciesRow(dexId: number): Promise<PokemonSpeciesRow>
     base_hp: findStat(pokemon.stats, 'hp'),
     base_atk: findStat(pokemon.stats, 'attack'),
     base_def: findStat(pokemon.stats, 'defense'),
+    base_sp_atk: findStat(pokemon.stats, 'special-attack'),
+    base_sp_def: findStat(pokemon.stats, 'special-defense'),
     base_spd: findStat(pokemon.stats, 'speed'),
     generation: parseGeneration(species.generation.name),
     evolution_stage: await fetchEvolutionStage(species),
@@ -390,7 +402,7 @@ async function fetchLearnsetRows(dexIds: number[]): Promise<LearnsetRow[]> {
   const uniqueKeys = new Set<string>();
 
   for (const dexId of dexIds) {
-    const pokemon = await fetchPokeApi<any>(`/pokemon/${dexId}`);
+    const pokemon = await fetchPokemon(dexId);
 
     for (const moveEntry of pokemon.moves) {
       const versionDetail = findMoveVersionDetail(moveEntry);
