@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from('type-charts')
+    .from('type_charts')
     .select('attack_type_id, defense_type_id, multiplier')
     .in('defense_type_id', validDefenderTypes);
 
@@ -35,11 +35,12 @@ export async function GET(request: Request) {
   }
 
   const effectivenessByAttackType = new Map<PokemonTypeValue, number>();
+  const rows = data ?? [];
 
-  data.forEach((row) => {
+  for (const row of rows) {
     const parsedAttackType = PokemonType.safeParse(row.attack_type_id);
 
-    if (!parsedAttackType.success) return;
+    if (!parsedAttackType.success) continue;
 
     const attackType = parsedAttackType.data;
     const current = effectivenessByAttackType.get(attackType) ?? 1;
@@ -51,5 +52,5 @@ export async function GET(request: Request) {
       .map(([attackType]) => attackType);
 
     return NextResponse.json({ weaknesses });
-  });
+  }
 }
