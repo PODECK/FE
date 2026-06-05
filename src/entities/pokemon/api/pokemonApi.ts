@@ -10,6 +10,8 @@ type PokemonSpeciesRow = {
   base_hp: number;
   base_atk: number;
   base_def: number;
+  base_sp_atk: number;
+  base_sp_def: number;
   base_spd: number;
   generation: number;
   evolution_stage: number;
@@ -32,8 +34,8 @@ function mapPokemon(row: PokemonSpeciesRow): PokemonData {
       hp: row.base_hp,
       attack: row.base_atk,
       defense: row.base_def,
-      specialAttack: row.base_atk,
-      specialDefense: row.base_def,
+      specialAttack: row.base_sp_atk,
+      specialDefense: row.base_sp_def,
       speed: row.base_spd,
     },
     spriteUrl: row.sprite_url ?? '',
@@ -60,6 +62,8 @@ const pokemonSelect = `
   base_atk,
   base_def,
   base_spd,
+  base_sp_atk,
+  base_sp_def,
   generation,
   evolution_stage,
   sprite_url,
