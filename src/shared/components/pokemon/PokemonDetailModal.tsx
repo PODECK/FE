@@ -42,8 +42,9 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
       });
     }
 
-    loadWeaknesses(selectedTypesKey).catch(() => {
-      // 모달을 닫거나 포켓몬을 바꾸며 abort된 요청은 무시한다.
+    loadWeaknesses(selectedTypesKey).catch((error) => {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      console.error('Failed to load type weaknesses:', error);
     });
 
     return () => {
