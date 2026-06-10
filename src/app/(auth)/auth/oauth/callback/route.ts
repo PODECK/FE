@@ -20,5 +20,9 @@ export async function GET(request: NextRequest) {
 
   const nextPath = await getOnboardingPath();
 
+  if (nextPath === '/home') {
+    return NextResponse.redirect(new URL('/loading', request.url));
+  }
+
   return NextResponse.redirect(new URL(nextPath, request.url));
 }
