@@ -11,6 +11,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 3,
     koName: '이상해꽃',
+    artworkUrl: '',
     type1: 'grass',
     type2: 'poison',
     level: 45,
@@ -25,6 +26,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 407,
     koName: '로즈레이드',
+    artworkUrl: '',
     type1: 'grass',
     type2: 'poison',
     level: 40,
@@ -40,6 +42,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 6,
     koName: '리자몽',
+    artworkUrl: '',
     type1: 'fire',
     type2: 'flying',
     level: 50,
@@ -54,6 +57,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 146,
     koName: '파이어',
+    artworkUrl: '',
     type1: 'fire',
     type2: 'flying',
     level: 60,
@@ -69,6 +73,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 9,
     koName: '거북왕',
+    artworkUrl: '',
     type1: 'water',
     type2: null,
     level: 50,
@@ -83,6 +88,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 382,
     koName: '가이오가',
+    artworkUrl: '',
     type1: 'water',
     type2: null,
     level: 70,
@@ -97,6 +103,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 260,
     koName: '대짱이',
+    artworkUrl: '',
     type1: 'water',
     type2: 'ground',
     level: 45,
@@ -112,6 +119,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 25,
     koName: '피카츄',
+    artworkUrl: '',
     type1: 'electric',
     type2: null,
     level: 30,
@@ -126,6 +134,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 145,
     koName: '썬더',
+    artworkUrl: '',
     type1: 'electric',
     type2: 'flying',
     level: 60,
@@ -140,6 +149,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 462,
     koName: '자포코일',
+    artworkUrl: '',
     type1: 'electric',
     type2: 'steel',
     level: 45,
@@ -155,6 +165,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 144,
     koName: '프리져',
+    artworkUrl: '',
     type1: 'ice',
     type2: 'flying',
     level: 60,
@@ -169,6 +180,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 478,
     koName: '포푸니라',
+    artworkUrl: '',
     type1: 'ice',
     type2: 'ghost',
     level: 40,
@@ -184,6 +196,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 448,
     koName: '루카리오',
+    artworkUrl: '',
     type1: 'fighting',
     type2: 'steel',
     level: 50,
@@ -198,6 +211,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 214,
     koName: '헤라크로스',
+    artworkUrl: '',
     type1: 'bug',
     type2: 'fighting',
     level: 40,
@@ -213,6 +227,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 150,
     koName: '뮤츠',
+    artworkUrl: '',
     type1: 'psychic',
     type2: null,
     level: 70,
@@ -227,6 +242,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 151,
     koName: '뮤',
+    artworkUrl: '',
     type1: 'psychic',
     type2: null,
     level: 60,
@@ -241,6 +257,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 249,
     koName: '루기아',
+    artworkUrl: '',
     type1: 'psychic',
     type2: 'flying',
     level: 70,
@@ -256,6 +273,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 94,
     koName: '팬텀',
+    artworkUrl: '',
     type1: 'ghost',
     type2: 'poison',
     level: 45,
@@ -271,6 +289,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 149,
     koName: '망나뇽',
+    artworkUrl: '',
     type1: 'dragon',
     type2: 'flying',
     level: 55,
@@ -285,6 +304,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 373,
     koName: '보만다',
+    artworkUrl: '',
     type1: 'dragon',
     type2: 'flying',
     level: 55,
@@ -299,6 +319,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 384,
     koName: '레쿠쟈',
+    artworkUrl: '',
     type1: 'dragon',
     type2: 'flying',
     level: 70,
@@ -313,6 +334,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 445,
     koName: '한카리아스',
+    artworkUrl: '',
     type1: 'dragon',
     type2: 'ground',
     level: 55,
@@ -328,6 +350,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 248,
     koName: '마기라스',
+    artworkUrl: '',
     type1: 'rock',
     type2: 'dark',
     level: 60,
@@ -343,6 +366,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 383,
     koName: '그란돈',
+    artworkUrl: '',
     type1: 'ground',
     type2: null,
     level: 70,
@@ -357,6 +381,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 330,
     koName: '플라이곤',
+    artworkUrl: '',
     type1: 'dragon',
     type2: 'ground',
     level: 40,
@@ -372,6 +397,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 212,
     koName: '시저리아',
+    artworkUrl: '',
     type1: 'bug',
     type2: 'steel',
     level: 40,
@@ -386,6 +412,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 395,
     koName: '엠페르트',
+    artworkUrl: '',
     type1: 'water',
     type2: 'steel',
     level: 45,
@@ -401,6 +428,7 @@ const MOCK_ROSTER: RosterPokemon[] = [
   {
     dexId: 143,
     koName: '잠만보',
+    artworkUrl: '',
     type1: 'normal',
     type2: null,
     level: 40,

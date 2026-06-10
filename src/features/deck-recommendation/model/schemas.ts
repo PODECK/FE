@@ -14,6 +14,7 @@ export const RosterMoveSchema = z.object({
 export const RosterPokemonSchema = z.object({
   dexId: z.number(),
   koName: z.string(),
+  artworkUrl: z.string(),
   type1: PokemonType,
   type2: PokemonType.nullable(),
   level: z.number(),
@@ -38,8 +39,8 @@ export const RecommendedDeckSchema = z.object({
     .array(
       z.object({
         dexId: z.number(),
-        role: z.string(),
-        reason: z.string(),
+        koName: z.string(),
+        artworkUrl: z.string(),
       }),
     )
     .min(3)

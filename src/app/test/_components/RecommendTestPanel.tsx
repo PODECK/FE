@@ -104,11 +104,10 @@ export default function RecommendTestPanel() {
               <div className="grid gap-3">
                 {result.data.deck.map((p) => (
                   <div key={p.dexId} className="rounded border border-gray-700 bg-gray-800 p-3">
-                    <div className="mb-1 flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <span className="font-bold text-yellow-400">#{p.dexId}</span>
-                      <span className="rounded bg-blue-900 px-2 py-0.5 text-xs text-blue-200">{p.role}</span>
+                      <span className="text-sm text-gray-200">{p.koName}</span>
                     </div>
-                    <p className="text-sm text-gray-300">{p.reason}</p>
                   </div>
                 ))}
               </div>

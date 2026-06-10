@@ -1,7 +1,17 @@
 import { generateObject } from 'ai';
+import { z } from 'zod';
 import { google } from '@ai-sdk/google';
-import { RecommendedDeckSchema } from '../model/schemas';
 import type { RecommendRequest, RecommendedDeck, RosterPokemon } from '../model/schemas';
+
+const AiDeckSchema = z.object({
+  title: z.string(),
+  description: z.string().transform((s) => s.slice(0, 14)),
+  deck: z
+    .array(z.object({ dexId: z.number() }))
+    .min(3)
+    .max(6),
+  strategy: z.string(),
+});
 
 export const RECOMMENDATION_MODEL = 'gemini-2.0-flash';
 
@@ -21,7 +31,7 @@ const SYSTEM_PROMPT = `너는 PODECK라는 포켓몬 턴제 카드 배틀 게임
 - 종족값뿐 아니라 타입 시너지, 약점 보완, 기술 구성을 종합적으로 고려한다.
 - 각 포켓몬의 역할(role)과 선택 이유(reason)를 한국어로 구체적으로 설명한다.
 - title은 덱 콘셉트를 10자 이내로 작성한다. (예: "격투 카운터덱", "상태이상 특화덱")
-- description은 전략 핵심을 20자 이내 한 줄로 작성한다. (예: "격투 타입을 효과적으로 제압하자!")
+- description은 전략 핵심을 14자 이내로 "~하자!" 형식으로 작성한다. (예: "상태이상으로 압박하자!", "격투 타입을 제압하자!")
 - strategy에는 이 덱의 전체 운영 방향을 한국어로 서술한다.`;
 
 function themeInstruction(req: RecommendRequest): string {
@@ -53,7 +63,7 @@ export async function generateRecommendation(
   req: RecommendRequest,
   candidates: RosterPokemon[],
 ): Promise<RecommendedDeck | null> {
-  const candidateSet = new Set(candidates.map((c) => c.dexId));
+  const candidateMap = new Map(candidates.map((c) => [c.dexId, c]));
   const prompt = `${themeInstruction(req)}\n\n후보 포켓몬:\n${serializeCandidates(candidates)}`;
   const temperatures = [0.7, 0.3];
 
@@ -61,16 +71,23 @@ export async function generateRecommendation(
     try {
       const { object } = await generateObject({
         model,
-        schema: RecommendedDeckSchema,
+        schema: AiDeckSchema,
         system: SYSTEM_PROMPT,
         prompt,
         temperature,
       });
 
-      const allValid = object.deck.every((p) => candidateSet.has(p.dexId));
+      const allValid = object.deck.every((p) => candidateMap.has(p.dexId));
       if (!allValid) continue;
 
-      return object;
+      return {
+        ...object,
+        deck: object.deck.map((p) => ({
+          dexId: p.dexId,
+          koName: candidateMap.get(p.dexId)!.koName,
+          artworkUrl: candidateMap.get(p.dexId)!.artworkUrl,
+        })),
+      };
     } catch {
       continue;
     }
