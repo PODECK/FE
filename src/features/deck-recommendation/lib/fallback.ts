@@ -28,6 +28,8 @@ export function fallbackRecommendation(req: RecommendRequest, candidates: Roster
   });
 
   return {
+    title: `${themeLabel} 추천덱`,
+    description: `${themeLabel} 전략에 최적화된 자동 추천 덱입니다.`,
     deck,
     strategy: `${themeLabel} 전략으로, 보유 포켓몬 중 기준에 부합하는 상위 포켓몬을 우선 편성했습니다. (자동 추천)`,
   };

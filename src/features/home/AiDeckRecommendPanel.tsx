@@ -1,9 +1,17 @@
-import HomeSidebarPanel from '@/features/home/HomeSidebarPanel';
+import { recommendDeck } from '@/features/deck-recommendation/actions/recommendDeck';
 
-export default function AiDeckRecommendPanel() {
+import AiDeckRecommendContent from './AiDeckRecommendContent';
+import HomeSidebarPanel from './HomeSidebarPanel';
+
+export default async function AiDeckRecommendPanel() {
+  const [result1, result2] = await Promise.all([
+    recommendDeck({ theme: 'optimal' }),
+    recommendDeck({ theme: 'status' }),
+  ]);
+
   return (
     <HomeSidebarPanel title="AI 추천 덱" badge="DECK ASSIST" className="min-h-138.75">
-      <p className="mt-4 text-sm font-semibold text-[var(--color-base-1)]">AI 덱 구성 영역</p>
+      <AiDeckRecommendContent initial1={result1} initial2={result2} />
     </HomeSidebarPanel>
   );
 }

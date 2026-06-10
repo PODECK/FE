@@ -119,7 +119,7 @@ function StatusProgress({
   const safeRate = Math.min(Math.max(rate, 0), 100);
 
   return (
-    <div className="grid grid-cols-[12.5_minmax(0,1fr)_13] items-center gap-1">
+    <div className="grid grid-cols-[50px_minmax(0,1fr)_52px] items-center gap-1">
       <Image src={iconSrc} alt="" width={35} height={35} className="ml-3" />
 
       <div className="min-w-0">

@@ -20,6 +20,8 @@ const SYSTEM_PROMPT = `너는 PODECK라는 포켓몬 턴제 카드 배틀 게임
 - 반드시 제시된 후보 포켓몬(candidate) 중에서만 고른다. 후보에 없는 포켓몬은 절대 추천하지 않는다.
 - 종족값뿐 아니라 타입 시너지, 약점 보완, 기술 구성을 종합적으로 고려한다.
 - 각 포켓몬의 역할(role)과 선택 이유(reason)를 한국어로 구체적으로 설명한다.
+- title은 덱 콘셉트를 10자 이내로 작성한다. (예: "격투 카운터덱", "상태이상 특화덱")
+- description은 전략 핵심을 20자 이내 한 줄로 작성한다. (예: "격투 타입을 효과적으로 제압하자!")
 - strategy에는 이 덱의 전체 운영 방향을 한국어로 서술한다.`;
 
 function themeInstruction(req: RecommendRequest): string {

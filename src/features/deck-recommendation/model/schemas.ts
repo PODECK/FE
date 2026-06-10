@@ -32,6 +32,8 @@ export const RecommendRequestSchema = z
   });
 
 export const RecommendedDeckSchema = z.object({
+  title: z.string(),
+  description: z.string(),
   deck: z
     .array(
       z.object({

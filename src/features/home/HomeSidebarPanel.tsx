@@ -11,9 +11,9 @@ interface HomeSidebarPanelProps {
 
 export default function HomeSidebarPanel({ title, badge, className, children }: HomeSidebarPanelProps) {
   return (
-    <section className={cn('rounded-5 relative bg-[var(--color-base-3)] p-5 shadow-lg', className)}>
+    <section className={cn('bg-base-3 relative rounded-2xl p-5 shadow-lg', className)}>
       <div className="flex items-start justify-between gap-4">
-        <h2 className="shrink-0 text-base font-extrabold text-[var(--color-base-0)]">{title}</h2>
+        <h2 className="text-base-0 shrink-0 text-base font-extrabold">{title}</h2>
         <span className="text-xs font-extrabold whitespace-nowrap text-[#D6D6D6]">{badge}</span>
       </div>
       {children}

@@ -34,11 +34,12 @@ async function loadRoster(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
 ): Promise<RosterPokemon[]> {
-  const { data: trainerPokemons } = await supabase.from('trainer_pokemons').select('dex_id').eq('user_id', userId);
+  const { data: trainerPokemons } = await supabase.from('owned_pokemon').select('dex_id').eq('user_id', userId);
 
   if (!trainerPokemons || trainerPokemons.length === 0) return [];
 
-  const dexIds = trainerPokemons.map((p: { dex_id: number }) => p.dex_id);
+  // 같은 종을 여러 마리 보유할 수 있으므로 dex_id 중복 제거
+  const dexIds = [...new Set(trainerPokemons.map((p: { dex_id: number }) => p.dex_id))];
 
   const { data: species } = await supabase
     .from('pokemon_species')
