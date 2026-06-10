@@ -7,7 +7,13 @@ import type { RecommendResponse, RosterPokemon } from '../model/schemas';
 import { filterOptimal, filterStatus, filterCounter } from '../lib/rule-engine';
 import { generateRecommendation, RECOMMENDATION_MODEL } from '../lib/gemini';
 import { fallbackRecommendation } from '../lib/fallback';
-import { computeRosterHash, themeKey, getCachedRecommendation, setCachedRecommendation } from '../lib/cache';
+import {
+  computeRosterHash,
+  themeKey,
+  getCachedRecommendation,
+  setCachedRecommendation,
+  checkRateLimit,
+} from '../lib/cache';
 import rawMovesJson from '../../../../data/moves.json';
 import rawPokemonMovesJson from '../../../../data/pokemon-moves.json';
 
@@ -105,6 +111,14 @@ export async function recommendDeck(rawInput: unknown): Promise<RecommendRespons
   const cached = await getCachedRecommendation(supabase, user.id, rosterHash, cacheTheme);
   if (cached) {
     return { ok: true, data: cached.data, cached: true, model: cached.model };
+  }
+
+  const rateLimit = await checkRateLimit(supabase, user.id);
+  if (rateLimit.limited) {
+    return {
+      ok: false,
+      message: `덱 추천은 1분에 한 번만 요청할 수 있습니다. ${rateLimit.remainingSeconds}초 후에 다시 시도해주세요.`,
+    };
   }
 
   let candidates: RosterPokemon[];
