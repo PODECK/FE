@@ -1,4 +1,4 @@
-import HomeSidebarPanel from '@/app/(main)/home/_components/HomeSidebarPanel';
+import HomeSidebarPanel from '@/features/home/HomeSidebarPanel';
 
 export default function AiDeckRecommendPanel() {
   return (

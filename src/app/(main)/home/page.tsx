@@ -1,8 +1,8 @@
-import AiDeckRecommendPanel from '@/app/(main)/home/_components/AiDeckRecommendPanel';
-import HomeActionCards from '@/app/(main)/home/_components/HomeActionCards';
-import HomeBanner from '@/app/(main)/home/_components/HomeBanner';
-import HomeMissionCard from '@/app/(main)/home/_components/HomeMissionCard';
-import TrainerStatusCard from '@/app/(main)/home/_components/TrainerStatusCard';
+import AiDeckRecommendPanel from '@/features/home/AiDeckRecommendPanel';
+import HomeActionCards from '@/features/home/HomeActionCards';
+import HomeBanner from '@/features/home/HomeBanner';
+import HomeMissionCard from '@/features/home/HomeMissionCard';
+import TrainerStatusCard from '@/features/home/TrainerStatusCard';
 import HomeHeader from '@/shared/components/HomeHeader';
 import { redirect } from 'next/navigation';
 import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';

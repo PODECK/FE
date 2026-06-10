@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 
-import HomeSidebarPanel from '@/app/(main)/home/_components/HomeSidebarPanel';
+import HomeSidebarPanel from '@/features/home/HomeSidebarPanel';
 
 interface TrainerStatusCardProps {
   trainerName: string;
