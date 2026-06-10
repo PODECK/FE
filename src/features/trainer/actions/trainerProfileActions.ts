@@ -66,7 +66,7 @@ export async function updateTrainerProfile(formData: FormData) {
     }
 
     const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-    avatarUrl = data.publicUrl;
+    avatarUrl = `${data.publicUrl}?t=${Date.now()}`;
   }
 
   const updatePayload: {
@@ -121,7 +121,12 @@ export async function deleteTrainerAccount() {
   await adminSupabase.storage
     .from('avatars')
     .remove(AVATAR_EXTENSIONS.map((extension) => `${user.id}/avatar.${extension}`));
-  await adminSupabase.from('users').delete().eq('id', user.id);
+
+  const { error: dbDeleteError } = await adminSupabase.from('users').delete().eq('id', user.id);
+
+  if (dbDeleteError) {
+    return { ok: false, message: '회원 탈퇴에 실패했습니다.' };
+  }
 
   const { error } = await adminSupabase.auth.admin.deleteUser(user.id);
 
