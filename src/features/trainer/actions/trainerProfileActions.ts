@@ -118,14 +118,18 @@ export async function deleteTrainerAccount() {
 
   const adminSupabase = createAdminClient();
 
-  await adminSupabase.storage
+  const { error: storageError } = await adminSupabase.storage
     .from('avatars')
     .remove(AVATAR_EXTENSIONS.map((extension) => `${user.id}/avatar.${extension}`));
 
-  const { error: dbDeleteError } = await adminSupabase.from('users').delete().eq('id', user.id);
+  if (storageError) {
+    console.error('아바타 삭제에 실패했습니다 : ', storageError);
+  }
 
-  if (dbDeleteError) {
-    return { ok: false, message: '회원 탈퇴에 실패했습니다.' };
+  const { error: dbError } = await adminSupabase.from('users').delete().eq('id', user.id);
+
+  if (dbError) {
+    return { ok: false, message: '사용자 데이터 삭제에 실패했습니다' };
   }
 
   const { error } = await adminSupabase.auth.admin.deleteUser(user.id);
