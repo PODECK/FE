@@ -26,7 +26,7 @@ export async function getCachedRecommendation(
   rosterHash: string,
   theme: string,
 ): Promise<{ data: RecommendedDeck; model: string } | null> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('deck_recommendation_cache')
     .select('result, model')
     .eq('user_id', userId)
@@ -34,7 +34,7 @@ export async function getCachedRecommendation(
     .eq('theme', theme)
     .maybeSingle();
 
-  if (!data) return null;
+  if (!data || error) return null;
   return { data: data.result as RecommendedDeck, model: data.model as string };
 }
 
@@ -70,10 +70,14 @@ export async function setCachedRecommendation(
   result: RecommendedDeck,
   model: string,
 ): Promise<void> {
-  await supabase
+  const { error } = await supabase
     .from('deck_recommendation_cache')
     .upsert(
       { user_id: userId, roster_hash: rosterHash, theme, result, model },
       { onConflict: 'user_id,roster_hash,theme' },
     );
+
+  if (error) {
+    console.error('Error setting cached recommendation:', error);
+  }
 }

@@ -43,7 +43,7 @@ async function loadRoster(
 
   const { data: species } = await supabase
     .from('pokemon_species')
-    .select('dex_id, ko_name, type1_id, type2_id, base_hp, base_atk, base_def, base_spd')
+    .select('dex_id, ko_name, artwork_url, type1_id, type2_id, base_hp, base_atk, base_def, base_spd')
     .in('dex_id', dexIds);
 
   if (!species) return [];
@@ -52,6 +52,7 @@ async function loadRoster(
     (s: {
       dex_id: number;
       ko_name: string;
+      artwork_url: string | null;
       type1_id: PokemonType;
       type2_id: PokemonType | null;
       base_hp: number;
@@ -74,6 +75,7 @@ async function loadRoster(
       return {
         dexId: s.dex_id,
         koName: s.ko_name,
+        artworkUrl: s.artwork_url ?? '',
         type1: s.type1_id,
         type2: s.type2_id,
         level: 1,
@@ -84,6 +86,7 @@ async function loadRoster(
   );
 }
 
+// AI API 호출용 덱 추천 함수
 export async function recommendDeck(rawInput: unknown): Promise<RecommendResponse> {
   const parsed = RecommendRequestSchema.safeParse(rawInput);
   if (!parsed.success) {
@@ -134,9 +137,104 @@ export async function recommendDeck(rawInput: unknown): Promise<RecommendRespons
   const aiResult = await generateRecommendation(req, candidates);
   const result = aiResult ?? fallbackRecommendation(req, candidates);
 
-  if (aiResult) {
-    await setCachedRecommendation(supabase, user.id, rosterHash, cacheTheme, aiResult, RECOMMENDATION_MODEL);
-  }
+  await setCachedRecommendation(
+    supabase,
+    user.id,
+    rosterHash,
+    cacheTheme,
+    result,
+    aiResult ? RECOMMENDATION_MODEL : 'fallback',
+  );
 
   return { ok: true, data: result, cached: false, model: RECOMMENDATION_MODEL };
+}
+
+export type HomeDecksResponse = {
+  optimal: RecommendResponse;
+  status: RecommendResponse;
+};
+
+// 홈 화면에서 사용하는 덱 추천 함수
+export async function recommendHomeDecks(): Promise<HomeDecksResponse> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    const err: RecommendResponse = { ok: false, message: '로그인이 필요합니다' };
+    return { optimal: err, status: err };
+  }
+
+  const roster = await loadRoster(supabase, user.id);
+
+  if (roster.length < 3) {
+    const err: RecommendResponse = { ok: false, message: '추천을 받으려면 최소 3마리의 포켓몬이 필요합니다' };
+    return { optimal: err, status: err };
+  }
+
+  const rosterHash = await computeRosterHash(roster);
+
+  const [cachedOptimal, cachedStatus] = await Promise.all([
+    getCachedRecommendation(supabase, user.id, rosterHash, 'optimal'),
+    getCachedRecommendation(supabase, user.id, rosterHash, 'status'),
+  ]);
+
+  if (cachedOptimal && cachedStatus) {
+    return {
+      optimal: { ok: true, data: cachedOptimal.data, cached: true, model: cachedOptimal.model },
+      status: { ok: true, data: cachedStatus.data, cached: true, model: cachedStatus.model },
+    };
+  }
+
+  const rateLimit = await checkRateLimit(supabase, user.id);
+  if (rateLimit.limited) {
+    const err: RecommendResponse = {
+      ok: false,
+      message: `덱 추천은 1분에 한 번만 요청할 수 있습니다. ${rateLimit.remainingSeconds}초 후에 다시 시도해주세요.`,
+    };
+    return {
+      optimal: cachedOptimal ? { ok: true, data: cachedOptimal.data, cached: true, model: cachedOptimal.model } : err,
+      status: cachedStatus ? { ok: true, data: cachedStatus.data, cached: true, model: cachedStatus.model } : err,
+    };
+  }
+
+  // Sequential Gemini calls to prevent rate-limit race condition on parallel cold starts
+  let optimalResult: RecommendResponse;
+  if (cachedOptimal) {
+    optimalResult = { ok: true, data: cachedOptimal.data, cached: true, model: cachedOptimal.model };
+  } else {
+    const candidates = filterOptimal(roster);
+    const aiResult = await generateRecommendation({ theme: 'optimal' }, candidates);
+    const data = aiResult ?? fallbackRecommendation({ theme: 'optimal' }, candidates);
+    await setCachedRecommendation(
+      supabase,
+      user.id,
+      rosterHash,
+      'optimal',
+      data,
+      aiResult ? RECOMMENDATION_MODEL : 'fallback',
+    );
+    optimalResult = { ok: true, data, cached: false, model: RECOMMENDATION_MODEL };
+  }
+
+  let statusResult: RecommendResponse;
+  if (cachedStatus) {
+    statusResult = { ok: true, data: cachedStatus.data, cached: true, model: cachedStatus.model };
+  } else {
+    const candidates = filterStatus(roster);
+    const aiResult = await generateRecommendation({ theme: 'status' }, candidates);
+    const data = aiResult ?? fallbackRecommendation({ theme: 'status' }, candidates);
+    await setCachedRecommendation(
+      supabase,
+      user.id,
+      rosterHash,
+      'status',
+      data,
+      aiResult ? RECOMMENDATION_MODEL : 'fallback',
+    );
+    statusResult = { ok: true, data, cached: false, model: RECOMMENDATION_MODEL };
+  }
+
+  return { optimal: optimalResult, status: statusResult };
 }

@@ -1,28 +1,41 @@
 'use client';
 
+import Image from 'next/image';
+
 import { cn } from '@/shared/lib/cn';
 
 const DEFAULT_SLOT_COUNT = 6;
+
+type DeckSlot = {
+  artworkUrl: string;
+  koName: string;
+};
 
 interface AiDeckCardProps {
   badge?: string;
   title: string;
   description: string;
+  deck: DeckSlot[];
   slotCount?: number;
   onUseDeck?: () => void;
   disabled?: boolean;
   className?: string;
 }
 
-function DeckPokemonSlot({ wide = false }: { wide?: boolean }) {
+function DeckPokemonSlot({ artworkUrl, koName, wide = false }: DeckSlot & { wide?: boolean }) {
+  const slotClassName = cn(
+    'bg-base-3 shrink-0 overflow-hidden rounded-sm border border-[#DBDBDB]',
+    wide ? 'h-8.25 w-9' : 'h-8.25 w-8.5',
+  );
+
+  if (!artworkUrl) {
+    return <div aria-hidden className={slotClassName} />;
+  }
+
   return (
-    <div
-      aria-hidden
-      className={cn(
-        'shrink-0 rounded-sm border border-[#DBDBDB] bg-[var(--color-base-3)]',
-        wide ? 'h-8.25 w-9' : 'h-8.25 w-8.5',
-      )}
-    />
+    <div className={slotClassName}>
+      <Image src={artworkUrl} alt={koName} width={36} height={33} className="h-full w-full object-contain" />
+    </div>
   );
 }
 
@@ -30,14 +43,21 @@ export default function AiDeckCard({
   badge = '추천',
   title,
   description,
-  slotCount = DEFAULT_SLOT_COUNT,
+  deck,
+  slotCount = deck.length || DEFAULT_SLOT_COUNT,
   onUseDeck,
   disabled = false,
   className,
 }: AiDeckCardProps) {
   const slots = Array.from({ length: slotCount }, (_, index) => {
     const isEdge = index === 0 || index === slotCount - 1;
-    return { id: index, wide: isEdge };
+    const pokemon = deck[index];
+    return {
+      id: index,
+      wide: isEdge,
+      artworkUrl: pokemon?.artworkUrl ?? '',
+      koName: pokemon?.koName ?? '',
+    };
   });
 
   return (
@@ -49,13 +69,13 @@ export default function AiDeckCard({
 
         <div className="flex min-w-0 flex-col gap-1.25">
           <h3 className="text-base-0 text-base leading-[1.4] font-bold tracking-tight">{title}</h3>
-          <p className="text-base-1 max-w-45 text-sm leading-[1.4] font-semibold tracking-tight">{description}</p>
+          <p className="text-base-1 max-w-45 text-sm leading-[1.4] tracking-tight">{description}</p>
         </div>
       </div>
 
-      <div className="flex h-8.25 items-center justify-between">
+      <div className="flex h-8.25 items-center justify-start gap-1.25">
         {slots.map((slot) => (
-          <DeckPokemonSlot key={slot.id} wide={slot.wide} />
+          <DeckPokemonSlot key={slot.id} wide={slot.wide} artworkUrl={slot.artworkUrl} koName={slot.koName} />
         ))}
       </div>
 
