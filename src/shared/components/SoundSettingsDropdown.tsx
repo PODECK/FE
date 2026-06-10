@@ -50,8 +50,8 @@ export function SoundSettingsDropdown({
               ? 'bg-base-3/18'
               : 'bg-base-3/10'
             : menuOpen
-              ? 'bg-[var(--color-base-2)] transition'
-              : 'border-base-2 bg-[var(--color-base-3)] transition hover:bg-[var(--color-base-2)]',
+              ? 'transition'
+              : 'border-base-2 transition hover:bg-[var(--color-base-2)]',
         )}
         aria-expanded={menuOpen}
         aria-haspopup="true"
