@@ -47,7 +47,11 @@ export async function getTrainerSummary(): Promise<TrainerSummary | null> {
 
   if (!user) return null;
 
-  const { data: appUser } = await supabase.from('users').select('id, nickname').eq('id', user.id).maybeSingle();
+  const { data: appUser } = await supabase
+    .from('users')
+    .select('id, nickname, avatar_url')
+    .eq('id', user.id)
+    .maybeSingle();
 
   if (!appUser?.nickname) return null;
 
@@ -76,9 +80,17 @@ export async function getTrainerSummary(): Promise<TrainerSummary | null> {
     .eq('user_id', user.id)
     .eq('won', false);
 
+  const googleAvatarUrl =
+    typeof user.user_metadata.avatar_url === 'string'
+      ? user.user_metadata.avatar_url
+      : typeof user.user_metadata.picture === 'string'
+        ? user.user_metadata.picture
+        : null;
+
   return {
     id: appUser.id,
     nickname: appUser.nickname,
+    avatarUrl: appUser.avatar_url ?? googleAvatarUrl,
     cardPackCount: pack?.pack_count ?? 0,
     battleRecord: {
       wins: wins ?? 0,
