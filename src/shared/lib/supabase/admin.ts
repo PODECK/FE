@@ -11,7 +11,6 @@ export const createAdminClient = () => {
   return createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       persistSession: false,
-
     },
   });
 };
