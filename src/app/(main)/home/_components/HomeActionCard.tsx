@@ -5,6 +5,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { ChevronRight } from 'lucide-react';
 
 import type { HomeActionCardData } from '@/app/(main)/home/_types/home';
 import SilhouetteBackground from '@/shared/components/SilhouetteBackground';
@@ -18,13 +19,13 @@ export default function HomeActionCard({ card }: HomeActionCardProps) {
     <motion.article
       whileHover={{ y: -6 }}
       transition={{ duration: 0.2 }}
-      className={`relative h-[180px] overflow-hidden rounded-[20px] p-8 text-[var(--color-secondary-2)] shadow-[0_14px_32px_rgba(0,0,0,0.12)] ${card.backgroundClassName}`}
+      className={`relative h-[150px] overflow-hidden rounded-[20px] p-8 text-[var(--color-secondary-2)] shadow-[0_14px_32px_rgba(0,0,0,0.12)] ${card.backgroundClassName}`}
     >
       <SilhouetteBackground
-        className={`right-[-120px]! bottom-[-80px]! left-auto! rotate-45 sm:right-[-150px]! sm:bottom-[-105px]! ${
-          card.silhouetteClassName ?? 'opacity-45!'
+        className={`top-[90%]! right-[-30px]! left-auto! -translate-y-1/2 rotate-45 ${
+          card.silhouetteClassName ?? 'opacity-90!'
         }`}
-        imageClassName="h-[320px]! w-[320px]! sm:h-[400px]! sm:w-[400px]!"
+        imageClassName="h-[280px]! w-[280px]!"
       />
 
       <div className="relative z-10">
@@ -33,9 +34,10 @@ export default function HomeActionCard({ card }: HomeActionCardProps) {
 
         <Link
           href={card.href}
-          className="mt-3 inline-flex h-10 items-center rounded-full bg-[var(--color-secondary-2)] px-6 text-lg font-extrabold text-[#787878] transition hover:scale-105"
+          aria-label={`${card.title} 페이지로 이동`}
+          className="absolute top-1/2 right-[-2px] z-20 flex h-9.5 w-9.5 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--color-secondary-2)] text-[var(--color-primary)] shadow-[0_8px_18px_rgba(0,0,0,0.12)] transition hover:scale-105"
         >
-          GO! →
+          <ChevronRight aria-hidden="true" size={30} strokeWidth={2.0} />
         </Link>
       </div>
 

@@ -1,7 +1,10 @@
+import LoadingBackground from '@/app/(main)/(start)/loading/LoadingBackground';
+import LoadingProgress from '@/app/(main)/(start)/_components/LoadingProgress';
+
 export default function Loading() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-gray-500">로딩 중...</div>
-    </div>
+    <LoadingBackground>
+      <LoadingProgress progress={60} message="로딩 중..." />
+    </LoadingBackground>
   );
 }

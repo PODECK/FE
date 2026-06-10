@@ -1,5 +1,4 @@
 import { Volume1, Volume2, VolumeOffIcon } from 'lucide-react';
-import { useState } from 'react';
 import { useSoundStore } from '@/shared/stores/soundStore';
 import { cn } from '@/shared/lib/cn';
 
@@ -32,8 +31,7 @@ function VolumeSlider({ label, volume, isMuted, tone, onVolumeChange, onMuteTogg
     : 'color-mix(in srgb, var(--color-base-0) 8%, transparent)';
   const trackFill = isDark
     ? `linear-gradient(to right, color-mix(in srgb, var(--color-base-3) 85%, transparent) ${displayPct}%, color-mix(in srgb, var(--color-base-3) 15%, transparent) ${displayPct}%)`
-    : `linear-gradient(to right, color-mix(in srgb, var(--color-secondary-1) 45%, transparent) ${displayPct}%, color-mix(in srgb, var(--color-base-0) 8%, transparent) ${displayPct}%)`;
-
+    : `linear-gradient(to right, var(--color-primary) ${displayPct}%, color-mix(in srgb, var(--color-base-0) 8%, transparent) ${displayPct}%)`;
   return (
     <div className="mb-3">
       <div className="mb-1.5 flex justify-between">
@@ -74,7 +72,6 @@ interface SoundControllerProps {
 }
 
 export function SoundController({ tone = 'dark' }: SoundControllerProps) {
-  const [soundOpen, setSoundOpen] = useState(false);
   const isDark = tone === 'dark';
 
   const { setting, setBgmVolume, setSfxVolume, toggleBgmMuted, toggleSfxMuted } = useSoundStore();
@@ -82,38 +79,33 @@ export function SoundController({ tone = 'dark' }: SoundControllerProps) {
 
   return (
     <div>
-      <button
-        type="button"
+      <h2
         className={cn(
-          'block w-full cursor-pointer border-0 bg-transparent px-5 py-4 text-center text-[15px] font-black',
-          isDark ? 'text-base-3 hover:bg-base-3/5' : 'text-base-0/90 hover:bg-base-0/5',
-          soundOpen && (isDark ? 'bg-base-3/5' : 'bg-base-0/5'),
+          'block w-full px-5 py-4 text-center text-[15px] font-black',
+          isDark ? 'text-base-3' : 'text-base-0/90',
         )}
-        onClick={() => setSoundOpen((v) => !v)}
       >
         사운드 설정
-      </button>
+      </h2>
 
-      {soundOpen && (
-        <div className="p-5 pb-4">
-          <VolumeSlider
-            label="BGM"
-            tone={tone}
-            volume={bgmVolume}
-            isMuted={isBgmMuted}
-            onVolumeChange={setBgmVolume}
-            onMuteToggle={toggleBgmMuted}
-          />
-          <VolumeSlider
-            label="SFX"
-            tone={tone}
-            volume={sfxVolume}
-            isMuted={isSfxMuted}
-            onVolumeChange={setSfxVolume}
-            onMuteToggle={toggleSfxMuted}
-          />
-        </div>
-      )}
+      <div className="p-5 pt-2 pb-4">
+        <VolumeSlider
+          label="BGM"
+          tone={tone}
+          volume={bgmVolume}
+          isMuted={isBgmMuted}
+          onVolumeChange={setBgmVolume}
+          onMuteToggle={toggleBgmMuted}
+        />
+        <VolumeSlider
+          label="SFX"
+          tone={tone}
+          volume={sfxVolume}
+          isMuted={isSfxMuted}
+          onVolumeChange={setSfxVolume}
+          onMuteToggle={toggleSfxMuted}
+        />
+      </div>
     </div>
   );
 }

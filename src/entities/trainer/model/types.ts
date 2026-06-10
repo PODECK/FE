@@ -1,6 +1,7 @@
 export type TrainerSummary = {
   id: string;
   nickname: string;
+  avatarUrl?: string | null;
   cardPackCount: number;
   battleRecord: {
     wins: number;
