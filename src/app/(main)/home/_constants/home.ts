@@ -161,7 +161,7 @@ export const homeActionCards: HomeActionCardData[] = [
     imageSrc: '/images/home/action/deck.svg',
     imageAlt: '도감 이미지',
     backgroundClassName: 'bg-[#FFCB3E]',
-    imageClassName: 'left-[210px] top-[105px] h-[180px] w-[170px] -translate-y-1/2',
+    imageClassName: 'left-[225px] top-[90px] h-[160px] w-[150px] -translate-y-1/2',
     silhouetteClassName: 'opacity-30!',
   },
   {
@@ -172,7 +172,7 @@ export const homeActionCards: HomeActionCardData[] = [
     imageSrc: '/images/home/action/battlesymbol.svg',
     imageAlt: '배틀 시작 이미지',
     backgroundClassName: 'bg-[#F77F66]',
-    imageClassName: 'right-[60px] top-1/2 h-[170px] w-[170px] -translate-y-1/2',
+    imageClassName: 'right-[60px] top-1/2 h-[160px] w-[160px] -translate-y-1/2',
     silhouetteClassName: 'opacity-30!',
   },
 ];
