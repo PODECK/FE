@@ -48,7 +48,7 @@ export default function AiDeckRecommendContent({ initial1, initial2 }: AiDeckRec
   const isDisabled = isPending || cooldown > 0;
 
   return (
-    <div className="mt-4 flex flex-col gap-3">
+    <div className="mt-4 flex flex-col gap-3.75">
       {result1.ok && (
         <AiDeckCard title={result1.data.title} description={result1.data.description} deck={result1.data.deck} />
       )}

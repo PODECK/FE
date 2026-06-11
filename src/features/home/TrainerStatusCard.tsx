@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 
 import HomeSidebarPanel from '@/features/home/HomeSidebarPanel';
+import Tooltip from '@/shared/components/Tooltip';
 
 interface TrainerStatusCardProps {
   trainerName: string;
@@ -63,12 +64,8 @@ export default function TrainerStatusCard({
       </div>
 
       {hasCardPack && (
-        <Link
-          href="/pokedex"
-          className="absolute top-40 -left-2 z-10 rounded-md bg-[#555555] px-2 py-1 text-xs font-extrabold whitespace-nowrap text-[var(--color-base-3)] shadow-md"
-        >
-          열 수 있는 카드팩이 있어요!
-          <span className="absolute top-full left-1/2 h-0 w-0 -translate-x-1/2 border-x-4 border-t-6 border-x-transparent border-t-[#555555]" />
+        <Link href="/pokedex" className="absolute top-40 -left-2 z-10">
+          <Tooltip text="열 수 있는 카드팩이 있어요!" />
         </Link>
       )}
 
