@@ -3,8 +3,15 @@
 import { createClient } from '@/shared/lib/supabase/server';
 import type { PokemonType } from '@/shared/types/pokemon';
 import { RecommendRequestSchema } from '../model/schemas';
-import type { RecommendResponse, RosterPokemon } from '../model/schemas';
-import { filterOptimal, filterStatus, filterCounter } from '../lib/rule-engine';
+import type { RecommendedDeck, RecommendResponse, RosterPokemon } from '../model/schemas';
+import {
+  filterOptimal,
+  filterStatus,
+  filterOffensive,
+  filterDefensive,
+  filterSpeed,
+  filterCounter,
+} from '../lib/rule-engine';
 import { generateRecommendation, RECOMMENDATION_MODEL } from '../lib/gemini';
 import { fallbackRecommendation } from '../lib/fallback';
 import {
@@ -79,11 +86,17 @@ async function loadRoster(
         type1: s.type1_id,
         type2: s.type2_id,
         level: 1,
+        baseAtk: s.base_atk,
+        baseSpd: s.base_spd,
         baseStatTotal: s.base_hp + s.base_atk + s.base_def + s.base_spd,
         moves,
       };
     },
   );
+}
+
+function trimDesc(deck: RecommendedDeck): RecommendedDeck {
+  return deck.description.length <= 14 ? deck : { ...deck, description: deck.description.slice(0, 14) };
 }
 
 // AI API 호출용 덱 추천 함수
@@ -114,7 +127,7 @@ export async function recommendDeck(rawInput: unknown): Promise<RecommendRespons
 
   const cached = await getCachedRecommendation(supabase, user.id, rosterHash, cacheTheme);
   if (cached) {
-    return { ok: true, data: cached.data, cached: true, model: cached.model };
+    return { ok: true, data: trimDesc(cached.data), cached: true, model: cached.model };
   }
 
   const rateLimit = await checkRateLimit(supabase, user.id);
@@ -128,6 +141,12 @@ export async function recommendDeck(rawInput: unknown): Promise<RecommendRespons
   let candidates: RosterPokemon[];
   if (req.theme === 'status') {
     candidates = filterStatus(roster);
+  } else if (req.theme === 'offensive') {
+    candidates = filterOffensive(roster);
+  } else if (req.theme === 'defensive') {
+    candidates = filterDefensive(roster);
+  } else if (req.theme === 'speed') {
+    candidates = filterSpeed(roster);
   } else if (req.theme === 'counter') {
     candidates = filterCounter(roster, req.counterTarget!);
   } else {
@@ -152,7 +171,45 @@ export async function recommendDeck(rawInput: unknown): Promise<RecommendRespons
 export type HomeDecksResponse = {
   optimal: RecommendResponse;
   status: RecommendResponse;
+  offensive: RecommendResponse;
+  defensive: RecommendResponse;
+  speed: RecommendResponse;
 };
+
+const HOME_THEMES = ['optimal', 'status', 'offensive', 'defensive', 'speed'] as const;
+type HomeTheme = (typeof HOME_THEMES)[number];
+
+async function resolveHomeTheme(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  rosterHash: string,
+  roster: RosterPokemon[],
+  theme: HomeTheme,
+  cached: { data: RecommendedDeck; model: string } | null,
+): Promise<RecommendResponse> {
+  if (cached) {
+    return { ok: true, data: trimDesc(cached.data), cached: true, model: cached.model };
+  }
+  const filterMap: Record<HomeTheme, (r: RosterPokemon[]) => RosterPokemon[]> = {
+    optimal: filterOptimal,
+    status: filterStatus,
+    offensive: filterOffensive,
+    defensive: filterDefensive,
+    speed: filterSpeed,
+  };
+  const candidates = filterMap[theme](roster);
+  const aiResult = await generateRecommendation({ theme }, candidates);
+  const data = aiResult ?? fallbackRecommendation({ theme }, candidates);
+  await setCachedRecommendation(
+    supabase,
+    userId,
+    rosterHash,
+    theme,
+    data,
+    aiResult ? RECOMMENDATION_MODEL : 'fallback',
+  );
+  return { ok: true, data, cached: false, model: RECOMMENDATION_MODEL };
+}
 
 // 홈 화면에서 사용하는 덱 추천 함수
 export async function recommendHomeDecks(): Promise<HomeDecksResponse> {
@@ -163,27 +220,30 @@ export async function recommendHomeDecks(): Promise<HomeDecksResponse> {
 
   if (!user) {
     const err: RecommendResponse = { ok: false, message: '로그인이 필요합니다' };
-    return { optimal: err, status: err };
+    return { optimal: err, status: err, offensive: err, defensive: err, speed: err };
   }
 
   const roster = await loadRoster(supabase, user.id);
 
   if (roster.length < 3) {
     const err: RecommendResponse = { ok: false, message: '추천을 받으려면 최소 3마리의 포켓몬이 필요합니다' };
-    return { optimal: err, status: err };
+    return { optimal: err, status: err, offensive: err, defensive: err, speed: err };
   }
 
   const rosterHash = await computeRosterHash(roster);
 
-  const [cachedOptimal, cachedStatus] = await Promise.all([
-    getCachedRecommendation(supabase, user.id, rosterHash, 'optimal'),
-    getCachedRecommendation(supabase, user.id, rosterHash, 'status'),
-  ]);
+  const caches = await Promise.all(
+    HOME_THEMES.map((theme) => getCachedRecommendation(supabase, user.id, rosterHash, theme)),
+  );
+  const [cachedOptimal, cachedStatus, cachedOffensive, cachedDefensive, cachedSpeed] = caches;
 
-  if (cachedOptimal && cachedStatus) {
+  if (caches.every(Boolean)) {
     return {
-      optimal: { ok: true, data: cachedOptimal.data, cached: true, model: cachedOptimal.model },
-      status: { ok: true, data: cachedStatus.data, cached: true, model: cachedStatus.model },
+      optimal: { ok: true, data: trimDesc(cachedOptimal!.data), cached: true, model: cachedOptimal!.model },
+      status: { ok: true, data: trimDesc(cachedStatus!.data), cached: true, model: cachedStatus!.model },
+      offensive: { ok: true, data: trimDesc(cachedOffensive!.data), cached: true, model: cachedOffensive!.model },
+      defensive: { ok: true, data: trimDesc(cachedDefensive!.data), cached: true, model: cachedDefensive!.model },
+      speed: { ok: true, data: trimDesc(cachedSpeed!.data), cached: true, model: cachedSpeed!.model },
     };
   }
 
@@ -193,48 +253,26 @@ export async function recommendHomeDecks(): Promise<HomeDecksResponse> {
       ok: false,
       message: `덱 추천은 1분에 한 번만 요청할 수 있습니다. ${rateLimit.remainingSeconds}초 후에 다시 시도해주세요.`,
     };
+    const toRes = (c: { data: RecommendedDeck; model: string } | null): RecommendResponse =>
+      c ? { ok: true, data: trimDesc(c.data), cached: true, model: c.model } : err;
     return {
-      optimal: cachedOptimal ? { ok: true, data: cachedOptimal.data, cached: true, model: cachedOptimal.model } : err,
-      status: cachedStatus ? { ok: true, data: cachedStatus.data, cached: true, model: cachedStatus.model } : err,
+      optimal: toRes(cachedOptimal),
+      status: toRes(cachedStatus),
+      offensive: toRes(cachedOffensive),
+      defensive: toRes(cachedDefensive),
+      speed: toRes(cachedSpeed),
     };
   }
 
   // Sequential Gemini calls to prevent rate-limit race condition on parallel cold starts
-  let optimalResult: RecommendResponse;
-  if (cachedOptimal) {
-    optimalResult = { ok: true, data: cachedOptimal.data, cached: true, model: cachedOptimal.model };
-  } else {
-    const candidates = filterOptimal(roster);
-    const aiResult = await generateRecommendation({ theme: 'optimal' }, candidates);
-    const data = aiResult ?? fallbackRecommendation({ theme: 'optimal' }, candidates);
-    await setCachedRecommendation(
-      supabase,
-      user.id,
-      rosterHash,
-      'optimal',
-      data,
-      aiResult ? RECOMMENDATION_MODEL : 'fallback',
-    );
-    optimalResult = { ok: true, data, cached: false, model: RECOMMENDATION_MODEL };
-  }
+  const [optimal, status, offensive, defensive, speed] = await HOME_THEMES.reduce(
+    async (acc, theme, i) => {
+      const results = await acc;
+      results.push(await resolveHomeTheme(supabase, user.id, rosterHash, roster, theme, caches[i]));
+      return results;
+    },
+    Promise.resolve([] as RecommendResponse[]),
+  );
 
-  let statusResult: RecommendResponse;
-  if (cachedStatus) {
-    statusResult = { ok: true, data: cachedStatus.data, cached: true, model: cachedStatus.model };
-  } else {
-    const candidates = filterStatus(roster);
-    const aiResult = await generateRecommendation({ theme: 'status' }, candidates);
-    const data = aiResult ?? fallbackRecommendation({ theme: 'status' }, candidates);
-    await setCachedRecommendation(
-      supabase,
-      user.id,
-      rosterHash,
-      'status',
-      data,
-      aiResult ? RECOMMENDATION_MODEL : 'fallback',
-    );
-    statusResult = { ok: true, data, cached: false, model: RECOMMENDATION_MODEL };
-  }
-
-  return { optimal: optimalResult, status: statusResult };
+  return { optimal, status, offensive, defensive, speed };
 }

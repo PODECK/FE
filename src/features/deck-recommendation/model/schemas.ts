@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { PokemonType } from '@/shared/types/pokemon';
 
-export const RECOMMENDATION_THEMES = ['optimal', 'status', 'counter'] as const;
+export const RECOMMENDATION_THEMES = ['optimal', 'status', 'offensive', 'defensive', 'speed', 'counter'] as const;
 
 export const RosterMoveSchema = z.object({
   id: z.string(),
@@ -18,6 +18,8 @@ export const RosterPokemonSchema = z.object({
   type1: PokemonType,
   type2: PokemonType.nullable(),
   level: z.number(),
+  baseAtk: z.number(),
+  baseSpd: z.number(),
   baseStatTotal: z.number(),
   moves: z.array(RosterMoveSchema),
 });

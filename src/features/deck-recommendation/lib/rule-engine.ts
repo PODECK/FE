@@ -20,6 +20,20 @@ export function filterStatus(roster: RosterPokemon[]): RosterPokemon[] {
   return combined.slice(0, CANDIDATE_LIMIT);
 }
 
+export function filterOffensive(roster: RosterPokemon[]): RosterPokemon[] {
+  return [...roster].sort((a, b) => b.baseAtk - a.baseAtk).slice(0, CANDIDATE_LIMIT);
+}
+
+export function filterDefensive(roster: RosterPokemon[]): RosterPokemon[] {
+  return [...roster]
+    .sort((a, b) => b.baseStatTotal - b.baseAtk - (a.baseStatTotal - a.baseAtk))
+    .slice(0, CANDIDATE_LIMIT);
+}
+
+export function filterSpeed(roster: RosterPokemon[]): RosterPokemon[] {
+  return [...roster].sort((a, b) => b.baseSpd - a.baseSpd).slice(0, CANDIDATE_LIMIT);
+}
+
 export function filterCounter(roster: RosterPokemon[], target: PokemonType): RosterPokemon[] {
   const hasCounterMove = (p: RosterPokemon) =>
     p.moves.some((m) => m.power !== null && TYPE_CHART[m.type]?.[target] === 2);

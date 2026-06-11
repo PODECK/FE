@@ -15,6 +15,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'grass',
     type2: 'poison',
     level: 45,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 525,
     moves: [
       { id: 'solar-beam', koName: '솔라빔', type: 'grass', power: 120, statusEffect: null },
@@ -30,6 +32,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'grass',
     type2: 'poison',
     level: 40,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 515,
     moves: [
       { id: 'petal-dance', koName: '꽃잎댄스', type: 'grass', power: 120, statusEffect: null },
@@ -46,6 +50,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'fire',
     type2: 'flying',
     level: 50,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 534,
     moves: [
       { id: 'flamethrower', koName: '화염방사', type: 'fire', power: 90, statusEffect: null },
@@ -61,6 +67,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'fire',
     type2: 'flying',
     level: 60,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 580,
     moves: [
       { id: 'fire-blast', koName: '불대문자', type: 'fire', power: 110, statusEffect: null },
@@ -77,6 +85,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'water',
     type2: null,
     level: 50,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 530,
     moves: [
       { id: 'surf', koName: '파도타기', type: 'water', power: 90, statusEffect: null },
@@ -92,6 +102,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'water',
     type2: null,
     level: 70,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 680,
     moves: [
       { id: 'hydro-pump', koName: '하이드로펌프', type: 'water', power: 110, statusEffect: null },
@@ -107,6 +119,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'water',
     type2: 'ground',
     level: 45,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 535,
     moves: [
       { id: 'earthquake', koName: '지진', type: 'ground', power: 100, statusEffect: null },
@@ -123,6 +137,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'electric',
     type2: null,
     level: 30,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 320,
     moves: [
       { id: 'thunderbolt', koName: '10만볼트', type: 'electric', power: 90, statusEffect: null },
@@ -138,6 +154,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'electric',
     type2: 'flying',
     level: 60,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 580,
     moves: [
       { id: 'thunder', koName: '천둥', type: 'electric', power: 110, statusEffect: null },
@@ -153,6 +171,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'electric',
     type2: 'steel',
     level: 45,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 535,
     moves: [
       { id: 'thunderbolt', koName: '10만볼트', type: 'electric', power: 90, statusEffect: null },
@@ -169,6 +189,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'ice',
     type2: 'flying',
     level: 60,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 580,
     moves: [
       { id: 'blizzard', koName: '눈보라', type: 'ice', power: 110, statusEffect: null },
@@ -184,6 +206,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'ice',
     type2: 'ghost',
     level: 40,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 480,
     moves: [
       { id: 'blizzard', koName: '눈보라', type: 'ice', power: 110, statusEffect: null },
@@ -200,6 +224,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'fighting',
     type2: 'steel',
     level: 50,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 535,
     moves: [
       { id: 'aura-sphere', koName: '파동탄', type: 'fighting', power: 80, statusEffect: null },
@@ -215,6 +241,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'bug',
     type2: 'fighting',
     level: 40,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 500,
     moves: [
       { id: 'close-combat', koName: '인파이트', type: 'fighting', power: 120, statusEffect: null },
@@ -231,6 +259,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'psychic',
     type2: null,
     level: 70,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 680,
     moves: [
       { id: 'psychic', koName: '사이코키네시스', type: 'psychic', power: 90, statusEffect: null },
@@ -246,6 +276,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'psychic',
     type2: null,
     level: 60,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 600,
     moves: [
       { id: 'psychic', koName: '사이코키네시스', type: 'psychic', power: 90, statusEffect: null },
@@ -261,6 +293,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'psychic',
     type2: 'flying',
     level: 70,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 680,
     moves: [
       { id: 'aeroblast', koName: '에어로블라스트', type: 'flying', power: 100, statusEffect: null },
@@ -277,6 +311,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'ghost',
     type2: 'poison',
     level: 45,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 500,
     moves: [
       { id: 'shadow-ball', koName: '섀도볼', type: 'ghost', power: 80, statusEffect: null },
@@ -293,6 +329,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'dragon',
     type2: 'flying',
     level: 55,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 600,
     moves: [
       { id: 'dragon-rush', koName: '역린', type: 'dragon', power: 100, statusEffect: null },
@@ -308,6 +346,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'dragon',
     type2: 'flying',
     level: 55,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 600,
     moves: [
       { id: 'dragon-rush', koName: '역린', type: 'dragon', power: 100, statusEffect: null },
@@ -323,6 +363,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'dragon',
     type2: 'flying',
     level: 70,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 680,
     moves: [
       { id: 'dragon-ascent', koName: '용승천', type: 'flying', power: 120, statusEffect: null },
@@ -338,6 +380,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'dragon',
     type2: 'ground',
     level: 55,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 600,
     moves: [
       { id: 'earthquake', koName: '지진', type: 'ground', power: 100, statusEffect: null },
@@ -354,6 +398,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'rock',
     type2: 'dark',
     level: 60,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 700,
     moves: [
       { id: 'stone-edge', koName: '스톤에지', type: 'rock', power: 100, statusEffect: null },
@@ -370,6 +416,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'ground',
     type2: null,
     level: 70,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 670,
     moves: [
       { id: 'earthquake', koName: '지진', type: 'ground', power: 100, statusEffect: null },
@@ -385,6 +433,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'dragon',
     type2: 'ground',
     level: 40,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 515,
     moves: [
       { id: 'earthquake', koName: '지진', type: 'ground', power: 100, statusEffect: null },
@@ -401,6 +451,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'bug',
     type2: 'steel',
     level: 40,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 500,
     moves: [
       { id: 'x-scissor', koName: '크로스치기', type: 'bug', power: 80, statusEffect: null },
@@ -416,6 +468,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'water',
     type2: 'steel',
     level: 45,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 530,
     moves: [
       { id: 'surf', koName: '파도타기', type: 'water', power: 90, statusEffect: null },
@@ -432,6 +486,8 @@ const MOCK_ROSTER: RosterPokemon[] = [
     type1: 'normal',
     type2: null,
     level: 40,
+    baseAtk: 80,
+    baseSpd: 80,
     baseStatTotal: 540,
     moves: [
       { id: 'body-slam', koName: '몸통박치기', type: 'normal', power: 85, statusEffect: null },

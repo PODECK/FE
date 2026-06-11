@@ -29,7 +29,6 @@ const SYSTEM_PROMPT = `너는 PODECK라는 포켓몬 턴제 카드 배틀 게임
 [추천 원칙]
 - 반드시 제시된 후보 포켓몬(candidate) 중에서만 고른다. 후보에 없는 포켓몬은 절대 추천하지 않는다.
 - 종족값뿐 아니라 타입 시너지, 약점 보완, 기술 구성을 종합적으로 고려한다.
-- 각 포켓몬의 역할(role)과 선택 이유(reason)를 한국어로 구체적으로 설명한다.
 - title은 덱 콘셉트를 10자 이내로 작성한다. (예: "격투 카운터덱", "상태이상 특화덱")
 - description은 전략 핵심을 14자 이내로 "~하자!" 형식으로 작성한다. (예: "상태이상으로 압박하자!", "격투 타입을 제압하자!")
 - strategy에는 이 덱의 전체 운영 방향을 한국어로 서술한다.`;
@@ -37,6 +36,10 @@ const SYSTEM_PROMPT = `너는 PODECK라는 포켓몬 턴제 카드 배틀 게임
 function themeInstruction(req: RecommendRequest): string {
   if (req.theme === 'status')
     return '아래 후보로 상태이상(잠듦·마비·화상·독 등)을 적극 활용하는 6마리 조합을 구성해줘.';
+  if (req.theme === 'offensive')
+    return '아래 후보로 공격력과 기술 위력을 최우선으로 한 화력 특화 6마리 조합을 구성해줘.';
+  if (req.theme === 'defensive') return '아래 후보로 내구력과 방어를 최우선으로 한 탱커 중심 6마리 조합을 구성해줘.';
+  if (req.theme === 'speed') return '아래 후보로 스피드를 최우선으로 한 선공·속공 특화 6마리 조합을 구성해줘.';
   if (req.theme === 'counter')
     return `아래 후보로 ${req.counterTarget} 타입을 효과적으로 카운터하는 6마리 조합을 구성해줘.`;
   return '아래 후보 중 가장 강력한 최적의 6마리 조합을 구성해줘.';

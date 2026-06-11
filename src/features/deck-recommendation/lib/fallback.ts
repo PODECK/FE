@@ -3,6 +3,9 @@ import type { RecommendRequest, RecommendedDeck, RosterPokemon } from '../model/
 const THEME_LABELS: Record<string, string> = {
   optimal: '최적',
   status: '상태이상',
+  offensive: '공격 특화',
+  defensive: '방어 특화',
+  speed: '속공 특화',
   counter: '카운터',
 };
 
