@@ -13,9 +13,9 @@ export default function AppToaster() {
       toastOptions={{
         classNames: {
           toast:
-            '!min-h-[44px] !w-[min(calc(100vw-2rem),280px)] !rounded-[12px] !border-0 !bg-[var(--color-secondary-1)] !px-4 !py-3 !shadow-[0_10px_22px_rgba(0,0,0,0.14)]',
-          title: '!text-sm !font-extrabold !leading-tight !text-white',
-          icon: '!mr-2',
+            'min-h-[44px]! w-[min(calc(100vw-2rem),280px)]! rounded-[12px]! border-0! bg-[var(--color-secondary-1)]! px-4! py-3! shadow-[0_10px_22px_rgba(0,0,0,0.14)]!',
+          title: 'text-sm! font-extrabold! leading-tight! text-[var(--color-base-3)]!',
+          icon: 'mr-2!',
         },
       }}
     />
