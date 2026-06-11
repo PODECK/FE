@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import { homeNavItems } from '@/app/(main)/home/_constants/home';
 import TrainerProfileMenu from '@/features/trainer/_components/TrainerProfileMenu';
-import { SoundSettingsDropdown } from '@/shared/components/SoundSettingsDropdown';
 import { cn } from '@/shared/lib/cn';
 import { usePathname } from 'next/navigation';
 
@@ -56,10 +55,8 @@ export default function HomeHeader({ nickname, avatarUrl }: HomeHeaderProps) {
               );
             })}
           </nav>
-          <SoundSettingsDropdown theme="light" className="shrink-0" />
           {nickname && (
             <>
-              <div className="h-8 w-px bg-[#E5E5E5]" />
               <TrainerProfileMenu nickname={nickname} avatarUrl={avatarUrl} />
             </>
           )}
