@@ -169,15 +169,24 @@ export async function recommendDeck(rawInput: unknown): Promise<RecommendRespons
 }
 
 export type HomeDecksResponse = {
-  optimal: RecommendResponse;
-  status: RecommendResponse;
-  offensive: RecommendResponse;
-  defensive: RecommendResponse;
-  speed: RecommendResponse;
+  decks: [RecommendResponse, RecommendResponse];
 };
 
 const HOME_THEMES = ['optimal', 'status', 'offensive', 'defensive', 'speed'] as const;
 type HomeTheme = (typeof HOME_THEMES)[number];
+
+const FILTER_MAP: Record<HomeTheme, (r: RosterPokemon[]) => RosterPokemon[]> = {
+  optimal: filterOptimal,
+  status: filterStatus,
+  offensive: filterOffensive,
+  defensive: filterDefensive,
+  speed: filterSpeed,
+};
+
+function pickRandomThemes(): [HomeTheme, HomeTheme] {
+  const shuffled = [...HOME_THEMES].sort(() => Math.random() - 0.5);
+  return [shuffled[0], shuffled[1]];
+}
 
 async function resolveHomeTheme(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -190,14 +199,7 @@ async function resolveHomeTheme(
   if (cached) {
     return { ok: true, data: trimDesc(cached.data), cached: true, model: cached.model };
   }
-  const filterMap: Record<HomeTheme, (r: RosterPokemon[]) => RosterPokemon[]> = {
-    optimal: filterOptimal,
-    status: filterStatus,
-    offensive: filterOffensive,
-    defensive: filterDefensive,
-    speed: filterSpeed,
-  };
-  const candidates = filterMap[theme](roster);
+  const candidates = FILTER_MAP[theme](roster);
   const aiResult = await generateRecommendation({ theme }, candidates);
   const data = aiResult ?? fallbackRecommendation({ theme }, candidates);
   await setCachedRecommendation(
@@ -211,68 +213,48 @@ async function resolveHomeTheme(
   return { ok: true, data, cached: false, model: RECOMMENDATION_MODEL };
 }
 
-// 홈 화면에서 사용하는 덱 추천 함수
+// 홈 화면에서 사용하는 덱 추천 함수 — 매 요청마다 랜덤 2개 테마를 선택한다
 export async function recommendHomeDecks(): Promise<HomeDecksResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    const err: RecommendResponse = { ok: false, message: '로그인이 필요합니다' };
-    return { optimal: err, status: err, offensive: err, defensive: err, speed: err };
-  }
+  const err: RecommendResponse = { ok: false, message: '로그인이 필요합니다' };
+  if (!user) return { decks: [err, err] };
 
   const roster = await loadRoster(supabase, user.id);
 
   if (roster.length < 3) {
-    const err: RecommendResponse = { ok: false, message: '추천을 받으려면 최소 3마리의 포켓몬이 필요합니다' };
-    return { optimal: err, status: err, offensive: err, defensive: err, speed: err };
+    const e: RecommendResponse = { ok: false, message: '추천을 받으려면 최소 3마리의 포켓몬이 필요합니다' };
+    return { decks: [e, e] };
   }
 
   const rosterHash = await computeRosterHash(roster);
+  const [themeA, themeB] = pickRandomThemes();
 
-  const caches = await Promise.all(
-    HOME_THEMES.map((theme) => getCachedRecommendation(supabase, user.id, rosterHash, theme)),
-  );
-  const [cachedOptimal, cachedStatus, cachedOffensive, cachedDefensive, cachedSpeed] = caches;
+  const [cachedA, cachedB] = await Promise.all([
+    getCachedRecommendation(supabase, user.id, rosterHash, themeA),
+    getCachedRecommendation(supabase, user.id, rosterHash, themeB),
+  ]);
 
-  if (caches.every(Boolean)) {
-    return {
-      optimal: { ok: true, data: trimDesc(cachedOptimal!.data), cached: true, model: cachedOptimal!.model },
-      status: { ok: true, data: trimDesc(cachedStatus!.data), cached: true, model: cachedStatus!.model },
-      offensive: { ok: true, data: trimDesc(cachedOffensive!.data), cached: true, model: cachedOffensive!.model },
-      defensive: { ok: true, data: trimDesc(cachedDefensive!.data), cached: true, model: cachedDefensive!.model },
-      speed: { ok: true, data: trimDesc(cachedSpeed!.data), cached: true, model: cachedSpeed!.model },
-    };
+  const hasCacheMiss = !cachedA || !cachedB;
+  if (hasCacheMiss) {
+    const rateLimit = await checkRateLimit(supabase, user.id);
+    if (rateLimit.limited) {
+      const rateLimitErr: RecommendResponse = {
+        ok: false,
+        message: `덱 추천은 1분에 한 번만 요청할 수 있습니다. ${rateLimit.remainingSeconds}초 후에 다시 시도해주세요.`,
+      };
+      const toRes = (c: { data: RecommendedDeck; model: string } | null): RecommendResponse =>
+        c ? { ok: true, data: trimDesc(c.data), cached: true, model: c.model } : rateLimitErr;
+      return { decks: [toRes(cachedA), toRes(cachedB)] };
+    }
   }
 
-  const rateLimit = await checkRateLimit(supabase, user.id);
-  if (rateLimit.limited) {
-    const err: RecommendResponse = {
-      ok: false,
-      message: `덱 추천은 1분에 한 번만 요청할 수 있습니다. ${rateLimit.remainingSeconds}초 후에 다시 시도해주세요.`,
-    };
-    const toRes = (c: { data: RecommendedDeck; model: string } | null): RecommendResponse =>
-      c ? { ok: true, data: trimDesc(c.data), cached: true, model: c.model } : err;
-    return {
-      optimal: toRes(cachedOptimal),
-      status: toRes(cachedStatus),
-      offensive: toRes(cachedOffensive),
-      defensive: toRes(cachedDefensive),
-      speed: toRes(cachedSpeed),
-    };
-  }
+  // Sequential to avoid rate-limit race condition on parallel cold starts
+  const deckA = await resolveHomeTheme(supabase, user.id, rosterHash, roster, themeA, cachedA);
+  const deckB = await resolveHomeTheme(supabase, user.id, rosterHash, roster, themeB, cachedB);
 
-  // Sequential Gemini calls to prevent rate-limit race condition on parallel cold starts
-  const [optimal, status, offensive, defensive, speed] = await HOME_THEMES.reduce(
-    async (acc, theme, i) => {
-      const results = await acc;
-      results.push(await resolveHomeTheme(supabase, user.id, rosterHash, roster, theme, caches[i]));
-      return results;
-    },
-    Promise.resolve([] as RecommendResponse[]),
-  );
-
-  return { optimal, status, offensive, defensive, speed };
+  return { decks: [deckA, deckB] };
 }
