@@ -10,6 +10,18 @@ import type { RecommendResponse } from '@/features/deck-recommendation/model/sch
 import { cn } from '@/shared/lib/cn';
 
 const COOLDOWN_SECONDS = 60;
+const COOLDOWN_KEY = 'deck-recommend-cooldown-expires';
+
+function getRemainingCooldown(): number {
+  try {
+    const raw = localStorage.getItem(COOLDOWN_KEY);
+    if (!raw) return 0;
+    const remaining = Math.ceil((Number(raw) - Date.now()) / 1000);
+    return remaining > 0 ? remaining : 0;
+  } catch {
+    return 0;
+  }
+}
 
 interface AiDeckRecommendContentProps {
   initialResults: [RecommendResponse, RecommendResponse];
@@ -21,11 +33,19 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
+    const remaining = getRemainingCooldown();
+    setTimeout(() => {
+      setCooldown(remaining);
+    }, 0);
+  }, []);
+
+  useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setInterval(() => {
       setCooldown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
+          localStorage.removeItem(COOLDOWN_KEY);
           return 0;
         }
         return prev - 1;
@@ -38,6 +58,7 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
     startTransition(async () => {
       const { decks } = await recommendHomeDecks();
       setResults(decks);
+      localStorage.setItem(COOLDOWN_KEY, String(Date.now() + COOLDOWN_SECONDS * 1000));
       setCooldown(COOLDOWN_SECONDS);
     });
   }
