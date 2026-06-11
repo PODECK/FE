@@ -2,6 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import Typewriter from 'typewriter-effect';
+
+import HomeSidebarPanel from '@/features/home/HomeSidebarPanel';
 
 interface TrainerStatusCardProps {
   trainerName: string;
@@ -40,31 +43,32 @@ export default function TrainerStatusCard({
     trainerName.length > MAX_TRAINER_NAME_LENGTH ? `${trainerName.slice(0, MAX_TRAINER_NAME_LENGTH)}...` : trainerName;
 
   return (
-    <section className="relative h-[380px] overflow-visible rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-      <div className="flex items-start justify-between gap-4">
-        <h2 className="shrink-0 text-base font-extrabold text-[var(--color-base-0)]">트레이너 정보</h2>
-        <span className="text-xs font-extrabold whitespace-nowrap text-[#D6D6D6]">TRAINER&apos;S CARD</span>
-      </div>
-
+    <HomeSidebarPanel title="트레이너 정보" badge="TRAINER'S CARD" className="h-95 overflow-visible">
       <div className="mt-4 flex flex-col items-center text-center">
-        <div className="relative h-[46px] w-[46px] overflow-hidden rounded-full bg-[#F4F4F4] ring-4 ring-[#F4F4F4]">
+        <div className="relative size-11.5 overflow-hidden rounded-full bg-[#F4F4F4] ring-4 ring-[#F4F4F4]">
           <Image src={profileImageSrc} alt={`${trainerName} 프로필 이미지`} fill className="object-cover" />
         </div>
 
-        <p className="mt-3 h-[52px] max-w-[230px] text-base leading-[22px] text-[var(--color-base-0)]">
-          안녕하세요,
-          <br />
-          트레이너 <strong className="font-extrabold">{displayTrainerName}</strong>님! 👋
-        </p>
+        <div className="mt-3 h-13 max-w-57.5 text-base leading-5.5 text-[var(--color-base-0)]">
+          <Typewriter
+            onInit={(typewriter) => {
+              typewriter.typeString(`안녕하세요,<br />트레이너 <strong>${displayTrainerName}</strong>님! 👋`).start();
+            }}
+            options={{
+              delay: 60,
+              cursor: '',
+            }}
+          />
+        </div>
       </div>
 
       {hasCardPack && (
         <Link
           href="/pokedex"
-          className="absolute top-[160px] left-[-8px] z-10 rounded-[6px] bg-[#555555] px-2 py-1 text-xs font-extrabold whitespace-nowrap text-[var(--color-base-3)] shadow-[0_6px_14px_rgba(0,0,0,0.16)]"
+          className="absolute top-40 -left-2 z-10 rounded-md bg-[#555555] px-2 py-1 text-xs font-extrabold whitespace-nowrap text-[var(--color-base-3)] shadow-md"
         >
           열 수 있는 카드팩이 있어요!
-          <span className="absolute top-full left-1/2 h-0 w-0 -translate-x-1/2 border-x-[4px] border-t-[6px] border-x-transparent border-t-[#555555]" />
+          <span className="absolute top-full left-1/2 h-0 w-0 -translate-x-1/2 border-x-4 border-t-6 border-x-transparent border-t-[#555555]" />
         </Link>
       )}
 
@@ -88,14 +92,14 @@ export default function TrainerStatusCard({
           value={`${itemCollectionCount} / ${totalItemCount}`}
         />
       </div>
-    </section>
+    </HomeSidebarPanel>
   );
 }
 
 function TrainerMetric({ value, label }: { value: string; label: string }) {
   return (
     <div className="px-2">
-      <strong className="block text-[22px] leading-none font-extrabold text-[var(--color-primary)]">{value}</strong>
+      <strong className="block text-xl leading-none font-extrabold text-[var(--color-primary)]">{value}</strong>
       <p className="mt-2 text-xs font-semibold text-[var(--color-base-1)]">{label}</p>
     </div>
   );
@@ -120,16 +124,16 @@ function StatusProgress({
 
       <div className="min-w-0">
         <p className="truncate text-base font-bold text-[var(--color-base-0)]">{label}</p>
-        <div className="mt-[2px] h-2 overflow-hidden rounded-full bg-[#F7F7F7]">
+        <div className="mt-0.5 h-2 overflow-hidden rounded-full bg-[#F7F7F7]">
           <div className="h-full rounded-full bg-[var(--color-primary)]" style={{ width: `${safeRate}%` }} />
         </div>
       </div>
 
       <div className="text-right">
-        <strong className="block translate-y-[6px] text-lg leading-none font-extrabold text-[var(--color-base-0)]">
+        <strong className="block translate-y-1.5 text-lg leading-none font-extrabold text-[var(--color-base-0)]">
           {safeRate}%
         </strong>
-        <p className="mt-[9px] text-xs font-semibold whitespace-nowrap text-[var(--color-base-1)]">{value}</p>
+        <p className="mt-2.25 text-xs font-semibold whitespace-nowrap text-[var(--color-base-1)]">{value}</p>
       </div>
     </div>
   );

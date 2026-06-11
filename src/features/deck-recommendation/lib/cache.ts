@@ -1,0 +1,83 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { RecommendRequest, RecommendedDeck, RosterPokemon } from '../model/schemas';
+
+export async function computeRosterHash(roster: RosterPokemon[]): Promise<string> {
+  const input = roster
+    .map((p) => `${p.dexId}:${p.level}`)
+    .sort()
+    .join('|');
+  const encoded = new TextEncoder().encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+export function themeKey(req: RecommendRequest): string {
+  if (req.theme === 'counter' && req.counterTarget) {
+    return `counter:${req.counterTarget}`;
+  }
+  return req.theme;
+}
+
+export async function getCachedRecommendation(
+  supabase: SupabaseClient,
+  userId: string,
+  rosterHash: string,
+  theme: string,
+): Promise<{ data: RecommendedDeck; model: string } | null> {
+  const { data, error } = await supabase
+    .from('deck_recommendation_cache')
+    .select('result, model')
+    .eq('user_id', userId)
+    .eq('roster_hash', rosterHash)
+    .eq('theme', theme)
+    .maybeSingle();
+
+  if (!data || error) return null;
+  return { data: data.result as RecommendedDeck, model: data.model as string };
+}
+
+const RATE_LIMIT_SECONDS = 60;
+
+export async function checkRateLimit(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<{ limited: boolean; remainingSeconds: number }> {
+  const { data } = await supabase
+    .from('deck_recommendation_cache')
+    .select('created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!data) return { limited: false, remainingSeconds: 0 };
+
+  const elapsed = Math.floor((Date.now() - new Date(data.created_at).getTime()) / 1000);
+  if (elapsed < RATE_LIMIT_SECONDS) {
+    return { limited: true, remainingSeconds: RATE_LIMIT_SECONDS - elapsed };
+  }
+
+  return { limited: false, remainingSeconds: 0 };
+}
+
+export async function setCachedRecommendation(
+  supabase: SupabaseClient,
+  userId: string,
+  rosterHash: string,
+  theme: string,
+  result: RecommendedDeck,
+  model: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from('deck_recommendation_cache')
+    .upsert(
+      { user_id: userId, roster_hash: rosterHash, theme, result, model },
+      { onConflict: 'user_id,roster_hash,theme' },
+    );
+
+  if (error) {
+    console.error('Error setting cached recommendation:', error);
+  }
+}

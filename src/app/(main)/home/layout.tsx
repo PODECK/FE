@@ -1,4 +1,4 @@
-import { HomeBgmController } from '@/app/(main)/home/_components/HomeBgmController';
+import { HomeBgmController } from '@/features/home/HomeBgmController';
 
 export default function HomeLayout({
   children,

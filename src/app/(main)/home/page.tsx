@@ -1,7 +1,8 @@
-import HomeActionCards from '@/app/(main)/home/_components/HomeActionCards';
-import HomeBanner from '@/app/(main)/home/_components/HomeBanner';
-import HomeMissionCard from '@/app/(main)/home/_components/HomeMissionCard';
-import TrainerStatusCard from '@/app/(main)/home/_components/TrainerStatusCard';
+import AiDeckRecommendPanel from '@/features/home/AiDeckRecommendPanel';
+import HomeActionCards from '@/features/home/HomeActionCards';
+import HomeBanner from '@/features/home/HomeBanner';
+import HomeMissionCard from '@/features/home/HomeMissionCard';
+import TrainerStatusCard from '@/features/home/TrainerStatusCard';
 import HomeHeader from '@/shared/components/HomeHeader';
 import { redirect } from 'next/navigation';
 import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';
@@ -53,9 +54,7 @@ export default async function HomePage() {
               totalPokemonCount={totalPokemonCount}
             />
 
-            <div className="min-h-[555px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-              AI 덱 구성 영역
-            </div>
+            <AiDeckRecommendPanel />
 
             <Link
               href="https://ktcloud-techup.com/"
