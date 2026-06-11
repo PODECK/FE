@@ -11,15 +11,18 @@ import { homeheroCarouselItems } from '@/app/(main)/home/_constants/home';
 
 const AUTO_PLAY_INTERVAL_MS = 3700;
 const SLIDE_TRANSITION_SECONDS = 0.8;
-const LAST_BANNER_INDEX = homeheroCarouselItems.length - 1;
+const BANNER_COUNT = homeheroCarouselItems.length;
+const LAST_BANNER_INDEX = BANNER_COUNT - 1;
 const INFINITE_CAROUSEL_ITEMS =
-  homeheroCarouselItems.length <= 1 ? homeheroCarouselItems : [...homeheroCarouselItems, homeheroCarouselItems[0]];
+  BANNER_COUNT <= 1 ? homeheroCarouselItems : [...homeheroCarouselItems, homeheroCarouselItems[0]];
 
 export default function HomeBanner() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
 
   const moveToPrevious = useCallback(() => {
+    if (BANNER_COUNT <= 1) return;
+
     setIsTransitionEnabled(true);
 
     setActiveIndex((currentIndex) => {
@@ -32,10 +35,12 @@ export default function HomeBanner() {
   }, []);
 
   const moveToNext = useCallback(() => {
+    if (BANNER_COUNT <= 1) return;
+
     setIsTransitionEnabled(true);
 
     setActiveIndex((currentIndex) => {
-      if (currentIndex >= homeheroCarouselItems.length) {
+      if (currentIndex >= BANNER_COUNT) {
         return 1;
       }
 
@@ -44,7 +49,7 @@ export default function HomeBanner() {
   }, []);
 
   useEffect(() => {
-    if (homeheroCarouselItems.length <= 1) return;
+    if (BANNER_COUNT <= 1) return;
 
     const intervalId = window.setInterval(moveToNext, AUTO_PLAY_INTERVAL_MS);
 
@@ -52,7 +57,7 @@ export default function HomeBanner() {
   }, [moveToNext]);
 
   const handleAnimationComplete = () => {
-    if (activeIndex !== homeheroCarouselItems.length) return;
+    if (activeIndex !== BANNER_COUNT) return;
 
     setIsTransitionEnabled(false);
     setActiveIndex(0);
@@ -110,23 +115,27 @@ export default function HomeBanner() {
         ))}
       </motion.div>
 
-      <button
-        type="button"
-        onClick={moveToPrevious}
-        aria-label="이전 배너 보기"
-        className="absolute top-1/2 left-6 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-[#FFAE17] shadow-md transition hover:scale-105"
-      >
-        <ChevronLeft aria-hidden="true" size={26} strokeWidth={2.5} />
-      </button>
+      {BANNER_COUNT > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={moveToPrevious}
+            aria-label="이전 배너 보기"
+            className="absolute top-1/2 left-6 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-[#FFAE17] shadow-md transition hover:scale-105"
+          >
+            <ChevronLeft aria-hidden="true" size={26} strokeWidth={2.5} />
+          </button>
 
-      <button
-        type="button"
-        onClick={moveToNext}
-        aria-label="다음 배너 보기"
-        className="absolute top-1/2 right-6 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-[#FFAE17] shadow-md transition hover:scale-105"
-      >
-        <ChevronRight aria-hidden="true" size={26} strokeWidth={2.5} />
-      </button>
+          <button
+            type="button"
+            onClick={moveToNext}
+            aria-label="다음 배너 보기"
+            className="absolute top-1/2 right-6 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-[#FFAE17] shadow-md transition hover:scale-105"
+          >
+            <ChevronRight aria-hidden="true" size={26} strokeWidth={2.5} />
+          </button>
+        </>
+      )}
     </section>
   );
 }
