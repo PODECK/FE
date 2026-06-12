@@ -12,18 +12,18 @@ const getRewardIconSrc = (rewardText: string) => {
 
 export default function HomeMissionCard() {
   return (
-    <section className="w-full rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-      <div className="mb-7 flex items-center justify-between gap-3">
+    <section className="h-[280px] w-full rounded-[20px] bg-[var(--color-base-3)] px-4 pt-4 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
+      <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="shrink-0 text-lg font-extrabold text-[var(--color-base-0)]">오늘의 미션</h2>
-        <span className="shrink-0 text-xs font-semibold text-[#999999]">초기화까지 09:28:45</span>
+        <span className="shrink-0 text-xs font-semibold text-[var(--color-base-1)]">초기화까지 09:28:45</span>
       </div>
 
-      <div className="space-y-4">
+      <div className="flex flex-col gap-2">
         {homeMissionItems.map((mission) => {
           const isClaimable = mission.progressRate >= 100 && !mission.isCompleted;
 
           const missionCardClassName = mission.isCompleted
-            ? 'bg-[#FAFAFA] text-[#999999]'
+            ? 'bg-[#FAFAFA] text-[var(--color-base-1)]'
             : isClaimable
               ? 'bg-[#FFF7E4] text-[var(--color-base-0)]'
               : 'bg-transparent text-[var(--color-base-0)]';
@@ -33,16 +33,16 @@ export default function HomeMissionCard() {
           const buttonClassName = mission.isCompleted
             ? 'bg-[#CFCFCF] text-white'
             : isClaimable
-              ? 'bg-[#FFB21A] text-white'
-              : 'bg-[#FFD77A] text-white';
+              ? 'bg-[#FFB21A] text-[var(--color-base-3)]'
+              : 'bg-[#FFD77A] text-[var(--color-base-3)]';
 
           return (
             <article
               key={mission.id}
-              className={`grid min-h-[82px] grid-cols-[minmax(0,1fr)_76px] items-center gap-x-4 rounded-[10px] px-3 py-3 ${missionCardClassName}`}
+              className={`grid h-[62px] grid-cols-[minmax(0,1fr)_68px] items-center gap-x-3 rounded-[10px] px-3 py-2 ${missionCardClassName}`}
             >
               <div className="min-w-0">
-                <p className="mb-3 truncate text-[13px] font-extrabold">
+                <p className="mb-1.5 truncate text-xs font-extrabold">
                   {mission.title} ({mission.progressText})
                 </p>
 
@@ -54,13 +54,13 @@ export default function HomeMissionCard() {
                 </div>
               </div>
 
-              <div className="flex w-[76px] flex-col items-end gap-2 justify-self-end">
-                <span className="flex items-center justify-end gap-1 text-[11px] font-semibold whitespace-nowrap text-[#777777]">
+              <div className="flex w-[68px] flex-col items-end gap-1 justify-self-end">
+                <span className="flex items-center justify-end gap-1 text-[10px] font-semibold whitespace-nowrap text-[#777777]">
                   <Image
                     src={getRewardIconSrc(mission.rewardText)}
                     alt=""
-                    width={14}
-                    height={14}
+                    width={13}
+                    height={13}
                     className={mission.isCompleted ? 'shrink-0 grayscale' : 'shrink-0'}
                   />
                   {mission.rewardText}
@@ -69,7 +69,7 @@ export default function HomeMissionCard() {
                 <button
                   type="button"
                   disabled={!isClaimable}
-                  className={`h-8 w-[64px] rounded-[8px] text-xs font-extrabold transition disabled:cursor-not-allowed ${buttonClassName}`}
+                  className={`h-6 w-[56px] rounded-[7px] text-[10px] font-extrabold transition disabled:cursor-not-allowed ${buttonClassName}`}
                 >
                   {mission.isCompleted ? '완료' : '수령하기'}
                 </button>

@@ -78,7 +78,7 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
         type="button"
         onClick={handleRefresh}
         disabled={isDisabled}
-        className="text-base-1 flex w-full items-center justify-start gap-1 tracking-tight transition-opacity disabled:opacity-40"
+        className="text-base-1 mt-1 flex w-full cursor-pointer items-center justify-start gap-1 tracking-tight transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
       >
         <RotateCcw
           className={cn('size-4 shrink-0', isPending && 'animate-[spin_1s_linear_infinite_reverse]')}

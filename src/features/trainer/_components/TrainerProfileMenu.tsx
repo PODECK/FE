@@ -151,7 +151,7 @@ export default function TrainerProfileMenu({ nickname, avatarUrl }: TrainerProfi
 
               <label
                 htmlFor="avatar-upload"
-                className="absolute right-[-4px] bottom-[-2px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-white text-[#999999] shadow-[0_4px_12px_rgba(0,0,0,0.18)] transition hover:text-[var(--color-primary)]"
+                className="absolute right-[-4px] bottom-[-2px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-[var(--color-base-3)] text-[var(--color-base-1)] shadow-[0_4px_12px_rgba(0,0,0,0.18)] transition hover:text-[var(--color-primary)]"
               >
                 <Camera aria-hidden="true" size={15} strokeWidth={2.5} />
               </label>

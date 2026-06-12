@@ -24,6 +24,14 @@ interface TrainerStatusCardProps {
 
 const MAX_TRAINER_NAME_LENGTH = 5;
 
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+
 export default function TrainerStatusCard({
   trainerName,
   avatarUrl,
@@ -42,6 +50,7 @@ export default function TrainerStatusCard({
 
   const displayTrainerName =
     trainerName.length > MAX_TRAINER_NAME_LENGTH ? `${trainerName.slice(0, MAX_TRAINER_NAME_LENGTH)}...` : trainerName;
+  const escapedTrainerName = escapeHtml(displayTrainerName);
 
   return (
     <HomeSidebarPanel title="트레이너 정보" badge="TRAINER'S CARD" className="h-95 overflow-visible">
@@ -53,7 +62,7 @@ export default function TrainerStatusCard({
         <div className="mt-3 h-13 max-w-57.5 text-base leading-5.5 text-[var(--color-base-0)]">
           <Typewriter
             onInit={(typewriter) => {
-              typewriter.typeString(`안녕하세요,<br />트레이너 <strong>${displayTrainerName}</strong>님! 👋`).start();
+              typewriter.typeString(`안녕하세요,<br />트레이너 <strong>${escapedTrainerName}</strong>님! 👋`).start();
             }}
             options={{
               delay: 60,
