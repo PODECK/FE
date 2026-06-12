@@ -3,6 +3,7 @@ import HomeActionCards from '@/features/home/HomeActionCards';
 import HomeBanner from '@/features/home/HomeBanner';
 import HomeMissionCard from '@/features/home/HomeMissionCard';
 import TrainerStatusCard from '@/features/home/TrainerStatusCard';
+import HomeNewsSection from '@/features/news/HomeNewsSection';
 import HomeHeader from '@/shared/components/HomeHeader';
 import { redirect } from 'next/navigation';
 import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';
@@ -38,9 +39,7 @@ export default async function HomePage() {
               <HomeActionCards />
             </div>
 
-            <div className="mt-6 min-h-[172px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-              새소식 영역
-            </div>
+            <HomeNewsSection />
           </div>
 
           <aside className="flex flex-col gap-6">
