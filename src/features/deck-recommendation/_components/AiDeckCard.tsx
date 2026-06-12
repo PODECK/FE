@@ -3,6 +3,7 @@
 import Image from 'next/image';
 
 import { cn } from '@/shared/lib/cn';
+import Tooltip from '@/shared/components/Tooltip';
 
 const DEFAULT_SLOT_COUNT = 6;
 
@@ -25,7 +26,7 @@ interface AiDeckCardProps {
 function DeckPokemonSlot({ artworkUrl, koName, wide = false }: DeckSlot & { wide?: boolean }) {
   const slotClassName = cn(
     'bg-base-3 shrink-0 overflow-hidden rounded-sm border border-[#DBDBDB]',
-    wide ? 'h-8.25 w-9' : 'h-8.25 w-8.5',
+    wide ? 'h-9 w-9' : 'h-8.25 w-8.5',
   );
 
   if (!artworkUrl) {
@@ -33,8 +34,14 @@ function DeckPokemonSlot({ artworkUrl, koName, wide = false }: DeckSlot & { wide
   }
 
   return (
-    <div className={slotClassName}>
-      <Image src={artworkUrl} alt={koName} width={36} height={33} className="h-full w-full object-contain" />
+    <div className="group relative shrink-0">
+      <Tooltip
+        text={koName}
+        className="pointer-events-none invisible absolute bottom-[calc(100%+6px)] left-1/2 z-10 w-max -translate-x-1/2 group-hover:visible"
+      />
+      <div className={slotClassName}>
+        <Image src={artworkUrl} alt={koName} width={36} height={36} className="h-full w-full object-contain" />
+      </div>
     </div>
   );
 }
@@ -73,7 +80,7 @@ export default function AiDeckCard({
         </div>
       </div>
 
-      <div className="flex h-8.25 items-center justify-start gap-1.25">
+      <div className="flex h-8.25 items-center justify-start gap-1.25 overflow-visible">
         {slots.map((slot) => (
           <DeckPokemonSlot key={slot.id} wide={slot.wide} artworkUrl={slot.artworkUrl} koName={slot.koName} />
         ))}

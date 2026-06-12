@@ -10,17 +10,34 @@ import type { RecommendResponse } from '@/features/deck-recommendation/model/sch
 import { cn } from '@/shared/lib/cn';
 
 const COOLDOWN_SECONDS = 60;
+const COOLDOWN_KEY = 'deck-recommend-cooldown-expires';
 
-interface AiDeckRecommendContentProps {
-  initial1: RecommendResponse;
-  initial2: RecommendResponse;
+function getRemainingCooldown(): number {
+  try {
+    const raw = localStorage.getItem(COOLDOWN_KEY);
+    if (!raw) return 0;
+    const remaining = Math.ceil((Number(raw) - Date.now()) / 1000);
+    return remaining > 0 ? remaining : 0;
+  } catch {
+    return 0;
+  }
 }
 
-export default function AiDeckRecommendContent({ initial1, initial2 }: AiDeckRecommendContentProps) {
-  const [result1, setResult1] = useState(initial1);
-  const [result2, setResult2] = useState(initial2);
+interface AiDeckRecommendContentProps {
+  initialResults: [RecommendResponse, RecommendResponse];
+}
+
+export default function AiDeckRecommendContent({ initialResults }: AiDeckRecommendContentProps) {
+  const [results, setResults] = useState<[RecommendResponse, RecommendResponse]>(initialResults);
   const [isPending, startTransition] = useTransition();
   const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    const remaining = getRemainingCooldown();
+    setTimeout(() => {
+      setCooldown(remaining);
+    }, 0);
+  }, []);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -28,6 +45,7 @@ export default function AiDeckRecommendContent({ initial1, initial2 }: AiDeckRec
       setCooldown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
+          localStorage.removeItem(COOLDOWN_KEY);
           return 0;
         }
         return prev - 1;
@@ -38,24 +56,24 @@ export default function AiDeckRecommendContent({ initial1, initial2 }: AiDeckRec
 
   function handleRefresh() {
     startTransition(async () => {
-      const { optimal, status } = await recommendHomeDecks();
-      setResult1(optimal);
-      setResult2(status);
+      const { decks } = await recommendHomeDecks();
+      setResults(decks);
+      localStorage.setItem(COOLDOWN_KEY, String(Date.now() + COOLDOWN_SECONDS * 1000));
       setCooldown(COOLDOWN_SECONDS);
     });
   }
 
   const isDisabled = isPending || cooldown > 0;
+  const [first, second] = results;
+  const allFailed = !first.ok && !second.ok;
 
   return (
-    <div className="mt-4 flex flex-col gap-2.5">
-      {result1.ok && (
-        <AiDeckCard title={result1.data.title} description={result1.data.description} deck={result1.data.deck} />
+    <div className="mt-4 flex flex-col gap-3.75">
+      {first.ok && <AiDeckCard title={first.data.title} description={first.data.description} deck={first.data.deck} />}
+      {second.ok && (
+        <AiDeckCard title={second.data.title} description={second.data.description} deck={second.data.deck} />
       )}
-      {result2.ok && (
-        <AiDeckCard title={result2.data.title} description={result2.data.description} deck={result2.data.deck} />
-      )}
-      {!result1.ok && !result2.ok && <p className="text-base-1 text-center text-sm">{result1.message}</p>}
+      {allFailed && <p className="text-base-1 text-center text-sm">{first.message}</p>}
       <button
         type="button"
         onClick={handleRefresh}
