@@ -48,7 +48,7 @@ export default function AiDeckRecommendContent({ initial1, initial2 }: AiDeckRec
   const isDisabled = isPending || cooldown > 0;
 
   return (
-    <div className="mt-4 flex flex-col gap-3">
+    <div className="mt-4 flex flex-col gap-2.5">
       {result1.ok && (
         <AiDeckCard title={result1.data.title} description={result1.data.description} deck={result1.data.deck} />
       )}
@@ -60,7 +60,7 @@ export default function AiDeckRecommendContent({ initial1, initial2 }: AiDeckRec
         type="button"
         onClick={handleRefresh}
         disabled={isDisabled}
-        className="text-base-1 flex w-full items-center justify-start gap-1 tracking-tight transition-opacity disabled:opacity-40"
+        className="text-base-1 mt-1 flex w-full cursor-pointer items-center justify-start gap-1 tracking-tight transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
       >
         <RotateCcw
           className={cn('size-4 shrink-0', isPending && 'animate-[spin_1s_linear_infinite_reverse]')}

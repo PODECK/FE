@@ -3,7 +3,7 @@ import Script from 'next/script';
 import './globals.css';
 import { Inter } from 'next/font/google';
 import { cn } from '@/shared/lib/cn';
-import { Toaster } from 'sonner';
+import AppToaster from '@/shared/components/AppToaster';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -76,7 +76,8 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-screen text-gray-900 antialiased">
-        {children} <Toaster richColors position="top-center" />
+        {children}
+        <AppToaster />
       </body>
     </html>
   );

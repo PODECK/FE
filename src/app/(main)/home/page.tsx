@@ -22,28 +22,28 @@ export default async function HomePage() {
       <HomeHeader nickname={trainer.nickname} avatarUrl={trainer.avatarUrl} />
 
       <div className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col pt-8 pb-8">
-        <div className="grid grid-cols-[950px_300px] gap-[30px]">
+        <div className="grid grid-cols-[950px_300px] gap-6">
           <div className="min-w-0">
             <HomeBanner />
 
-            <div className="mt-[30px] grid grid-cols-[300px_minmax(0,1fr)] gap-[30px]">
+            <div className="mt-6 grid grid-cols-[300px_minmax(0,1fr)] items-start gap-6">
               <HomeMissionCard />
 
-              <div className="min-h-[260px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
+              <div className="h-[280px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
                 배틀 히스토리 영역
               </div>
             </div>
 
-            <div className="mt-[30px]">
+            <div className="mt-[27px]">
               <HomeActionCards />
             </div>
 
-            <div className="mt-[30px] min-h-[170px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
+            <div className="mt-6 min-h-[172px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
               새소식 영역
             </div>
           </div>
 
-          <aside className="flex flex-col gap-[30px]">
+          <aside className="flex flex-col gap-6">
             <TrainerStatusCard
               trainerName={trainer.nickname}
               avatarUrl={trainer.avatarUrl}
