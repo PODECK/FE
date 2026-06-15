@@ -106,7 +106,7 @@ export default function TrainerProfileMenu({ nickname, avatarUrl }: TrainerProfi
   };
 
   return (
-    <div className="relative">
+    <div data-tour-id="trainer-profile-menu" className="relative">
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}

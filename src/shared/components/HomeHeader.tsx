@@ -31,7 +31,10 @@ export default function HomeHeader({ nickname, avatarUrl }: HomeHeaderProps) {
         </Link>
 
         <div className="flex items-center gap-2 md:gap-4">
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-4 md:flex">
+          <nav
+            data-tour-id="home-navigation"
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-4 md:flex"
+          >
             {homeNavItems.map((item) => {
               const isActive = pathName === item.href || pathName.startsWith(`${item.href}/`);
               const isBattle = item.id === 'battle';
