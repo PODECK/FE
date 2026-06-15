@@ -148,7 +148,7 @@ export async function recommendDeck(rawInput: unknown): Promise<RecommendRespons
   } else if (req.theme === 'speed') {
     candidates = filterSpeed(roster);
   } else if (req.theme === 'counter') {
-    candidates = filterCounter(roster, req.counterTarget!);
+    candidates = await filterCounter(roster, req.counterTarget!);
   } else {
     candidates = filterOptimal(roster);
   }
