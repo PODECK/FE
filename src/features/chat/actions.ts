@@ -1,5 +1,6 @@
 'use server';
 
+import type { ChatMessage } from '@/shared/stores/overlayStore';
 import { RECOMMENDATION_MODEL } from '@/features/deck-recommendation/lib/gemini';
 import { createClient } from '@/shared/lib/supabase/server';
 import { google } from '@ai-sdk/google';
@@ -50,10 +51,7 @@ export async function copyCounterDeckToUser(dexIds: number[]) {
 }
 
 // 채팅 스트리밍 응답 생성
-export async function streamChatResponse(
-  messages: { role: 'user' | 'assistant'; content: string }[],
-  currentFloor: number,
-) {
+export async function streamChatResponse(messages: ChatMessage[], currentFloor: number) {
   const supabase = await createClient();
 
   const { data: enemies } = await supabase

@@ -59,7 +59,7 @@ export default function TrainerStatusCard({
           <Image src={profileImageSrc} alt={`${trainerName} 프로필 이미지`} fill className="object-cover" />
         </div>
 
-        <div className="mt-3 h-13 max-w-57.5 text-base leading-5.5 text-[var(--color-base-0)]">
+        <div className="text-base-0 mt-3 h-13 max-w-57.5 text-base leading-5.5">
           <Typewriter
             onInit={(typewriter) => {
               typewriter.typeString(`안녕하세요,<br />트레이너 <strong>${escapedTrainerName}</strong>님! 👋`).start();

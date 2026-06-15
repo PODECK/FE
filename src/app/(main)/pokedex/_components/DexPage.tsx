@@ -55,7 +55,6 @@ export default function DexPage({ pokemons }: DexPageProps) {
   const [types, setTypes] = useState<PokemonType[]>([] as PokemonType[]);
   const [page, setPage] = useState(1);
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonData | null>(null);
-  const [isGachaOpen, setIsGachaOpen] = useState(false);
   const trainerDataJson = useSyncExternalStore(subscribeToStorage, getTrainerDataSnapshot, getServerSnapshot);
   const ownedPokemonIds = useMemo(() => parseOwnedPokemonIds(trainerDataJson), [trainerDataJson]);
   const selectedPokemonCount = ownedPokemonIds.length;
@@ -125,9 +124,9 @@ export default function DexPage({ pokemons }: DexPageProps) {
           onClose={() => setSelectedPokemon(null)}
         />
 
-        <FloatingButton cardPackCount={cardPackCount} onClick={() => setIsGachaOpen(true)} />
+        <FloatingButton mode="card" cardPackCount={cardPackCount} />
 
-        <CardGachaModal isOpen={isGachaOpen} onClose={() => setIsGachaOpen(false)} packCount={cardPackCount} />
+        <CardGachaModal packCount={cardPackCount} />
       </main>
     </div>
   );
