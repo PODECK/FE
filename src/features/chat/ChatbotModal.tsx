@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { streamChatResponse } from '@/features/chat/actions';
 import { cn } from '@/shared/lib/cn';
-import type { ChatMessage } from '@/shared/stores/overlayStore';
-import { useOverlayStore } from '@/shared/stores/overlayStore';
+import type { ChatMessage } from '@/shared/stores/overlay-store';
+import { useOverlayStore } from '@/shared/stores/overlay-store';
 
 export default function ChatbotModal() {
   const { chatMessages } = useOverlayStore((state) => state);

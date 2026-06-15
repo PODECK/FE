@@ -2,7 +2,7 @@
 
 import ChatbotModal from '@/features/chat/ChatbotModal';
 import { cn } from '@/shared/lib/cn';
-import { useOverlayStore } from '@/shared/stores/overlayStore';
+import { useOverlayStore } from '@/shared/stores/overlay-store';
 import { BotIcon } from 'lucide-react';
 import Image from 'next/image';
 import CardGachaModal from './CardGachaModal';

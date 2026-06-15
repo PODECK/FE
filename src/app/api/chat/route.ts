@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     const { floorNumber } = parsed.data;
 
-    const [floorRes, enmyPokemonRes, userPokemonRes, typeChartRes] = await Promise.all([
+    const [floorRes, enemyPokemonRes, userPokemonRes, typeChartRes] = await Promise.all([
       supabase.from('tower_floors').select('id').eq('floor_number', floorNumber).single().throwOnError(),
       supabase
         .from('tower_floor_pokemon')
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
     if (!floorRes.data) return NextResponse.json({ error: '해당 층을 찾을 수 없습니다.' }, { status: 404 });
 
-    const enemyDecks = enmyPokemonRes.data || [];
+    const enemyDecks = enemyPokemonRes.data || [];
     const myDecks = userPokemonRes.data || [];
     const typeChart = typeChartRes.data || [];
 

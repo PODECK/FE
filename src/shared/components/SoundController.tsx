@@ -1,5 +1,5 @@
 import { Volume1, Volume2, VolumeOffIcon } from 'lucide-react';
-import { useSoundStore } from '@/shared/stores/soundStore';
+import { useSoundStore } from '@/shared/stores/sound-store';
 import { cn } from '@/shared/lib/cn';
 
 export type SoundControllerTone = 'dark' | 'light';

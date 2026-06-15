@@ -1,6 +1,6 @@
 'use client';
 
-import { useSoundStore } from '@/shared/stores/soundStore';
+import { useSoundStore } from '@/shared/stores/sound-store';
 import { useCallback, useEffect } from 'react';
 import { sfx } from '../lib/bgm';
 

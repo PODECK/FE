@@ -7,7 +7,7 @@ import { pullGacha, saveGachaResult } from '@/app/(main)/pokedex/_lib/cardGacha'
 import GachaLoading from './GachaLoading';
 import GachaReveal from './GachaReveal';
 import GachaResult from './GachaResult';
-import { useOverlayStore } from '@/shared/stores/overlayStore';
+import { useOverlayStore } from '@/shared/stores/overlay-store';
 
 type Props = {
   packCount: number;
