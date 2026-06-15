@@ -46,11 +46,10 @@ export async function GET(request: Request) {
     const current = effectivenessByAttackType.get(attackType) ?? 1;
 
     effectivenessByAttackType.set(attackType, current * Number(row.multiplier));
-
-    const weaknesses = [...effectivenessByAttackType.entries()]
-      .filter(([, effectiveness]) => effectiveness > 1)
-      .map(([attackType]) => attackType);
-
-    return NextResponse.json({ weaknesses });
   }
+  const weaknesses = [...effectivenessByAttackType.entries()]
+    .filter(([, effectiveness]) => effectiveness > 1)
+    .map(([attackType]) => attackType);
+
+  return NextResponse.json({ weaknesses });
 }
