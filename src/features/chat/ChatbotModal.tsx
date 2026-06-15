@@ -89,6 +89,7 @@ export default function ChatbotModal() {
               )}
             >
               {message.content || (
+                // 로딩 애니메이션
                 <div className="flex items-center justify-center gap-1 py-1">
                   <span className="bg-base-1 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:0ms]" />
                   <span className="bg-base-1 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:150ms]" />
