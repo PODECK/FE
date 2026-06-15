@@ -91,8 +91,7 @@ export default function HomeOnboardingGuide({ userId }: HomeOnboardingGuideProps
       const target = getTarget();
 
       if (!target) {
-        setTargetRect(null);
-        setTooltipStyle(null);
+        moveNext();
         return;
       }
 
