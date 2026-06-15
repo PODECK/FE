@@ -1,10 +1,13 @@
 'use server';
 
-import type { ChatMessage } from '@/shared/stores/overlayStore';
-import { RECOMMENDATION_MODEL } from '@/features/deck-recommendation/lib/gemini';
+import type { ChatMessage } from '@/shared/stores/overlay-store';
 import { createClient } from '@/shared/lib/supabase/server';
-import { google } from '@ai-sdk/google';
+import { createOllama } from 'ollama-ai-provider';
 import { streamText } from 'ai';
+
+const ollama = createOllama({
+  baseURL: 'http://localhost:11434/api',
+});
 
 // 유저가 정한 AI 추천 카운터 덱을 실제 DB에 맞게 1:N 트랜잭션으로 저장
 export async function copyCounterDeckToUser(dexIds: number[]) {
@@ -83,9 +86,13 @@ export async function streamChatResponse(messages: ChatMessage[], currentFloor: 
 5. 답변은 다음 3개 요소를 포함해라: 약점 타입, 위험 요소, 운영 팁.`;
 
   const result = await streamText({
-    model: google(RECOMMENDATION_MODEL),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    model: ollama('llama3') as any,
     system: CHAT_SYSTEM_PROMPT,
-    messages: messages,
+    messages: messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    })),
   });
 
   return result.fullStream;
