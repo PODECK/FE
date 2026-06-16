@@ -81,13 +81,13 @@ export default function ChatbotModal() {
           <div key={index} className={cn('flex', message.role === 'user' ? 'justify-end' : 'justify-start')}>
             <div
               className={cn(
-                'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm',
+                'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line shadow-sm',
                 message.role === 'user'
                   ? 'bg-primary text-base-3 rounded-tr-none'
                   : 'border-base-2 bg-base-3 text-base-0 rounded-tl-none border',
               )}
             >
-              {message.content || (
+              {message.content.replace(/\*\*/g, '') || (
                 // 로딩 애니메이션
                 <div className="flex items-center justify-center gap-1 py-1">
                   <span className="bg-base-1 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:0ms]" />

@@ -3,16 +3,17 @@
 import { createOllama } from 'ollama-ai-provider-v2';
 import { streamText } from 'ai';
 
+import { TOWER_FLOORS } from '@/shared/config/tower-floors';
 import { createClient } from '@/shared/lib/supabase/server';
 
 import type { PokemonType } from '@/shared/types/pokemon';
 import type { ChatMessage } from '@/shared/stores/overlay-store';
 
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434/api';
-const OLLAMA_CHAT_MODEL = process.env.OLLAMA_CHAT_MODEL ?? 'llama3';
+const LLM_BASE_URL = process.env.LLM_BASE_URL ?? 'http://localhost:11434/api';
+const LLM_CHAT_MODEL = process.env.LLM_CHAT_MODEL ?? 'qwen2.5:7b';
 
-const ollama = createOllama({
-  baseURL: OLLAMA_BASE_URL,
+const llm = createOllama({
+  baseURL: LLM_BASE_URL,
 });
 
 type EnemySpecies = {
@@ -81,36 +82,48 @@ export async function copyCounterDeckToUser(dexIds: number[]) {
 export async function streamChatResponse(messages: ChatMessage[], currentFloor: number) {
   const supabase = await createClient();
 
-  const { data: enemies } = await supabase
-    .from('tower_floors_pokemon')
-    .select('dex_id, pokemon_species(ko_name, type1_id, type2_id, base_hp, base_atk, base_def)')
-    .eq('floor', currentFloor);
+  // 적 정보는 TOWER_FLOORS 설정의 pokemonPool(dex ID 배열)을 기준으로 species를 조회한다
+  const floorConfig = TOWER_FLOORS.find((f) => f.floor === currentFloor);
 
   let enemyContext = '정보 없음';
-  if (enemies && enemies.length > 0) {
-    enemyContext = enemies
-      .map((e) => normalizeEnemySpecies(e.pokemon_species))
-      .filter((s): s is EnemySpecies => s !== null)
-      .map((s) => {
-        const types = s.type2_id ? `${s.type1_id}/${s.type2_id}` : s.type1_id;
-        return `- ${s.ko_name} [${types}] (체력:${s.base_hp} 공격:${s.base_atk} 방어:${s.base_def})`;
-      })
-      .join('\n');
+  if (floorConfig && floorConfig.pokemonPool.length > 0) {
+    const { data: enemies } = await supabase
+      .from('pokemon_species')
+      .select('ko_name, type1_id, type2_id, base_hp, base_atk, base_def')
+      .in('dex_id', floorConfig.pokemonPool);
+
+    if (enemies && enemies.length > 0) {
+      enemyContext = enemies
+        .map((row) => normalizeEnemySpecies(row))
+        .filter((s): s is EnemySpecies => s !== null)
+        .map((s) => {
+          const types = s.type2_id ? `${s.type1_id}/${s.type2_id}` : s.type1_id;
+          return `- ${s.ko_name} [${types}] (체력:${s.base_hp} 공격:${s.base_atk} 방어:${s.base_def})`;
+        })
+        .join('\n');
+    }
   }
 
   const CHAT_SYSTEM_PROMPT = `너는 PODECK 게임의 무한의 탑 공략 전문 배틀 AI 조력자다.
 현재 플레이어가 도전 중인 층은 [무한의 탑 ${currentFloor}층]이다.
 현재 층의 적 정보는 [${enemyContext}]이다.
 
-답변 원칙:
-1. 친절하면서도 예리한 턴제 카드 게임 스트리머나 프로게이머처럼 말해라.
-2. 반드시 제공된 적 정보만 근거로 전략을 말해라. 추측이나 환각은 금지다.
+답변 원칙 (절대 사수):
+1. 처음부터 끝까지 모든 문장을 완벽한 "한국어"로만 답변해라. 영어 단어(예: HP, Burn, Card Draw 등)를 영어 그대로 노출하지 말고 '체력', '화상 데미지', '카드 뽑기'와 같이 한글로 번역해서 말해라.
+2. 친절하면서도 예리한 턴제 카드 게임 스트리머나 프로게이머처럼 말해라.
 3. 가장 위협적인 적 1~2개를 기준으로 핵심 약점 타입과 조심해야 할 스펙을 짚어라.
-4. 너무 길게 말하지 말고 3~4줄 내외로 콤팩트하게 답해라.
-5. 답변은 다음 3개 요소를 포함해라: 약점 타입, 위험 요소, 운영 팁.`;
+4. 서론, 인사, 맺음말 없이 곧바로 핵심만 말해라. 각 항목은 한 문장으로 짧게 끊어라.
+5. 답변은 아래 형식 그대로, 세 줄로 나눠서(각 항목 사이 줄바꿈 필수) 출력해라:
+약점 타입: (내용)
+위험 요소: (내용)
+운영 팁: (내용)
+
+텍스트 스타일 규칙 (필수):
+- ** 기호나 # 같은 마크다운 특수문자를 절대 사용하지 마라. (예: "**약점 타입**" 대신 "약점 타입:" 처럼 순수 텍스트만 쓸 것)
+- 주사위(🎲), 웃음(😄) 같은 이모지나 특수 아이콘을 절대 포함하지 말고 담백하게 글자로만 출력해라.`;
 
   const result = await streamText({
-    model: ollama(OLLAMA_CHAT_MODEL),
+    model: llm(LLM_CHAT_MODEL),
     system: CHAT_SYSTEM_PROMPT,
     messages: messages.map((msg) => ({
       role: msg.role,

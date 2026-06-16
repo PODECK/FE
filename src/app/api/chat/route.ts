@@ -3,8 +3,8 @@ import z from 'zod';
 
 import { createClient } from '@/shared/lib/supabase/server';
 
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434/api';
-const OLLAMA_DECK_MODEL = process.env.OLLAMA_DECK_MODEL ?? 'llama3';
+const LLM_BASE_URL = process.env.LLM_BASE_URL ?? 'http://localhost:11434/api';
+const LLM_DECK_MODEL = process.env.LLM_DECK_MODEL ?? 'qwen2.5:7b';
 
 const RequestSchema = z.object({
   floorNumber: z.number().min(1).max(999),
@@ -42,11 +42,11 @@ export async function POST(req: Request) {
     const myDecks = userPokemonRes.data || [];
     const typeChart = typeChartRes.data || [];
 
-    const ollamaResponse = await fetch(`${OLLAMA_BASE_URL}/chat`, {
+    const ollamaResponse = await fetch(`${LLM_BASE_URL}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: OLLAMA_DECK_MODEL,
+        model: LLM_DECK_MODEL,
         messages: [
           {
             role: 'system',
