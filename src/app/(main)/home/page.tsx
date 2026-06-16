@@ -2,6 +2,7 @@ import AiDeckRecommendPanel from '@/features/home/AiDeckRecommendPanel';
 import HomeActionCards from '@/features/home/HomeActionCards';
 import HomeBanner from '@/features/home/HomeBanner';
 import HomeMissionCard from '@/features/home/HomeMissionCard';
+import HomeOnboardingGuide from '@/features/home/HomeOnboardingGuide';
 import TrainerStatusCard from '@/features/home/TrainerStatusCard';
 import HomeNewsSection from '@/features/news/HomeNewsSection';
 import HomeHeader from '@/shared/components/HomeHeader';
@@ -28,32 +29,42 @@ export default async function HomePage() {
             <HomeBanner />
 
             <div className="mt-6 grid grid-cols-[300px_minmax(0,1fr)] items-start gap-6">
-              <HomeMissionCard />
-
-              <div className="h-[280px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
+              <div data-tour-id="home-mission">
+                <HomeMissionCard />
+              </div>
+              <div
+                data-tour-id="home-history"
+                className="h-[280px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
+              >
                 배틀 히스토리 영역
               </div>
             </div>
 
-            <div className="mt-[27px]">
+            <div data-tour-id="home-action-cards" className="mt-[28px]">
               <HomeActionCards />
             </div>
 
-            <HomeNewsSection />
+            <div data-tour-id="home-news">
+              <HomeNewsSection />
+            </div>
           </div>
 
           <aside className="flex flex-col gap-6">
-            <TrainerStatusCard
-              trainerName={trainer.nickname}
-              avatarUrl={trainer.avatarUrl}
-              cardPackCount={trainer.cardPackCount}
-              currentFloor={trainer.currentFloor}
-              battleRecord={trainer.battleRecord}
-              ownedPokemonCount={trainer.ownedPokemonCount}
-              totalPokemonCount={totalPokemonCount}
-            />
+            <div data-tour-id="home-trainer-status">
+              <TrainerStatusCard
+                trainerName={trainer.nickname}
+                avatarUrl={trainer.avatarUrl}
+                cardPackCount={trainer.cardPackCount}
+                currentFloor={trainer.currentFloor}
+                battleRecord={trainer.battleRecord}
+                ownedPokemonCount={trainer.ownedPokemonCount}
+                totalPokemonCount={totalPokemonCount}
+              />
+            </div>
 
-            <AiDeckRecommendPanel />
+            <div data-tour-id="home-ai-recommend">
+              <AiDeckRecommendPanel />
+            </div>
 
             <Link
               href="https://ktcloud-techup.com/"
@@ -66,13 +77,15 @@ export default async function HomePage() {
                 src="/images/home/ad/techup-banner.svg"
                 alt="kt cloud TECH UP 배너"
                 width={300}
-                height={140}
+                height={130}
                 className="h-full w-full object-cover transition hover:scale-105"
               />
             </Link>
           </aside>
         </div>
       </div>
+
+      <HomeOnboardingGuide userId={trainer.id} />
 
       <footer className="pb-6 text-center text-sm text-[#888888]">© 2026 Team 로켓단. All rights reserved.</footer>
     </main>

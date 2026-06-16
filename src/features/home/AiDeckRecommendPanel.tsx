@@ -13,7 +13,7 @@ async function AiDeckRecommendLoader() {
 
 export default function AiDeckRecommendPanel() {
   return (
-    <HomeSidebarPanel title="오늘의 추천 덱" badge="DECK ASSIST" className="min-h-138.75">
+    <HomeSidebarPanel title="오늘의 추천 덱" badge="DECK ASSIST" className="min-h-[445px]">
       <Suspense fallback={<AiDeckRecommendSkeleton />}>
         <AiDeckRecommendLoader />
       </Suspense>
