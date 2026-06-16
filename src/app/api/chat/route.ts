@@ -1,6 +1,10 @@
-import { createClient } from '@/shared/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import z from 'zod';
+
+import { createClient } from '@/shared/lib/supabase/server';
+
+const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434/api';
+const OLLAMA_DECK_MODEL = process.env.OLLAMA_DECK_MODEL ?? 'llama3';
 
 const RequestSchema = z.object({
   floorNumber: z.number().min(1).max(999),
@@ -28,12 +32,7 @@ export async function POST(req: Request) {
         .select('pokemon_id, name, type')
         .eq('floor_number', floorNumber)
         .throwOnError(),
-      supabase
-        .from('owned_pokemons')
-        .select('id, pokemon_id, name, type')
-        .eq('trainer_id', user.id)
-        .single()
-        .throwOnError(),
+      supabase.from('owned_pokemons').select('id, pokemon_id, name, type').eq('trainer_id', user.id).throwOnError(),
       supabase.from('type_charts').select('*').throwOnError(),
     ]);
 
@@ -43,59 +42,46 @@ export async function POST(req: Request) {
     const myDecks = userPokemonRes.data || [];
     const typeChart = typeChartRes.data || [];
 
-    const ollamaResponse = await fetch('http://localhost:11434/api/chat', {
+    const ollamaResponse = await fetch(`${OLLAMA_BASE_URL}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
+        model: OLLAMA_DECK_MODEL,
         messages: [
           {
             role: 'system',
-            content: `너는 포켓몬 카드 배틀 전문가다.
-목표는 유저가 무한의 탑을 클리어할 수 있도록, 제공된 데이터만 사용해 최적의 카운터 덱을 추천하는 것이다.
+            content: `너는 포켓몬 카드 배틀 전문가 및 턴제 전략 AI다.\n
+목표는 제공된 데이터를 완벽히 분석하여 유저가 상대 팀을 이길 수 있는 최적의 카운터 덱을 '순수 JSON'으로만 추천하는 것이다.
 
-입력 데이터:
-- my_pool: 유저가 실제로 보유한 포켓몬 목록
-- enemy_team: 상대 팀 포켓몬 목록
-- type_chart: 타입 상성표
+[제공된 데이터 입력]
+- my_pool: 유저가 소유한 포켓몬 목록 (객체 배열: id, level, base_hp, base_atk, base_def, speed, type1_id, type2_id)
+- enemy_team: 상대 팀 포켓몬 목록 (객체 배열)
+- type_chart: 타입 상성 계수 데이터
 
-게임 규칙:
-- 유저는 최대 6마리의 포켓몬을 덱으로 가져갈 수 있다.
-- 실제 추천 카드 수는 3~6장이다.
-- my_pool에 6장 미만만 있으면 가진 수만큼만 추천한다.
-- 필드에는 한 번에 1~3마리까지 세팅 가능하다.
+[덱 빌딩 필수 원칙]
+1. 추천 카드 개수: 최대 6장. 만약 my_pool의 전체 카드 수가 6장 미만이라면, my_pool에 존재하는 모든 카드를 추천하라.
+2. 카드 검증 (절대 규칙): "cards" 배열에 들어가는 모든 숫자는 반드시 제공된 my_pool 안에 실제로 존재하는 포켓몬의 'id'여야만 한다. 없는 id를 발명하거나 추측하지 마라.
+3. 밸런스: 상대 팀 전체를 받아치기 가장 좋은 조합을 구성하되, 한 가지 타입으로만 덱이 과도하게 몰리지 않도록 밸런스를 안배하라.
 
-절대 규칙:
-1. cards에는 반드시 my_pool 안에 실제로 존재하는 id만 넣어라.
-2. my_pool에 없는 id를 생성하거나 추측하거나 변형하지 마라.
-3. 판단에 필요한 정보가 부족하면 추측하지 말고, 제공된 데이터 안에서만 최선의 선택을 하라.
-4. 반드시 type_chart를 참고해 enemy_team의 타입에 유리한 포켓몬을 우선 고려하라.
-5. 출력은 반드시 순수 JSON만 반환하라.
-6. JSON 외의 설명, 마크다운, 코드블록, 주석, 서문, 후문을 절대 추가하지 마라.
+[우선순위 및 가중치]
+상대를 이길 카드를 고를 때 다음 순서대로 가중치를 두어 계산하라:
+1 순위: type_chart 기준 enemy_team의 약점을 찌르는 '타입 상성 우위'
+2 순위: 종합 종족값 수치 (체력 + 공격 + 방어)
+3 순위: 레벨(level)이 높은 카드
+4 순위: 공격력(base_atk) 및 스피드(speed)가 높은 카드
 
-덱 선정 우선순위:
-1. 종족값
-2. 포켓몬 카운터 타입 상성
-3. 레벨
-4. 공격력
-5. 스피드
+[출력 및 코멘트 규칙]
+- "comment"는 완벽한 '한국어'로만 작성하라. 영어 및 마크다운 기호(**, # 등), 이모지를 절대 사용하지 마라.
+- 코멘트에는 핵심 카운터 타입 상성, 이 덱이 유리한 이유, 운영 방향성을 3~5문장으로 요약하여 담아라.
+- 출력 형식은 오직 아래 명시된 JSON만 허용한다.
 
-덱 선정 세부 원칙:
-- enemy_team 전체를 상대하기 좋은 조합을 구성하라.
-- 특정 적 하나만 카운터치는 조합보다, 여러 적을 안정적으로 상대할 수 있는 조합을 우선한다.
-- 같은 타입만 과도하게 몰리지 않도록 가능한 범위에서 밸런스를 고려하라.
-- 추천 카드 수는 min(6, my_pool의 카드 수)로 한다. 단, my_pool은 최소 3장 이상이라고 가정한다.
-
-comment 작성 규칙:
-- 왜 이 카드들이 enemy_team에 유리한지 설명하라.
-- 어떤 타입 상성을 노렸는지 설명하라.
-- 핵심 시너지와 운영 방향을 3~5문장으로 설명하라.
-
-반드시 아래 형식의 JSON 객체만 반환하라:
+[출력 포맷 - 반환할 엄격한 JSON 구조]
 {
-  "comment": "string",
-  "cards": [1, 2, 3, 4, 5, 6]
-}`,
+  "comment": "여기에 타입 상성 조언과 운영 팁을 줄글로 작성 (특수문자 및 이모지 금지)",
+  "cards": [1, 2, 3]
+}
+
+주의: 마크다운 코드 블록('''json ... ''')을 포함한 그 어떤 설명, 인사말, 후문도 추가하지 말고, 오직 중괄호 '{' 로 시작해서 '}' 로 끝나는 순수한 JSON 데이터만 반환하라.`,
           },
           {
             role: 'user',

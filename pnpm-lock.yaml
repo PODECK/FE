@@ -20,6 +20,9 @@ importers:
       ai:
         specifier: ^6.0.197
         version: 6.0.197(zod@4.3.6)
+      ai-sdk-ollama:
+        specifier: ^3.8.7
+        version: 3.8.7(ai@6.0.197(zod@4.3.6))(zod@4.3.6)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1340,6 +1343,12 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  ai-sdk-ollama@3.8.7:
+    resolution: {integrity: sha512-q4oN8gWc5fxnzXnc96sveE6vy4BoKOZQr8uAYywKzu3r5CR+jwwI7csmdzxMqhEdj5TUJ7OT5O9jTGZr5YDYng==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      ai: ^6.0.197
+
   ai@6.0.197:
     resolution: {integrity: sha512-U3KsjkqwQXGHC0u0VeUDqUaNaBS/uQc7v4Vj92Cjv5lPx5DIyRBQYk4Hipy5vwD9AQKIG8uRvdaN9R+pAvrtcQ==}
     engines: {node: '>=18'}
@@ -2142,6 +2151,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  jsonrepair@3.14.0:
+    resolution: {integrity: sha512-tWPGKMZf/8UPim+fcW2EfcQ/d/7aKUrP6IECz9G3Tu6Q5dX0orSleqJ9z6sSw7qrQkjF8/Edo4DvsWBZ8H+HNg==}
+    hasBin: true
+
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
     engines: {node: '>=4.0'}
@@ -2386,6 +2399,9 @@ packages:
     peerDependencies:
       ai: ^5.0.0 || ^6.0.0
       zod: ^4.0.16
+
+  ollama@0.6.3:
+    resolution: {integrity: sha512-KEWEhIqE5wtfzEIZbDCLH51VFZ6Z3ZSa6sIOg/E/tBV8S51flyqBOXi+bRxlOYKDf8i327zG9eSTb8IJxvm3Zg==}
 
   onetime@7.0.0:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
@@ -2938,6 +2954,9 @@ packages:
         optional: true
       jsdom:
         optional: true
+
+  whatwg-fetch@3.6.20:
+    resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}
 
   which-boxed-primitive@1.1.1:
     resolution: {integrity: sha512-TbX3mj8n0odCBFVlY8AxkqcHASw3L60jIuF8jFP78az3C2YhmGvqbHBpAjTRH2/xqYunrJ9g1jSyjCjpoWzIAA==}
@@ -3975,6 +3994,16 @@ snapshots:
 
   acorn@8.16.0: {}
 
+  ai-sdk-ollama@3.8.7(ai@6.0.197(zod@4.3.6))(zod@4.3.6):
+    dependencies:
+      '@ai-sdk/provider': 3.0.10
+      '@ai-sdk/provider-utils': 4.0.27(zod@4.3.6)
+      ai: 6.0.197(zod@4.3.6)
+      jsonrepair: 3.14.0
+      ollama: 0.6.3
+    transitivePeerDependencies:
+      - zod
+
   ai@6.0.197(zod@4.3.6):
     dependencies:
       '@ai-sdk/gateway': 3.0.125(zod@4.3.6)
@@ -4933,6 +4962,8 @@ snapshots:
 
   json5@2.2.3: {}
 
+  jsonrepair@3.14.0: {}
+
   jsx-ast-utils@3.3.5:
     dependencies:
       array-includes: 3.1.9
@@ -5171,6 +5202,10 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.27(zod@4.3.6)
       ai: 6.0.197(zod@4.3.6)
       zod: 4.3.6
+
+  ollama@0.6.3:
+    dependencies:
+      whatwg-fetch: 3.6.20
 
   onetime@7.0.0:
     dependencies:
@@ -5746,6 +5781,8 @@ snapshots:
       '@types/node': 20.19.39
     transitivePeerDependencies:
       - msw
+
+  whatwg-fetch@3.6.20: {}
 
   which-boxed-primitive@1.1.1:
     dependencies:
