@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 
 import { streamChatResponse } from '@/features/chat/actions';
 import { cn } from '@/shared/lib/cn';
-import type { ChatMessage } from '@/shared/stores/overlay-store';
 import { useOverlayStore } from '@/shared/stores/overlay-store';
+
+import type { ChatMessage } from '@/shared/stores/overlay-store';
 
 export default function ChatbotModal() {
   const { chatMessages } = useOverlayStore((state) => state);
@@ -35,12 +36,10 @@ export default function ChatbotModal() {
     setChatMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
     try {
-      const fullStream = await streamChatResponse(updatedMessages, currentFloor);
+      const textStream = await streamChatResponse(updatedMessages, currentFloor);
 
-      for await (const delta of fullStream as any) {
-        if (delta.type === 'text-delta') {
-          updateLastAssistantMessage(delta.textDelta);
-        }
+      for await (const textDelta of textStream) {
+        updateLastAssistantMessage(textDelta);
       }
     } catch (err) {
       console.error(err);

@@ -1,13 +1,37 @@
 'use server';
 
-import type { ChatMessage } from '@/shared/stores/overlay-store';
-import { createClient } from '@/shared/lib/supabase/server';
-import { createOllama } from 'ollama-ai-provider';
+import { createOllama } from 'ollama-ai-provider-v2';
 import { streamText } from 'ai';
 
+import { createClient } from '@/shared/lib/supabase/server';
+
+import type { PokemonType } from '@/shared/types/pokemon';
+import type { ChatMessage } from '@/shared/stores/overlay-store';
+
+const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434/api';
+const OLLAMA_CHAT_MODEL = process.env.OLLAMA_CHAT_MODEL ?? 'llama3';
+
 const ollama = createOllama({
-  baseURL: 'http://localhost:11434/api',
+  baseURL: OLLAMA_BASE_URL,
 });
+
+type EnemySpecies = {
+  ko_name: string;
+  type1_id: PokemonType;
+  type2_id: PokemonType | null;
+  base_hp: number;
+  base_atk: number;
+  base_def: number;
+};
+
+// Supabase 중첩 select는 단일 관계를 객체 또는 배열로 추론할 수 있어 정규화한다
+function normalizeEnemySpecies(value: unknown): EnemySpecies | null {
+  const species = Array.isArray(value) ? (value[0] as unknown) : value;
+  if (species && typeof species === 'object' && 'ko_name' in species) {
+    return species as EnemySpecies;
+  }
+  return null;
+}
 
 // 유저가 정한 AI 추천 카운터 덱을 실제 DB에 맞게 1:N 트랜잭션으로 저장
 export async function copyCounterDeckToUser(dexIds: number[]) {
@@ -65,9 +89,9 @@ export async function streamChatResponse(messages: ChatMessage[], currentFloor: 
   let enemyContext = '정보 없음';
   if (enemies && enemies.length > 0) {
     enemyContext = enemies
-      .map((e) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const s = e.pokemon_species as any;
+      .map((e) => normalizeEnemySpecies(e.pokemon_species))
+      .filter((s): s is EnemySpecies => s !== null)
+      .map((s) => {
         const types = s.type2_id ? `${s.type1_id}/${s.type2_id}` : s.type1_id;
         return `- ${s.ko_name} [${types}] (체력:${s.base_hp} 공격:${s.base_atk} 방어:${s.base_def})`;
       })
@@ -86,8 +110,7 @@ export async function streamChatResponse(messages: ChatMessage[], currentFloor: 
 5. 답변은 다음 3개 요소를 포함해라: 약점 타입, 위험 요소, 운영 팁.`;
 
   const result = await streamText({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    model: ollama('llama3') as any,
+    model: ollama(OLLAMA_CHAT_MODEL),
     system: CHAT_SYSTEM_PROMPT,
     messages: messages.map((msg) => ({
       role: msg.role,
@@ -95,5 +118,5 @@ export async function streamChatResponse(messages: ChatMessage[], currentFloor: 
     })),
   });
 
-  return result.fullStream;
+  return result.textStream;
 }
