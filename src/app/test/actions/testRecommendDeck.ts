@@ -509,7 +509,7 @@ export async function testRecommendDeck(rawInput: unknown): Promise<RecommendRes
   if (req.theme === 'status') {
     candidates = filterStatus(MOCK_ROSTER);
   } else if (req.theme === 'counter') {
-    candidates = filterCounter(MOCK_ROSTER, req.counterTarget!);
+    candidates = await filterCounter(MOCK_ROSTER, req.counterTarget!);
   } else {
     candidates = filterOptimal(MOCK_ROSTER);
   }
