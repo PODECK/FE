@@ -76,7 +76,7 @@ export default function AiDeckCard({
 
         <div className="flex min-w-0 flex-col gap-1">
           <h3 className="text-base-0 text-base leading-[1.4] font-bold tracking-tight">{title}</h3>
-          <p className="text-base-1 max-w-45 text-sm leading-[1.4] tracking-tight">{description}</p>
+          <p className="text-base-1 max-w-none text-sm leading-[1.4] tracking-tight">{description}</p>
         </div>
       </div>
 

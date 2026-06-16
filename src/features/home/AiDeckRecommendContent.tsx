@@ -68,7 +68,7 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
   const allFailed = !first.ok && !second.ok;
 
   return (
-    <div className="mt-4 flex flex-col gap-3.75">
+    <div className="mt-4 flex flex-col gap-2.5">
       {first.ok && <AiDeckCard title={first.data.title} description={first.data.description} deck={first.data.deck} />}
       {second.ok && (
         <AiDeckCard title={second.data.title} description={second.data.description} deck={second.data.deck} />
