@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
 
   const isPublic = isPublicPath(pathname);
 
-  if (!user && isPublic) {
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = '/';
     url.search = '';
