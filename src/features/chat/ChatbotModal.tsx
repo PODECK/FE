@@ -21,6 +21,19 @@ import type { ChatDeckSlot, ChatMessage } from '@/shared/stores/overlay-store';
 
 const TYPE_OPTIONS = PokemonType.options.map((type) => ({ type, label: typeLabelMap[type] ?? type }));
 
+// 자유 입력에서 대상 층을 추출한다. 명시적 "N층"이 우선, 없으면 다음/이전 같은 상대 표현을 해석한다
+function parseRequestedFloor(text: string, currentFloor: number): number | null {
+  const numbered = [...text.matchAll(/(\d+)\s*층/g)].at(-1)?.[1];
+  if (numbered) return Number(numbered);
+
+  if (/다다음\s*층/.test(text)) return currentFloor + 2;
+  if (/다음\s*층/.test(text)) return currentFloor + 1;
+  if (/(이전|전)\s*층/.test(text)) return Math.max(1, currentFloor - 1);
+  if (/(이번|현재|지금|이)\s*층/.test(text)) return currentFloor;
+
+  return null;
+}
+
 export default function ChatbotModal() {
   const { chatMessages } = useOverlayStore((state) => state);
   const currentFloor = useOverlayStore((state) => state.currentFloor ?? 1);
@@ -88,6 +101,20 @@ export default function ChatbotModal() {
     e.preventDefault();
     if (!input.trim() || busy) return;
 
+    const requestedFloor = parseRequestedFloor(input, currentFloor);
+    // 현재 층 +1층까지만 안내 가능
+    if (requestedFloor !== null && requestedFloor > currentFloor + 1) {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: 'user', content: input },
+        { role: 'assistant', content: `현재 ${currentFloor}층에서는 ${requestedFloor}층 공략을 도와드릴 수 없어요.` },
+      ]);
+      setInput('');
+      return;
+    }
+
+    const targetFloor = requestedFloor && requestedFloor >= 1 ? requestedFloor : currentFloor;
+
     const userMessage: ChatMessage = { role: 'user', content: input };
     const updatedMessages = [...chatMessages, userMessage];
 
@@ -98,7 +125,7 @@ export default function ChatbotModal() {
     setChatMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
     try {
-      const textStream = await streamChatResponse(updatedMessages, currentFloor);
+      const textStream = await streamChatResponse(updatedMessages, targetFloor);
 
       for await (const textDelta of textStream) {
         updateLastAssistantMessage(textDelta);
@@ -131,7 +158,7 @@ export default function ChatbotModal() {
         <button
           type="button"
           onClick={closeChat}
-          className="text-base-1 hover:text-secondary-1 text-xs font-semibold transition-colors"
+          className="text-base-1 hover:text-secondary-1 cursor-pointer text-xs font-semibold transition-colors"
         >
           접기
         </button>
@@ -253,7 +280,7 @@ export default function ChatbotModal() {
         <button
           type="submit"
           disabled={!input.trim() || busy}
-          className="bg-primary text-base-3 h-10 w-11 shrink-0 rounded-xl text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-primary text-base-3 h-10 w-11 shrink-0 cursor-pointer rounded-xl text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50"
         >
           전송
         </button>
