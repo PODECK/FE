@@ -6,7 +6,6 @@ import { createOllama } from 'ollama-ai-provider-v2';
 import { typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
 import { filterByType, filterTowerCounter } from '@/features/deck-recommendation/lib/rule-engine';
 import { buildRoster, loadOwnedRoster } from '@/features/deck-recommendation/lib/roster';
-import { TOWER_FLOORS } from '@/shared/config/tower-floors';
 import { createClient } from '@/shared/lib/supabase/server';
 
 import type { RosterPokemon } from '@/features/deck-recommendation/model/schemas';
@@ -160,18 +159,26 @@ function toDeckSlots(roster: RosterPokemon[]) {
   return roster.slice(0, DECK_SIZE).map((p) => ({ dexId: p.dexId, koName: p.koName, artworkUrl: p.artworkUrl }));
 }
 
-// 현재 층의 적 타입 집합을 TOWER_FLOORS 풀에서 도출한다
+// 현재 층 적 dex_id 목록을 DB(tower_floors.pokemon_pool)에서 읽는다
+async function getFloorEnemyDexIds(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  floor: number,
+): Promise<number[]> {
+  const { data } = await supabase.from('tower_floors').select('pokemon_pool').eq('floor', floor).maybeSingle();
+  const pool = (data?.pokemon_pool ?? null) as { enemies?: { dexId: number }[] } | null;
+  if (!pool?.enemies) return [];
+  return [...new Set(pool.enemies.map((e) => e.dexId).filter((id): id is number => typeof id === 'number'))];
+}
+
+// 현재 층의 적 타입 집합을 DB 로스터에서 도출한다
 async function getFloorEnemyTypes(
   supabase: Awaited<ReturnType<typeof createClient>>,
   floor: number,
 ): Promise<PokemonType[]> {
-  const config = TOWER_FLOORS.find((f) => f.floor === floor);
-  if (!config || config.pokemonPool.length === 0) return [];
+  const dexIds = await getFloorEnemyDexIds(supabase, floor);
+  if (dexIds.length === 0) return [];
 
-  const { data: species } = await supabase
-    .from('pokemon_species')
-    .select('type1_id, type2_id')
-    .in('dex_id', config.pokemonPool);
+  const { data: species } = await supabase.from('pokemon_species').select('type1_id, type2_id').in('dex_id', dexIds);
 
   if (!species) return [];
 
@@ -294,15 +301,15 @@ export async function analyzeEntryDeck(currentFloor: number): Promise<DeckSugges
 export async function streamChatResponse(messages: ChatMessage[], currentFloor: number) {
   const supabase = await createClient();
 
-  // 적 정보는 TOWER_FLOORS 설정의 pokemonPool(dex ID 배열)을 기준으로 species를 조회한다
-  const floorConfig = TOWER_FLOORS.find((f) => f.floor === currentFloor);
+  // 적 정보는 DB(tower_floors.pokemon_pool)의 dex ID를 기준으로 species를 조회한다
+  const enemyDexIds = await getFloorEnemyDexIds(supabase, currentFloor);
 
   let enemyContext = '정보 없음';
-  if (floorConfig && floorConfig.pokemonPool.length > 0) {
+  if (enemyDexIds.length > 0) {
     const { data: enemies } = await supabase
       .from('pokemon_species')
       .select('ko_name, type1_id, type2_id, base_hp, base_atk, base_def')
-      .in('dex_id', floorConfig.pokemonPool);
+      .in('dex_id', enemyDexIds);
 
     if (enemies && enemies.length > 0) {
       enemyContext = enemies
@@ -319,21 +326,21 @@ export async function streamChatResponse(messages: ChatMessage[], currentFloor: 
 
   const CHAT_SYSTEM_PROMPT = `너는 PODECK 게임의 무한의 탑 공략 전문 배틀 AI 조력자다.
 현재 플레이어가 도전 중인 층은 [무한의 탑 ${currentFloor}층]이다.
-현재 층의 적 정보는 [${enemyContext}]이다.
+현재 층의 적 로스터(이름 / 타입 / 능력치)는 다음과 같다:
+${enemyContext}
 
-답변 원칙 (절대 사수):
-1. 처음부터 끝까지 모든 문장을 완벽한 "한국어"로만 답변해라. 영어 단어(예: HP, Burn, Card Draw 등)를 영어 그대로 노출하지 말고 '체력', '화상 데미지', '카드 뽑기'와 같이 한글로 번역해서 말해라.
-2. 친절하면서도 예리한 턴제 카드 게임 스트리머나 프로게이머처럼 말해라.
-3. 가장 위협적인 적 1~2개를 기준으로 핵심 약점 타입과 조심해야 할 스펙을 짚어라.
-4. 서론, 인사, 맺음말 없이 곧바로 핵심만 말해라. 각 항목은 한 문장으로 짧게 끊어라.
-5. 답변은 아래 형식 그대로, 세 줄로 나눠서(각 항목 사이 줄바꿈 필수) 출력해라:
+답변 원칙:
+1. 무엇보다 사용자의 질문에 직접 답해라. 위에 주어진 적 로스터 정보 안에서만 답하고, 없는 정보는 절대 지어내지 마라.
+2. 사용자가 적 목록·이름·타입·능력치를 물으면, 위 로스터의 포켓몬 이름과 타입을 한 줄에 하나씩 그대로 나열해라.
+3. 사용자가 공략·카운터·전략을 물을 때만 아래 형식으로 답해라(각 항목 줄바꿈 필수):
 약점 타입: (내용)
 위험 요소: (내용)
 운영 팁: (내용)
+4. 친절하지만 장황하지 않게, 서론·맺음말 없이 핵심만 짧게 답하고 각 문장은 줄바꿈으로 구분해라.
 
-텍스트 스타일 규칙 (필수):
-- ** 기호나 # 같은 마크다운 특수문자를 절대 사용하지 마라. (예: "**약점 타입**" 대신 "약점 타입:" 처럼 순수 텍스트만 쓸 것)
-- 주사위(🎲), 웃음(😄) 같은 이모지나 특수 아이콘을 절대 포함하지 말고 담백하게 글자로만 출력해라.`;
+스타일 규칙(필수):
+- 모든 문장을 완벽한 한국어로만 써라. 영어 단어(HP, Burn 등)는 '체력', '화상'처럼 한글로 바꾸고, 포켓몬 타입도 반드시 한글(불꽃, 물, 노말 등)로 표기해라.
+- 마크다운 기호(**, #)나 이모지를 절대 쓰지 말고 담백한 글자로만 출력해라.`;
 
   const result = await streamText({
     model: llm(LLM_CHAT_MODEL),
