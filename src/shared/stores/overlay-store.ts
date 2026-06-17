@@ -1,8 +1,17 @@
 import { create } from 'zustand';
 
+export type ChatDeckSlot = {
+  dexId: number;
+  koName: string;
+  artworkUrl: string;
+};
+
 export type ChatMessage = {
   role: 'user' | 'assistant';
   content: string;
+  // 결정론 추천/분석 결과를 덱 카드로 렌더링할 때만 채워진다
+  title?: string;
+  deck?: ChatDeckSlot[];
 };
 
 type OverlayState = {
