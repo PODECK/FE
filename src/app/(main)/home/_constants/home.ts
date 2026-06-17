@@ -4,7 +4,6 @@ import type {
   HomeActionCardData,
   HomeBattleHistoryItem,
   HomeHeroCarouselItem,
-  // HomeMissionItem,
   HomeNavItem,
   HomeNewsItem,
   HomeRecommendedDeck,
