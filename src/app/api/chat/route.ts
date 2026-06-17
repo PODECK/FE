@@ -26,21 +26,31 @@ export async function POST(req: Request) {
     const { floorNumber } = parsed.data;
 
     const [floorRes, enemyPokemonRes, userPokemonRes, typeChartRes] = await Promise.all([
-      supabase.from('tower_floors').select('id').eq('floor_number', floorNumber).single().throwOnError(),
-      supabase
-        .from('tower_floor_pokemon')
-        .select('pokemon_id, name, type')
-        .eq('floor_number', floorNumber)
-        .throwOnError(),
-      supabase.from('owned_pokemons').select('id, pokemon_id, name, type').eq('trainer_id', user.id).throwOnError(),
-      supabase.from('type_charts').select('*').throwOnError(),
+      supabase.from('tower_floors').select('id').eq('floor_number', floorNumber).single(),
+      supabase.from('tower_floor_pokemon').select('pokemon_id, name, type').eq('floor_number', floorNumber),
+      supabase.from('owned_pokemons').select('id, pokemon_id, name, type').eq('trainer_id', user.id),
+      supabase.from('type_charts').select('*'),
     ]);
 
-    if (!floorRes.data) return NextResponse.json({ error: '해당 층을 찾을 수 없습니다.' }, { status: 404 });
+    if (floorRes.error || !floorRes.data) {
+      return NextResponse.json({ error: '해당 층을 찾을 수 없습니다.' }, { status: 404 });
+    }
 
-    const enemyDecks = enemyPokemonRes.data || [];
-    const myDecks = userPokemonRes.data || [];
-    const typeChart = typeChartRes.data || [];
+    if (userPokemonRes.error) {
+      console.error('보유 포켓몬 조회 실패:', userPokemonRes.error);
+      return NextResponse.json({ error: '보유 포켓몬을 불러오는데 실패했습니다.' }, { status: 500 });
+    }
+
+    if (enemyPokemonRes.error) {
+      console.error('적 포켓몬 조회 실패:', enemyPokemonRes.error);
+    }
+    if (typeChartRes.error) {
+      console.error('타입 상성 조회 실패:', typeChartRes.error);
+    }
+
+    const enemyDecks = enemyPokemonRes.data ?? [];
+    const myDecks = userPokemonRes.data ?? [];
+    const typeChart = typeChartRes.data ?? [];
 
     const ollamaResponse = await fetch(`${LLM_BASE_URL}/chat`, {
       method: 'POST',
@@ -135,7 +145,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (error: unknown) {
-    console.error('데이터베이스 병렬 조회 실패:', error instanceof Error ? error.message : '알 수 없는 오류');
-    return NextResponse.json({ error: '배틀 데이터를 불러오는데 실패했습니다.' }, { status: 500 });
+    console.error('덱 추천 스트림 처리 실패:', error instanceof Error ? error.message : '알 수 없는 오류');
+    return NextResponse.json({ error: '덱 추천 응답 생성에 실패했습니다.' }, { status: 500 });
   }
 }
