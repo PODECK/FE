@@ -11,10 +11,10 @@ import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';
 import { getPokemonCount } from '@/entities/pokemon/api/pokemonApi';
 import Image from 'next/image';
 import Link from 'next/link';
+import FloatingButton from '@/app/(main)/pokedex/_components/FloatingButton';
 
 export default async function HomePage() {
   const [trainer, totalPokemonCount] = await Promise.all([getTrainerSummary(), getPokemonCount().catch(() => 0)]);
-
   if (!trainer) {
     redirect('/');
   }
@@ -84,6 +84,7 @@ export default async function HomePage() {
           </aside>
         </div>
       </div>
+      <FloatingButton mode="chatbot" cardPackCount={trainer.cardPackCount} currentFloor={trainer.currentFloor} />
 
       <HomeOnboardingGuide userId={trainer.id} />
 

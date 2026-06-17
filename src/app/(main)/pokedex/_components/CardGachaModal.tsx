@@ -7,21 +7,23 @@ import { pullGacha, saveGachaResult } from '@/app/(main)/pokedex/_lib/cardGacha'
 import GachaLoading from './GachaLoading';
 import GachaReveal from './GachaReveal';
 import GachaResult from './GachaResult';
+import { useOverlayStore } from '@/shared/stores/overlay-store';
 
 type Props = {
-  isOpen: boolean;
-  onClose: () => void;
   packCount: number;
 };
 
 type Step = 1 | 2 | 3;
 
-export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
+export default function CardGachaModal({ packCount }: Props) {
+  const { isGachaOpen } = useOverlayStore((state) => state);
+  const { closeGacha } = useOverlayStore((state) => state.actions);
+
   const [step, setStep] = useState<Step>(1);
   const [cards, setCards] = useState<GachaCard[]>([]);
   const isEmptyPackState = packCount === 0 && step === 1 && cards.length === 0;
 
-  if (!isOpen) return null;
+  if (!isGachaOpen) return null;
 
   const handlePull = () => {
     try {
@@ -42,7 +44,7 @@ export default function CardGachaModal({ isOpen, onClose, packCount }: Props) {
   const handleClose = () => {
     setCards([]);
     setStep(1);
-    onClose();
+    closeGacha();
   };
 
   return (

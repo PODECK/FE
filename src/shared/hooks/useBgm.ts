@@ -1,6 +1,6 @@
 'use client';
 
-import { useSoundStore } from '@/shared/stores/soundStore';
+import { useSoundStore } from '@/shared/stores/sound-store';
 import { useEffect } from 'react';
 import type { BgmOptions } from '../lib/bgm';
 import { bgm } from '../lib/bgm';
