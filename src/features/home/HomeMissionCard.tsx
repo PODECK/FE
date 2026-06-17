@@ -1,25 +1,31 @@
 import Image from 'next/image';
 
-import { homeMissionItems } from '@/app/(main)/home/_constants/home';
+import { claimDailyMissionReward } from '@/features/mission/actions/dailyMissionActions';
+import type { DailyMissionView } from '@/entities/mission/model/types';
+import DailyMissionResetTimer from '@/features/mission/components/DailyMissionResetTimer';
 
 const getRewardIconSrc = (rewardText: string) => {
   if (rewardText.includes('카드팩')) {
-    return '/images/pokedex/card-icon.svg';
+    return '/images/home/mission/dex.svg';
   }
 
   return '/images/home/rewards/potion.svg';
 };
 
-export default function HomeMissionCard() {
+type HomeMissionCardProps = {
+  missions: DailyMissionView[];
+};
+
+export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
   return (
     <section className="h-[280px] w-full rounded-[20px] bg-[var(--color-base-3)] px-4 pt-4 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="shrink-0 text-lg font-extrabold text-[var(--color-base-0)]">오늘의 미션</h2>
-        <span className="shrink-0 text-xs font-semibold text-[var(--color-base-1)]">초기화까지 09:28:45</span>
+        <DailyMissionResetTimer />
       </div>
 
       <div className="flex flex-col gap-2">
-        {homeMissionItems.map((mission) => {
+        {missions.map((mission) => {
           const isClaimable = mission.progressRate >= 100 && !mission.isCompleted;
 
           const missionCardClassName = mission.isCompleted
@@ -31,7 +37,7 @@ export default function HomeMissionCard() {
           const progressBarClassName = mission.isCompleted ? 'bg-[#FFD77A]' : 'bg-[#FFB21A]';
 
           const buttonClassName = mission.isCompleted
-            ? 'bg-[#CFCFCF] text-white'
+            ? 'bg-[#CFCFCF] text-[var(--color-base-3)]'
             : isClaimable
               ? 'bg-[#FFB21A] text-[var(--color-base-3)]'
               : 'bg-[#FFD77A] text-[var(--color-base-3)]';
@@ -43,7 +49,7 @@ export default function HomeMissionCard() {
             >
               <div className="min-w-0">
                 <p className="mb-1.5 truncate text-xs font-extrabold">
-                  {mission.title} ({mission.progressText})
+                  {mission.id === 'type-win' ? mission.title : `${mission.title} (${mission.progressText})`}
                 </p>
 
                 <div className="h-1.5 overflow-hidden rounded-full bg-[#E8E8E8]">
@@ -66,13 +72,16 @@ export default function HomeMissionCard() {
                   {mission.rewardText}
                 </span>
 
-                <button
-                  type="button"
-                  disabled={!isClaimable}
-                  className={`h-6 w-[56px] rounded-[7px] text-[10px] font-extrabold transition disabled:cursor-not-allowed ${buttonClassName}`}
-                >
-                  {mission.isCompleted ? '완료' : '수령하기'}
-                </button>
+                <form action={claimDailyMissionReward}>
+                  <input type="hidden" name="missionId" value={mission.id} />
+                  <button
+                    type="submit"
+                    disabled={!isClaimable}
+                    className={`h-6 w-[56px] rounded-[7px] text-[10px] font-extrabold transition disabled:cursor-not-allowed ${buttonClassName}`}
+                  >
+                    {mission.isCompleted ? '완료' : '수령하기'}
+                  </button>
+                </form>
               </div>
             </article>
           );

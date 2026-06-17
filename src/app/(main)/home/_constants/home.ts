@@ -4,7 +4,6 @@ import type {
   HomeActionCardData,
   HomeBattleHistoryItem,
   HomeHeroCarouselItem,
-  HomeMissionItem,
   HomeNavItem,
   HomeNewsItem,
   HomeRecommendedDeck,
@@ -75,31 +74,6 @@ export const homeheroCarouselItems: HomeHeroCarouselItem[] = [
     badgeClassName: 'border-[#4961FF] text-[#4961FF]',
     textClassName: 'text-[var(--color-base-0)]',
     descriptionClassName: 'text-[#666666]',
-  },
-];
-
-export const homeMissionItems: HomeMissionItem[] = [
-  {
-    id: 'attendance',
-    title: '출석 체크',
-    progressText: '1/1',
-    rewardText: '상자팩 x 1',
-    progressRate: 100,
-  },
-  {
-    id: 'battle-win',
-    title: '배틀 3회 승리',
-    progressText: '1/3',
-    rewardText: '카드팩 x 1',
-    progressRate: 33,
-  },
-  {
-    id: 'grass-win',
-    title: '불꽃 타입으로 승리',
-    progressText: '1/1',
-    rewardText: '상자팩 x 1',
-    progressRate: 100,
-    isCompleted: true,
   },
 ];
 
