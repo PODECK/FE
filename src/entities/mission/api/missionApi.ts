@@ -1,9 +1,8 @@
-// 미션 조회 API
-
+import { TYPE_CONFIG } from '@/app/(main)/pokedex/_constants/pokemon-type';
 import type { DailyMissionView } from '@/entities/mission/model/types';
 import { getKstDayRange } from '@/features/mission/lib/missionDate';
-import { pokemonTypeLabels, type PokemonTypeId } from '@/shared/constants/pokemonTypes';
 import { createClient } from '@/shared/lib/supabase/server';
+import { PokemonType } from '@/shared/types/pokemon';
 
 type DailyMissionProgress = {
   id: string;
@@ -23,8 +22,10 @@ type SupabaseErrorLike = {
 };
 
 function getPokemonTypeLabel(typeId: string) {
-  if (typeId in pokemonTypeLabels) {
-    return pokemonTypeLabels[typeId as PokemonTypeId];
+  const parsedType = PokemonType.safeParse(typeId);
+
+  if (parsedType.success) {
+    return TYPE_CONFIG[parsedType.data].label;
   }
 
   return typeId;

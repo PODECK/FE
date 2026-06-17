@@ -1,5 +1,3 @@
-// 미션 타입 정의
-
 export type DailyMissionId = 'attendance' | 'battle-win' | 'type-win';
 
 export type DailyMissionView = {

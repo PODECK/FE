@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from 'react';
 
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
 function getNextKstMidnightTime() {
   const now = new Date();
+  const kstTime = new Date(now.getTime() + KST_OFFSET_MS);
 
-  const kstNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
-  const nextMidnight = new Date(kstNow);
+  const year = kstTime.getUTCFullYear();
+  const month = kstTime.getUTCMonth();
+  const day = kstTime.getUTCDate();
 
-  nextMidnight.setDate(kstNow.getDate() + 1);
-  nextMidnight.setHours(0, 0, 0, 0);
-
-  return nextMidnight.getTime();
+  return Date.UTC(year, month, day + 1, 0, 0, 0, 0) - KST_OFFSET_MS;
 }
 
 function formatRemainingTime(ms: number) {

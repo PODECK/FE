@@ -78,31 +78,6 @@ export const homeheroCarouselItems: HomeHeroCarouselItem[] = [
   },
 ];
 
-// export const homeMissionItems: HomeMissionItem[] = [
-//   {
-//     id: 'attendance',
-//     title: '출석 체크',
-//     progressText: '1/1',
-//     rewardText: '상자팩 x 1',
-//     progressRate: 100,
-//   },
-//   {
-//     id: 'battle-win',
-//     title: '배틀 3회 승리',
-//     progressText: '1/3',
-//     rewardText: '카드팩 x 1',
-//     progressRate: 33,
-//   },
-//   {
-//     id: 'grass-win',
-//     title: '불꽃 타입으로 승리',
-//     progressText: '1/1',
-//     rewardText: '상자팩 x 1',
-//     progressRate: 100,
-//     isCompleted: true,
-//   },
-// ];
-
 // 실제 데이터로 치환 필요
 export const homeBattleHistoryItem: HomeBattleHistoryItem[] = [
   {
