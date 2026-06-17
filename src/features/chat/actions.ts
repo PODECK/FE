@@ -1,13 +1,19 @@
 'use server';
 
+import { generateText, streamText } from 'ai';
 import { createOllama } from 'ollama-ai-provider-v2';
-import { streamText } from 'ai';
 
+import { typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
+import { filterByType, filterTowerCounter } from '@/features/deck-recommendation/lib/rule-engine';
+import { buildRoster, loadOwnedRoster } from '@/features/deck-recommendation/lib/roster';
 import { TOWER_FLOORS } from '@/shared/config/tower-floors';
 import { createClient } from '@/shared/lib/supabase/server';
 
+import type { RosterPokemon } from '@/features/deck-recommendation/model/schemas';
 import type { PokemonType } from '@/shared/types/pokemon';
 import type { ChatMessage } from '@/shared/stores/overlay-store';
+
+import { TYPE_CHART } from '../../../data/type-chart';
 
 const LLM_BASE_URL = process.env.LLM_BASE_URL ?? 'http://localhost:11434/api';
 const LLM_CHAT_MODEL = process.env.LLM_CHAT_MODEL ?? 'qwen2.5:7b';
@@ -78,6 +84,212 @@ export async function copyCounterDeckToUser(dexIds: number[]) {
   return { success: true, deckId: deck.id, message: '카운터 덱이 성공적으로 복사되었습니다.' };
 }
 
+export type EntryDeckPokemon = {
+  dexId: number;
+  koName: string;
+  artworkUrl: string;
+  type1: PokemonType;
+  type2: PokemonType | null;
+};
+
+export type EntryDeckResult = { ok: true; deck: EntryDeckPokemon[] } | { ok: false; message: string };
+
+// 유저가 등록한 6마리 엔트리 덱(pokedex_entries)을 등록 순서대로 불러온다
+export async function loadEntryDeck(): Promise<EntryDeckResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { ok: false, message: '로그인이 필요합니다' };
+
+  const { data: entries } = await supabase
+    .from('pokedex_entries')
+    .select('dex_id')
+    .eq('user_id', user.id)
+    .order('discovered_at', { ascending: true });
+
+  if (!entries || entries.length === 0) {
+    return { ok: false, message: '등록된 덱이 없습니다. 도감에서 6마리를 먼저 등록해 주세요.' };
+  }
+
+  const dexIds = [...new Set(entries.map((e: { dex_id: number }) => e.dex_id))];
+
+  const { data: species } = await supabase
+    .from('pokemon_species')
+    .select('dex_id, ko_name, artwork_url, type1_id, type2_id')
+    .in('dex_id', dexIds);
+
+  if (!species || species.length === 0) {
+    return { ok: false, message: '덱 정보를 불러오지 못했습니다' };
+  }
+
+  const byId = new Map(
+    species.map(
+      (s: {
+        dex_id: number;
+        ko_name: string;
+        artwork_url: string | null;
+        type1_id: PokemonType;
+        type2_id: PokemonType | null;
+      }) => [s.dex_id, s] as const,
+    ),
+  );
+
+  const deck = dexIds
+    .map((id) => byId.get(id))
+    .filter((s): s is NonNullable<typeof s> => Boolean(s))
+    .map((s) => ({
+      dexId: s.dex_id,
+      koName: s.ko_name,
+      artworkUrl: s.artwork_url ?? '',
+      type1: s.type1_id,
+      type2: s.type2_id,
+    }));
+
+  return { ok: true, deck };
+}
+
+const DECK_SIZE = 6;
+
+export type DeckSuggestion =
+  | { ok: true; deck: { dexId: number; koName: string; artworkUrl: string }[]; explanation: string }
+  | { ok: false; message: string };
+
+function toDeckSlots(roster: RosterPokemon[]) {
+  return roster.slice(0, DECK_SIZE).map((p) => ({ dexId: p.dexId, koName: p.koName, artworkUrl: p.artworkUrl }));
+}
+
+// 현재 층의 적 타입 집합을 TOWER_FLOORS 풀에서 도출한다
+async function getFloorEnemyTypes(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  floor: number,
+): Promise<PokemonType[]> {
+  const config = TOWER_FLOORS.find((f) => f.floor === floor);
+  if (!config || config.pokemonPool.length === 0) return [];
+
+  const { data: species } = await supabase
+    .from('pokemon_species')
+    .select('type1_id, type2_id')
+    .in('dex_id', config.pokemonPool);
+
+  if (!species) return [];
+
+  const types = new Set<PokemonType>();
+  for (const s of species as { type1_id: PokemonType; type2_id: PokemonType | null }[]) {
+    types.add(s.type1_id);
+    if (s.type2_id) types.add(s.type2_id);
+  }
+  return [...types];
+}
+
+const EXPLAIN_SYSTEM_PROMPT = `너는 PODECK 무한의 탑 공략 조력자다. 주어진 덱과 상황을 바탕으로 추천 근거를 한국어로 2~3문장 안에 짧게 설명해라.
+규칙: 한국어만 사용하고 영어 단어·마크다운(**, #)·이모지를 절대 쓰지 마라. 포켓몬 타입은 반드시 한글(불꽃, 물, 독 등)로 표기해라. 타입 상성을 중심으로 왜 이 구성이 유리한지만 담백하게 말하고, 각 문장은 줄바꿈으로 구분해라.`;
+
+// 확정된 덱에 대한 짧은 설명만 LLM으로 생성한다 (덱 선정 자체는 결정론)
+async function explainDeck(prompt: string): Promise<string> {
+  try {
+    const { text } = await generateText({ model: llm(LLM_CHAT_MODEL), system: EXPLAIN_SYSTEM_PROMPT, prompt });
+    return text
+      .replace(/\*\*/g, '')
+      .replace(/([.!?])\s+/g, '$1\n')
+      .trim();
+  } catch (error) {
+    console.error('덱 설명 생성 실패:', error);
+    return '';
+  }
+}
+
+// 객관식 1. 현재 층을 카운터하는 덱 (보유 포켓몬 전체에서 선발)
+export async function recommendCounterDeck(currentFloor: number): Promise<DeckSuggestion> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, message: '로그인이 필요합니다' };
+
+  const roster = await loadOwnedRoster(supabase, user.id);
+  if (roster.length < 3) return { ok: false, message: '추천을 받으려면 보유 포켓몬이 최소 3마리 필요합니다' };
+
+  const enemyTypes = await getFloorEnemyTypes(supabase, currentFloor);
+  const ranked = await filterTowerCounter(roster, enemyTypes);
+  const deck = toDeckSlots(ranked);
+
+  const enemyLabel = enemyTypes.length > 0 ? enemyTypes.map((t) => typeLabelMap[t] ?? t).join(', ') : '정보 없음';
+  const explanation = await explainDeck(
+    `현재 ${currentFloor}층 적 타입: [${enemyLabel}]. 추천 카운터 덱: ${deck.map((d) => d.koName).join(', ')}. 이 덱이 왜 이 층에 유리한지 설명해줘.`,
+  );
+
+  return { ok: true, deck, explanation };
+}
+
+// 객관식 2. 특정 타입으로 구성된 덱 (보유 포켓몬 중 해당 타입)
+export async function recommendTypeDeck(type: PokemonType): Promise<DeckSuggestion> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, message: '로그인이 필요합니다' };
+
+  const roster = await loadOwnedRoster(supabase, user.id);
+  const candidates = filterByType(roster, type);
+  if (candidates.length === 0) return { ok: false, message: '해당 타입의 보유 포켓몬이 없습니다' };
+
+  const deck = toDeckSlots(candidates);
+  const explanation = await explainDeck(
+    `${typeLabelMap[type] ?? type} 타입으로 구성한 덱: ${deck.map((d) => d.koName).join(', ')}. 이 타입 덱의 강점과 운영 방향을 설명해줘.`,
+  );
+
+  return { ok: true, deck, explanation };
+}
+
+// 객관식 3. 내 등록 덱(pokedex_entries)이 현재 층에 통할지 결정론으로 분석한다 (0토큰)
+export async function analyzeEntryDeck(currentFloor: number): Promise<DeckSuggestion> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, message: '로그인이 필요합니다' };
+
+  const { data: entries } = await supabase
+    .from('pokedex_entries')
+    .select('dex_id')
+    .eq('user_id', user.id)
+    .order('discovered_at', { ascending: true });
+
+  if (!entries || entries.length === 0) {
+    return { ok: false, message: '등록된 덱이 없습니다. 도감에서 6마리를 먼저 등록해 주세요.' };
+  }
+
+  const roster = await buildRoster(
+    supabase,
+    entries.map((e: { dex_id: number }) => e.dex_id),
+  );
+  const enemyTypes = await getFloorEnemyTypes(supabase, currentFloor);
+
+  const advantaged: string[] = [];
+  const weak: string[] = [];
+  for (const p of roster) {
+    const hasSuperEffectiveMove = p.moves.some(
+      (m) => m.power !== null && enemyTypes.some((et) => (TYPE_CHART[m.type]?.[et] ?? 1) >= 2),
+    );
+    const isVulnerable = enemyTypes.some(
+      (et) => (TYPE_CHART[et]?.[p.type1] ?? 1) >= 2 || (p.type2 ? (TYPE_CHART[et]?.[p.type2] ?? 1) >= 2 : false),
+    );
+    if (hasSuperEffectiveMove && !isVulnerable) advantaged.push(p.koName);
+    else if (isVulnerable && !hasSuperEffectiveMove) weak.push(p.koName);
+  }
+
+  const enemyLabel = enemyTypes.length > 0 ? enemyTypes.map((t) => typeLabelMap[t] ?? t).join(', ') : '정보 없음';
+  const lines = [
+    `현재 ${currentFloor}층 적 타입: ${enemyLabel}`,
+    advantaged.length > 0 ? `유리한 카드: ${advantaged.join(', ')}` : '뚜렷하게 유리한 카드: 없음',
+    weak.length > 0 ? `불리한 카드: ${weak.join(', ')}` : '불리한 카드: 없음',
+  ];
+
+  return { ok: true, deck: toDeckSlots(roster), explanation: lines.join('\n') };
+}
+
 // 채팅 스트리밍 응답 생성
 export async function streamChatResponse(messages: ChatMessage[], currentFloor: number) {
   const supabase = await createClient();
@@ -97,7 +309,8 @@ export async function streamChatResponse(messages: ChatMessage[], currentFloor: 
         .map((row) => normalizeEnemySpecies(row))
         .filter((s): s is EnemySpecies => s !== null)
         .map((s) => {
-          const types = s.type2_id ? `${s.type1_id}/${s.type2_id}` : s.type1_id;
+          const t1 = typeLabelMap[s.type1_id] ?? s.type1_id;
+          const types = s.type2_id ? `${t1}/${typeLabelMap[s.type2_id] ?? s.type2_id}` : t1;
           return `- ${s.ko_name} [${types}] (체력:${s.base_hp} 공격:${s.base_atk} 방어:${s.base_def})`;
         })
         .join('\n');
