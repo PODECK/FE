@@ -7,6 +7,7 @@ import TrainerStatusCard from '@/features/home/TrainerStatusCard';
 import HomeNewsSection from '@/features/news/HomeNewsSection';
 import HomeHeader from '@/shared/components/HomeHeader';
 import { redirect } from 'next/navigation';
+import { getDailyMissions } from '@/entities/mission/api/missionApi';
 import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';
 import { getPokemonCount } from '@/entities/pokemon/api/pokemonApi';
 import Image from 'next/image';
@@ -14,7 +15,11 @@ import Link from 'next/link';
 import FloatingButton from '@/app/(main)/pokedex/_components/FloatingButton';
 
 export default async function HomePage() {
-  const [trainer, totalPokemonCount] = await Promise.all([getTrainerSummary(), getPokemonCount().catch(() => 0)]);
+  const [trainer, totalPokemonCount, dailyMissions] = await Promise.all([
+    getTrainerSummary(),
+    getPokemonCount().catch(() => 0),
+    getDailyMissions().catch(() => []),
+  ]);
   if (!trainer) {
     redirect('/');
   }
@@ -30,7 +35,7 @@ export default async function HomePage() {
 
             <div className="mt-6 grid grid-cols-[300px_minmax(0,1fr)] items-start gap-6">
               <div data-tour-id="home-mission">
-                <HomeMissionCard />
+                <HomeMissionCard missions={dailyMissions} />
               </div>
               <div
                 data-tour-id="home-history"

@@ -24,14 +24,14 @@ export interface HomeHeroCarouselItem {
   descriptionClassName: string;
 }
 
-export interface HomeMissionItem {
-  id: string;
-  title: string;
-  progressText: string;
-  rewardText: string;
-  progressRate: number;
-  isCompleted?: boolean;
-}
+// export interface HomeMissionItem {
+//   id: string;
+//   title: string;
+//   progressText: string;
+//   rewardText: string;
+//   progressRate: number;
+//   isCompleted?: boolean;
+// }
 
 export interface HomeActionCardData {
   id: string;
