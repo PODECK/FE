@@ -1,0 +1,10 @@
+# Caddy: 자동 HTTPS + Bearer 토큰 인증 후 Ollama로 리버스 프록시
+# Vercel 서버에서 Authorization: Bearer <LLM_API_KEY> 헤더를 보내야만 통과한다.
+
+{$DOMAIN} {
+	# Authorization 헤더가 정확히 "Bearer <LLM_API_KEY>"가 아니면 차단
+	@unauthorized not header Authorization "Bearer {$LLM_API_KEY}"
+	respond @unauthorized "Unauthorized" 401
+
+	reverse_proxy ollama:11434
+}
