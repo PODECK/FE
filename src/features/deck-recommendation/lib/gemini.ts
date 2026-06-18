@@ -13,7 +13,7 @@ const AiDeckSchema = z.object({
   strategy: z.string(),
 });
 
-export const RECOMMENDATION_MODEL = 'gemini-2.0-flash';
+export const RECOMMENDATION_MODEL = 'gemini-2.5-flash';
 
 const model = google(RECOMMENDATION_MODEL);
 

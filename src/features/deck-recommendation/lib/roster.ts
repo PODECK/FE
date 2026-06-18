@@ -24,11 +24,12 @@ export async function buildRoster(supabase: SupabaseClient, dexIds: number[]): P
   const unique = [...new Set(dexIds)];
   if (unique.length === 0) return [];
 
-  const { data: species } = await supabase
+  const { data: species, error: speciesError } = await supabase
     .from('pokemon_species')
     .select('dex_id, ko_name, artwork_url, type1_id, type2_id, base_hp, base_atk, base_def, base_spd')
     .in('dex_id', unique);
 
+  if (speciesError) throw new Error(`pokemon_species 조회 실패: ${speciesError.message}`);
   if (!species) return [];
 
   return species.map(
