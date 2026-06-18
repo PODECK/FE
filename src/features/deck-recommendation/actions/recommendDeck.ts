@@ -96,7 +96,7 @@ async function loadRoster(
 }
 
 function trimDesc(deck: RecommendedDeck): RecommendedDeck {
-  return deck.description.length <= 20 ? deck : { ...deck, description: deck.description.slice(0, 14) };
+  return deck.description.length <= 20 ? deck : { ...deck, description: deck.description.slice(0, 20) };
 }
 
 // AI API 호출용 덱 추천 함수
