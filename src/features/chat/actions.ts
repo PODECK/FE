@@ -1,7 +1,7 @@
 'use server';
 
-import { google } from '@ai-sdk/google';
 import { generateText, streamText } from 'ai';
+import { createOllama } from 'ollama-ai-provider-v2';
 
 import { typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
 import { filterByType, filterTowerCounter } from '@/features/deck-recommendation/lib/rule-engine';
@@ -14,7 +14,15 @@ import type { ChatMessage } from '@/shared/stores/overlay-store';
 
 import { TYPE_CHART } from '../../../data/type-chart';
 
-const LLM_CHAT_MODEL = process.env.LLM_CHAT_MODEL ?? 'gemini-2.5-flash';
+const LLM_BASE_URL = process.env.LLM_BASE_URL ?? 'http://localhost:11434/api';
+const LLM_CHAT_MODEL = process.env.LLM_CHAT_MODEL ?? 'exaone3.5:7.8b';
+const LLM_API_KEY = process.env.LLM_API_KEY;
+
+const llm = createOllama({
+  baseURL: LLM_BASE_URL,
+  // 원격 Ollama(EC2)는 프록시에서 Bearer 토큰을 검증한다. 로컬은 키가 없어 헤더 미전송.
+  headers: LLM_API_KEY ? { Authorization: `Bearer ${LLM_API_KEY}` } : undefined,
+});
 
 type EnemySpecies = {
   ko_name: string;
@@ -191,7 +199,7 @@ const EXPLAIN_SYSTEM_PROMPT = `너는 PODECK 무한의 탑 공략 조력자다. 
 // 확정된 덱에 대한 짧은 설명만 LLM으로 생성한다 (덱 선정 자체는 결정론)
 async function explainDeck(prompt: string): Promise<string> {
   try {
-    const { text } = await generateText({ model: google(LLM_CHAT_MODEL), system: EXPLAIN_SYSTEM_PROMPT, prompt });
+    const { text } = await generateText({ model: llm(LLM_CHAT_MODEL), system: EXPLAIN_SYSTEM_PROMPT, prompt });
     return text
       .replace(/\*\*/g, '')
       .replace(/([.!?])\s+/g, '$1\n')
@@ -338,7 +346,7 @@ ${enemyContext}
 - 마크다운 기호(**, #)나 이모지를 절대 쓰지 말고 담백한 글자로만 출력해라.`;
 
   const result = await streamText({
-    model: google(LLM_CHAT_MODEL),
+    model: llm(LLM_CHAT_MODEL),
     system: CHAT_SYSTEM_PROMPT,
     messages: messages.map((msg) => ({
       role: msg.role,
