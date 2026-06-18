@@ -83,6 +83,7 @@ function ChatbotButton({ onClick, isChatOpen }: { onClick: () => void; isChatOpe
   return (
     <button
       onClick={onClick}
+      data-tour-id="ai-chat"
       className="fixed right-10 bottom-10 flex cursor-pointer flex-col items-center gap-2"
       style={{ zIndex: 40 }}
     >
