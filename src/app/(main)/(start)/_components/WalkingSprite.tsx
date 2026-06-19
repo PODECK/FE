@@ -3,7 +3,12 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-const walkingSpriteImages = ['/images/RED1.svg', '/images/RED2.svg', '/images/RED3.svg', '/images/RED4.svg'] as const;
+const walkingSpriteImages = [
+  '/images/start/walking/RED1.svg',
+  '/images/start/walking/RED2.svg',
+  '/images/start/walking/RED3.svg',
+  '/images/start/walking/RED4.svg',
+] as const;
 
 const FRAME_INTERVAL_MS = 150;
 

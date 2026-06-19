@@ -73,7 +73,7 @@ export default function BattleTopBar({ currentFloor, aiPokemon }: Props) {
 
         {aiPokemon.length > 0 && (
           <div className="absolute top-[33px] left-0 flex w-full items-center justify-center gap-[6px] text-[13px] font-bold text-[var(--color-base-3)]/48">
-            <Image src="/images/home/pokeball.svg" alt="" width={18} height={18} />
+            <Image src="/images/home/status/ball.svg" alt="" width={18} height={18} />
             <span>
               포켓몬 {aiPokemon.filter((pokemon) => !pokemon.fainted).length}/{aiPokemon.length}
             </span>

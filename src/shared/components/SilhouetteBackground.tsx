@@ -21,7 +21,7 @@ export default function SilhouetteBackground({
       className={`pointer-events-none absolute -right-70 -bottom-72 opacity-80 sm:-right-85 sm:-bottom-80 ${className}`}
     >
       <Image
-        src="/images/silhouette.svg"
+        src="/images/shared/silhouette.svg"
         alt=""
         width={800}
         height={800}

@@ -35,7 +35,7 @@ export default function GachaCardItem({ card, isRevealed, onClick }: Props) {
           }}
         >
           <Image
-            src="/images/silhouette.svg"
+            src="/images/shared/silhouette.svg"
             alt="실루엣"
             width={80}
             height={80}

@@ -11,7 +11,7 @@ export default function LoadingBackground({ children }: LoadingBackgroundProps) 
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-2.5"
         style={{
-          backgroundImage: "url('/images/pokeball-frame.svg')",
+          backgroundImage: "url('/images/shared/pokeball-frame.svg')",
           backgroundRepeat: 'repeat',
           backgroundSize: '180px 180px',
           backgroundPosition: 'top left',

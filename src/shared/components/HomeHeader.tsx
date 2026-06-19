@@ -21,7 +21,7 @@ export default function HomeHeader({ nickname, avatarUrl }: HomeHeaderProps) {
       <div className="relative mx-auto flex h-20 w-full max-w-[1280px] items-center justify-between px-4">
         <Link href="/home" className="flex items-center">
           <Image
-            src="/images/podeck-logo.svg"
+            src="/images/shared/podeck-logo.svg"
             alt="PODECK"
             width={220}
             height={54}
