@@ -12,7 +12,7 @@ export default function LoginStep() {
       <div className="mb-10 text-center">
         <div className="flex w-full justify-center">
           <Image
-            src="/images/podeck-logo.svg"
+            src="/images/shared/podeck-logo.svg"
             alt="logo"
             width={493}
             height={96}

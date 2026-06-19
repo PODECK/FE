@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
+import { cn } from '@/shared/lib/cn';
 
 import HomeSidebarPanel from '@/features/home/HomeSidebarPanel';
 import Tooltip from '@/shared/components/Tooltip';
@@ -40,11 +41,10 @@ export default function TrainerStatusCard({
   battleRecord,
   ownedPokemonCount,
   totalPokemonCount,
-  itemCollectionCount = 12,
-  totalItemCount = 80,
 }: TrainerStatusCardProps) {
   const pokemonRate = Math.round((ownedPokemonCount / Math.max(totalPokemonCount, 1)) * 100);
-  const itemRate = Math.round((itemCollectionCount / Math.max(totalItemCount, 1)) * 100);
+  const totalBattles = battleRecord.wins + battleRecord.losses;
+  const winRate = totalBattles > 0 ? Math.round((battleRecord.wins / totalBattles) * 100) : 0;
   const profileImageSrc = avatarUrl ?? '/images/home/status/base_profile.svg';
   const hasCardPack = cardPackCount > 0;
 
@@ -92,10 +92,11 @@ export default function TrainerStatusCard({
           value={`${ownedPokemonCount} / ${totalPokemonCount}`}
         />
         <StatusProgress
-          iconSrc="/images/home/status/item.svg"
-          label="아이템 수집률"
-          rate={itemRate}
-          value={`${itemCollectionCount} / ${totalItemCount}`}
+          iconSrc="/images/home/status/wins.svg"
+          label="배틀 승률"
+          rate={winRate}
+          value={`${battleRecord.wins}승 / ${totalBattles}전`}
+          iconClassName="h-20 w-20 translate-x-0.5 -translate-y-0.2"
         />
       </div>
     </HomeSidebarPanel>
@@ -116,17 +117,21 @@ function StatusProgress({
   label,
   rate,
   value,
+  iconClassName = '',
 }: {
   iconSrc: string;
   label: string;
   rate: number;
   value: string;
+  iconClassName?: string;
 }) {
   const safeRate = Math.min(Math.max(rate, 0), 100);
 
   return (
-    <div className="grid grid-cols-[50px_minmax(0,1fr)_52px] items-center gap-1">
-      <Image src={iconSrc} alt="" width={35} height={35} className="ml-3" />
+    <div className="grid grid-cols-[42px_minmax(0,1fr)_52px] items-center gap-1">
+      <div className="flex h-11 w-[42px] items-center justify-center">
+        <Image src={iconSrc} alt="" width={35} height={35} className={cn('h-[35px] w-[35px]', iconClassName)} />
+      </div>
 
       <div className="min-w-0">
         <p className="truncate text-base font-bold text-[var(--color-base-0)]">{label}</p>

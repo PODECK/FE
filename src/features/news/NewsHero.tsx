@@ -5,7 +5,7 @@ export default function NewsHero() {
         aria-hidden="true"
         className="absolute inset-0 opacity-30 mix-blend-screen"
         style={{
-          backgroundImage: "url('/images/pokeball-frame.svg')",
+          backgroundImage: "url('/images/shared/pokeball-frame.svg')",
           backgroundPosition: 'center',
           backgroundSize: '180px 180px',
         }}

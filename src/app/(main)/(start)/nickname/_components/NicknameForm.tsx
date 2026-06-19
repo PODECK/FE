@@ -53,7 +53,7 @@ export default function NicknameForm() {
       <div className="mb-10 text-center">
         <div className="flex w-full justify-center">
           <Image
-            src="/images/podeck-logo.svg"
+            src="/images/shared/podeck-logo.svg"
             alt="logo"
             width={493}
             height={96}
@@ -75,7 +75,7 @@ export default function NicknameForm() {
         >
           <div className="flex flex-col items-center">
             <Image
-              src="/images/silhouette.svg"
+              src="/images/shared/silhouette.svg"
               alt="포켓볼"
               width={50}
               height={50}
