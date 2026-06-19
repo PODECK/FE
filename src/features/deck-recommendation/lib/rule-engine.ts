@@ -11,10 +11,7 @@ async function ensureTypeChart(): Promise<TypeChartCache> {
   if (typeChartCache) return typeChartCache;
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('type_charts')
-    .select('attack_type_id, defense_type_id, multiplier')
-    .throwOnError();
+  const { data, error } = await supabase.from('type_charts').select('attack_type_id, defense_type_id, multiplier');
 
   if (error || !data) {
     console.error('Type chart 데이터를 불러오는데 실패했습니다. 기본 상성 배율을 사용합니다.', error);
@@ -64,6 +61,13 @@ export function filterDefensive(roster: RosterPokemon[]): RosterPokemon[] {
 
 export function filterSpeed(roster: RosterPokemon[]): RosterPokemon[] {
   return [...roster].sort((a, b) => b.baseSpd - a.baseSpd).slice(0, CANDIDATE_LIMIT);
+}
+
+export function filterByType(roster: RosterPokemon[], type: PokemonType): RosterPokemon[] {
+  return roster
+    .filter((p) => p.type1 === type || p.type2 === type)
+    .sort((a, b) => b.baseStatTotal - a.baseStatTotal)
+    .slice(0, CANDIDATE_LIMIT);
 }
 
 export async function filterCounter(roster: RosterPokemon[], target: PokemonType): Promise<RosterPokemon[]> {
