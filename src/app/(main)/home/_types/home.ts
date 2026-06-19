@@ -36,13 +36,18 @@ export interface HomeActionCardData {
   silhouetteClassName?: string;
 }
 
+export interface BattleHistoryPokemon {
+  artworkUrl: string;
+  koName: string;
+}
+
 export interface HomeBattleHistoryItem {
   id: string;
   result: 'WIN' | 'DEFEAT';
   opponentName: string;
   floorName: string;
   timeAgo: string;
-  pokemonImageSrcs: string[];
+  deckPokemons: BattleHistoryPokemon[];
 }
 
 export interface HomeNewsItem {
