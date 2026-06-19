@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./public/images/podeck-logo.svg" alt="PODECK 로고" width="320" />
+  <img src="./public/images/shared/podeck-logo.svg" alt="PODECK 로고" width="320" />
 </p>
 
 # PODECK Web
