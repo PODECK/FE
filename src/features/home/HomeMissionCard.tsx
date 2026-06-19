@@ -77,7 +77,7 @@ export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
                   <button
                     type="submit"
                     disabled={!isClaimable}
-                    className={`h-6 w-[56px] rounded-[7px] text-[10px] font-extrabold transition disabled:cursor-not-allowed ${buttonClassName}`}
+                    className={`h-6 w-[56px] cursor-pointer rounded-[7px] text-[10px] font-extrabold transition active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100 ${buttonClassName}`}
                   >
                     {mission.isCompleted ? '완료' : '수령하기'}
                   </button>
