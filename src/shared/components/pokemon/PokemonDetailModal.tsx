@@ -1,10 +1,11 @@
 'use client';
 
 import { typeColorMap, typeIconMap, typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { PokemonData, PokemonType } from '@/shared/types/pokemon';
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import Tilt from 'react-parallax-tilt';
 
 interface PokemonDetailModalProps {
   pokemon: PokemonData | null;
@@ -13,6 +14,20 @@ interface PokemonDetailModalProps {
 }
 
 export default function PokemonDetailModal({ pokemon, isOpen, onClose }: PokemonDetailModalProps) {
+  const [isVisible, setIsVisible] = useState(false);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isOpen || !pokemon) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = requestAnimationFrame(() => setIsVisible(true));
+    });
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      setIsVisible(false);
+    };
+  }, [isOpen, pokemon]);
+
   const selectedTypesKey = isOpen && pokemon ? pokemon.types.join(',') : '';
 
   const [weaknessResult, setWeaknessResult] = useState<{
@@ -58,9 +73,19 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
   const mainType = pokemon.types[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-base-0)]/60 px-4">
-      {/* 뒤에 배경 흐리게 */}
-      <article className="relative grid w-[800px] grid-cols-[240px_1fr] gap-15 rounded-[20px] border-4 border-[#999999] bg-[var(--color-secondary-2)] p-6">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-base-0)]/60 px-4"
+      style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.2s ease' }}
+      onClick={onClose}
+    >
+      <article
+        className="relative grid w-[800px] grid-cols-[240px_1fr] gap-15 rounded-[20px] border-4 border-[#999999] bg-[var(--color-secondary-2)] p-6"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
+          transition: 'transform 0.25s ease',
+        }}
+      >
         <button
           type="button"
           aria-label="닫기"
@@ -70,18 +95,23 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
           <X size={36} strokeWidth={1.8} />
         </button>
 
-        {/* 포켓몬 카드 뒷면 */}
-        <div className="flex h-[390px] w-[260px] items-center justify-center self-center rounded-[12px] bg-[var(--color-secondary-2)] p-3 shadow-[0_0_16px_rgba(0,0,0,0.18)]">
-          <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm">
-            <Image
-              src={`/images/pokemon-cards/${pokemon.dexId}.png`}
-              alt={`${pokemon.koName} 카드`}
-              width={260}
-              height={390}
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
+        {/* 포켓몬 카드 */}
+        <Tilt
+          tiltMaxAngleX={10}
+          tiltMaxAngleY={10}
+          glareEnable={true}
+          glareMaxOpacity={0.15}
+          glareBorderRadius="12px"
+          className="relative h-[390px] w-[260px] self-center overflow-hidden rounded-[12px]"
+          style={{ filter: 'drop-shadow(0 6px 18px rgba(0,0,0,0.2))' }}
+        >
+          <Image
+            src={`/images/pokemon-cards/${pokemon.dexId}.png`}
+            alt={`${pokemon.koName} 카드`}
+            fill
+            className="object-contain"
+          />
+        </Tilt>
 
         <section className="scrollbar-hide h-[390px] self-center overflow-y-auto pr-6">
           <div className="flex items-end gap-2">
