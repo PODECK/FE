@@ -96,11 +96,11 @@ export default function TrainerStatusCard({
           label="배틀 승률"
           rate={winRate}
           value={`${battleRecord.wins}승 / ${totalBattles}전`}
-          iconClassName="h-20 w-20 translate-x-0.5 -translate-y-0.2"
+          iconClassName="h-20 w-20 translate-x-0.5 -translate-y-0.5"
         />
       </div>
     </HomeSidebarPanel>
-  );
+
 }
 
 function TrainerMetric({ value, label }: { value: string; label: string }) {
