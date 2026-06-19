@@ -59,6 +59,13 @@ export const homeTourSteps = [
     description: '새로운 소식들을 확인해볼 수 있어요',
     placement: 'top',
   },
+  {
+    id: 'chat',
+    targetId: 'ai-chat',
+    title: 'AI 챗봇',
+    description: 'AI 챗봇과 대화하며 덱을 구성해보세요.',
+    placement: 'top',
+  },
 ] as const;
 
 export type HomeTourStep = (typeof homeTourSteps)[number];
