@@ -25,6 +25,12 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
+    console.error('OAuth session exchange failed:', {
+      message: error.message,
+      status: error.status,
+      name: error.name,
+    });
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
