@@ -131,8 +131,6 @@ pnpm run format:check     # Prettier 검사만
 ┃ ┃ ┃ ┣ 📂 pokedex
 ┃ ┃ ┃ ┃ ┣ 📜 layout.tsx
 ┃ ┃ ┃ ┃ ┗ 📜 page.tsx
-┃ ┃ ┃ ┣ 📂 mydeck
-┃ ┃ ┃ ┃ ┗ 📜 page.tsx
 ┃ ┃ ┃ ┣ 📂 battle
 ┃ ┃ ┃ ┃ ┣ 📜 layout.tsx
 ┃ ┃ ┃ ┃ ┣ 📜 page.tsx
@@ -150,11 +148,9 @@ pnpm run format:check     # Prettier 검사만
 ┃   ┣ 📂 components
 ┃   ┣ 📂 config
 ┃   ┣ 📂 constants
-┃   ┣ 📂 data
 ┃   ┣ 📂 hooks
 ┃   ┣ 📂 lib
 ┃   ┣ 📂 stores
-┃   ┣ 📂 temp-ai
 ┃   ┗ 📂 types
 ┣ 📜 package.json
 ┣ 📜 pnpm-lock.yaml
@@ -164,6 +160,6 @@ pnpm run format:check     # Prettier 검사만
 ```
 
 - `app/(main)/(start)` — `/` 랜딩, `/build-deck` 스타터·덱 구성, `/loading` 로딩 화면
-- `app/(main)/home` · `pokedex` · `mydeck` · `battle` — 메인 게임 화면 (`_components` 등은 각 라우트 폴더 하위)
+- `app/(main)/home` · `pokedex` · `battle` — 메인 게임 화면 (`_components` 등은 각 라우트 폴더 하위)
 - `features/battle` — 배틀 도메인 UI·게임 로직
 - `shared` — 공용 컴포넌트, 훅, 스토어, 타입, 정적 데이터 헬퍼
