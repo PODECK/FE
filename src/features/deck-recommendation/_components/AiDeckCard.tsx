@@ -24,11 +24,8 @@ interface AiDeckCardProps {
   className?: string;
 }
 
-function DeckPokemonSlot({ artworkUrl, koName, wide = false }: DeckSlot & { wide?: boolean }) {
-  const slotClassName = cn(
-    'bg-base-3 shrink-0 overflow-hidden rounded-sm border border-[#DBDBDB]',
-    wide ? 'h-9 w-9' : 'h-8.25 w-8.5',
-  );
+function DeckPokemonSlot({ artworkUrl, koName }: DeckSlot) {
+  const slotClassName = cn('bg-base-3 shrink-0 overflow-hidden rounded-sm border border-[#DBDBDB] h-8.25 w-8.5');
 
   if (!artworkUrl) {
     return <div aria-hidden className={slotClassName} />;
@@ -41,7 +38,7 @@ function DeckPokemonSlot({ artworkUrl, koName, wide = false }: DeckSlot & { wide
         className="pointer-events-none invisible absolute bottom-[calc(100%+6px)] left-1/2 z-10 w-max -translate-x-1/2 group-hover:visible"
       />
       <div className={slotClassName}>
-        <Image src={artworkUrl} alt={koName} width={36} height={36} className="h-full w-full object-contain" />
+        <Image src={artworkUrl} alt={koName} width={34} height={34} className="h-full w-full object-contain" />
       </div>
     </div>
   );
@@ -83,7 +80,7 @@ export default function AiDeckCard({
 
       <div className="flex h-8.25 items-center justify-start gap-1.25 overflow-visible">
         {slots.map((slot) => (
-          <DeckPokemonSlot key={slot.id} wide={slot.wide} artworkUrl={slot.artworkUrl} koName={slot.koName} />
+          <DeckPokemonSlot key={slot.id} artworkUrl={slot.artworkUrl} koName={slot.koName} />
         ))}
       </div>
 
