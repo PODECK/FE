@@ -3,13 +3,12 @@
 import { useEffect, useState, useTransition } from 'react';
 
 import { RotateCcw } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 import { recommendHomeDecks } from '@/features/deck-recommendation/actions/recommendDeck';
 import AiDeckCard from '@/features/deck-recommendation/_components/AiDeckCard';
+import { useCopyDeck } from '@/features/deck-recommendation/hooks/use-copy-deck';
 import type { RecommendResponse } from '@/features/deck-recommendation/model/schemas';
 import { cn } from '@/shared/lib/cn';
-import { saveDeckAction } from '@/entities/trainer/api/deckActions';
 
 const COOLDOWN_SECONDS = 60;
 const COOLDOWN_KEY = 'deck-recommend-cooldown-expires';
@@ -30,15 +29,10 @@ interface AiDeckRecommendContentProps {
 }
 
 export default function AiDeckRecommendContent({ initialResults }: AiDeckRecommendContentProps) {
-  const router = useRouter();
   const [results, setResults] = useState<[RecommendResponse, RecommendResponse]>(initialResults);
   const [isPending, startTransition] = useTransition();
   const [cooldown, setCooldown] = useState(0);
-
-  async function handleUseDeck(deck: { dexId: number }[]) {
-    await saveDeckAction(deck.map((p) => p.dexId));
-    router.push('/pokedex?openDeck=true');
-  }
+  const { copyDeck, isPending: copyPending } = useCopyDeck();
 
   useEffect(() => {
     const remaining = getRemainingCooldown();
@@ -82,7 +76,8 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
           title={first.data.title}
           description={first.data.description}
           deck={first.data.deck}
-          onUseDeck={() => handleUseDeck(first.data.deck)}
+          onUseDeck={() => copyDeck(first.data.deck.map((d) => d.dexId))}
+          disabled={copyPending}
         />
       )}
       {second.ok && (
@@ -90,7 +85,8 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
           title={second.data.title}
           description={second.data.description}
           deck={second.data.deck}
-          onUseDeck={() => handleUseDeck(second.data.deck)}
+          onUseDeck={() => copyDeck(second.data.deck.map((d) => d.dexId))}
+          disabled={copyPending}
         />
       )}
       {allFailed && <p className="text-base-1 text-center text-sm">{first.message}</p>}

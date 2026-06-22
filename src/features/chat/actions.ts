@@ -54,6 +54,36 @@ export async function copyCounterDeckToUser(dexIds: number[]) {
 
   if (authError || !user) return { success: false, error: '인증되지 않은 사용자입니다.' };
 
+  // 추천 덱은 dex_id(종)를 들고 있지만 deck_numbers는 instance_id(보유 개체)를 받는다.
+  // 보유 포켓몬 중 해당 dex_id를 가진 인스턴스를 찾아 dex_id -> instance_id로 변환한다.
+  const wantedDexIds = [...new Set(dexIds)].slice(0, DECK_SIZE);
+
+  const { data: owned, error: ownedError } = await supabase
+    .from('owned_pokemon')
+    .select('instance_id, dex_id, level')
+    .eq('user_id', user.id)
+    .in('dex_id', wantedDexIds);
+
+  if (ownedError) {
+    console.error('보유 포켓몬 조회 실패:', ownedError);
+    return { success: false, error: '보유 포켓몬을 불러오지 못했습니다.' };
+  }
+
+  // dex_id별로 레벨이 가장 높은 인스턴스 1개를 선택한다 (같은 인스턴스 중복 편성 방지).
+  const bestByDex = new Map<number, { instance_id: string; level: number }>();
+  for (const p of (owned ?? []) as { instance_id: string; dex_id: number; level: number }[]) {
+    const cur = bestByDex.get(p.dex_id);
+    if (!cur || p.level > cur.level) bestByDex.set(p.dex_id, { instance_id: p.instance_id, level: p.level });
+  }
+
+  const instanceIds = wantedDexIds
+    .map((dexId) => bestByDex.get(dexId)?.instance_id)
+    .filter((id): id is string => Boolean(id));
+
+  if (instanceIds.length === 0) {
+    return { success: false, error: '추천 덱에 넣을 수 있는 보유 포켓몬이 없습니다.' };
+  }
+
   const { data: deck, error: deckError } = await supabase
     .from('decks')
     .insert({ user_id: user.id, is_active: false })
@@ -65,10 +95,10 @@ export async function copyCounterDeckToUser(dexIds: number[]) {
     return { success: false, error: '덱 생성에 실패했습니다.' };
   }
 
-  const insertRows = dexIds.slice(0, 6).map((dexId, index) => ({
+  // position은 같은 덱 안에서 중복 불가 -> 0부터 순서대로 부여
+  const insertRows = instanceIds.map((instanceId, index) => ({
     deck_id: deck.id,
-    user_id: user.id,
-    dex_id: dexId,
+    instance_id: instanceId,
     position: index,
   }));
 
@@ -83,7 +113,17 @@ export async function copyCounterDeckToUser(dexIds: number[]) {
     }
     return { success: false, error: '덱의 포켓몬 상세 구성 저장에 실패했습니다.' };
   }
-  return { success: true, deckId: deck.id, message: '카운터 덱이 성공적으로 복사되었습니다.' };
+
+  // 복사한 덱을 활성 덱으로 전환한다 (유저당 활성 덱은 하나).
+  // 덱 편성(deck_numbers)이 끝난 뒤 전환해야 미완성 덱이 활성화되지 않는다.
+  await supabase.from('decks').update({ is_active: false }).eq('user_id', user.id).neq('id', deck.id);
+  const { error: activateError } = await supabase.from('decks').update({ is_active: true }).eq('id', deck.id);
+  if (activateError) {
+    // 복사 자체는 성공했으므로 활성화 실패는 로깅만 한다.
+    console.error('덱 활성화 실패:', activateError);
+  }
+
+  return { success: true, deckId: deck.id, message: '덱이 성공적으로 복사되었습니다.' };
 }
 
 export type EntryDeckPokemon = {

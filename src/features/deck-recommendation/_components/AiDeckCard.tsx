@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import { cn } from '@/shared/lib/cn';
 import Tooltip from '@/shared/components/Tooltip';
+import { DeckCopyButton } from '@/shared/components/DeckCopyButton';
 
 const DEFAULT_SLOT_COUNT = 6;
 
@@ -86,14 +87,7 @@ export default function AiDeckCard({
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={onUseDeck}
-        disabled={disabled}
-        className="bg-primary text-base-3 flex h-8.5 w-full cursor-pointer items-center justify-center rounded-md px-5 text-sm leading-[1.4] font-bold tracking-tight transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        덱 사용하기
-      </button>
+      <DeckCopyButton onUseDeck={onUseDeck ?? (() => {})} disabled={disabled} />
     </article>
   );
 }
