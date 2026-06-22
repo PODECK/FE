@@ -5,7 +5,7 @@ import { getOnboardingPathForUser } from '@/entities/trainer/api/onboarding';
 
 const publicPaths = ['/'];
 const publicPrefixes = ['/auth'];
-const publicApiPrefixes = ['/api/health', '/api/type-weaknesses'];
+const publicApiPrefixes = ['/api/health', '/api/data', '/api/type-weaknesses'];
 
 function isPublicPath(pathname: string) {
   return (
