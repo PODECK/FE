@@ -7,6 +7,32 @@ const supabaseHostname = process.env.NEXT_PUBLIC_SUPABASE_URL
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  async headers() {
+    return [
+      {
+        source: '/unity/Build/:path*.data.gz',
+        headers: [
+          { key: 'Content-Encoding', value: 'gzip' },
+          { key: 'Content-Type', value: 'application/octet-stream' },
+        ],
+      },
+      {
+        source: '/unity/Build/:path*.wasm.gz',
+        headers: [
+          { key: 'Content-Encoding', value: 'gzip' },
+          { key: 'Content-Type', value: 'application/wasm' },
+        ],
+      },
+      {
+        source: '/unity/Build/:path*.js.gz',
+        headers: [
+          { key: 'Content-Encoding', value: 'gzip' },
+          { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
+        ],
+      },
+    ];
+  },
+
   images: {
     remotePatterns: [
       {

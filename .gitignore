@@ -1,7 +1,9 @@
-# Next.js
+﻿# Next.js
 .next/
 out/
 build/
+!public/unity/Build/
+!public/unity/Build/**
 
 # TypeScript incremental cache (자동 생성, 커밋·수동 편집 불필요)
 *.tsbuildinfo
