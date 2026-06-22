@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import type { PokemonData, PokemonType } from '@/shared/types/pokemon';
 import { toast } from 'sonner';
 import { saveDeckAction } from '@/entities/trainer/api/deckActions';
+import { DRAG_TYPE_POKEMON } from '../_constants/drag';
 
 import SearchBar from './SearchBar';
 import PokemonGrid from './PokemonGrid';
@@ -62,7 +63,7 @@ export default function DexPage({
     };
 
     const onOver = (e: DragEvent) => {
-      if (!e.dataTransfer?.types.includes('pokemondexid')) return;
+      if (!e.dataTransfer?.types.includes(DRAG_TYPE_POKEMON)) return;
       const preview = dragPreviewRef.current;
       if (!preview) return;
       preview.style.left = `${e.clientX}px`;
@@ -86,18 +87,26 @@ export default function DexPage({
   const handleAddToDeck = useCallback(
     (pokemon: PokemonData) => {
       if (deckDexIds.includes(pokemon.dexId) || deckDexIds.length >= MAX_DECK_SIZE) return;
+      const prev = deckDexIds;
       const next = [...deckDexIds, pokemon.dexId];
       setDeckDexIds(next);
-      saveDeckAction(next).catch(() => toast.error('덱 저장에 실패했습니다'));
+      saveDeckAction(next).catch(() => {
+        setDeckDexIds(prev);
+        toast.error('덱 저장에 실패했습니다');
+      });
     },
     [deckDexIds],
   );
 
   const handleRemoveFromDeck = useCallback(
     (dexId: number) => {
+      const prev = deckDexIds;
       const next = deckDexIds.filter((id) => id !== dexId);
       setDeckDexIds(next);
-      saveDeckAction(next).catch(() => toast.error('덱 저장에 실패했습니다'));
+      saveDeckAction(next).catch(() => {
+        setDeckDexIds(prev);
+        toast.error('덱 저장에 실패했습니다');
+      });
     },
     [deckDexIds],
   );
@@ -110,15 +119,26 @@ export default function DexPage({
     [pokemons, handleAddToDeck],
   );
 
-  const handleReorderDeck = useCallback((dexIds: number[]) => {
-    setDeckDexIds(dexIds);
-    saveDeckAction(dexIds).catch(() => toast.error('덱 저장에 실패했습니다'));
-  }, []);
+  const handleReorderDeck = useCallback(
+    (dexIds: number[]) => {
+      const prev = deckDexIds;
+      setDeckDexIds(dexIds);
+      saveDeckAction(dexIds).catch(() => {
+        setDeckDexIds(prev);
+        toast.error('덱 저장에 실패했습니다');
+      });
+    },
+    [deckDexIds],
+  );
 
   const handleClearDeck = useCallback(() => {
+    const prev = deckDexIds;
     setDeckDexIds([]);
-    saveDeckAction([]).catch(() => toast.error('덱 저장에 실패했습니다'));
-  }, []);
+    saveDeckAction([]).catch(() => {
+      setDeckDexIds(prev);
+      toast.error('덱 저장에 실패했습니다');
+    });
+  }, [deckDexIds]);
 
   const deckPokemons = useMemo(
     () => deckDexIds.map((id) => pokemons.find((p) => p.dexId === id)).filter((p): p is PokemonData => Boolean(p)),

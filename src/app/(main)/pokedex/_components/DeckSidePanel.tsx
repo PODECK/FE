@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { X, Plus, GripVertical } from 'lucide-react';
 import type { PokemonData } from '@/shared/types/pokemon';
+import { DRAG_TYPE_DECK_SLOT, DRAG_TYPE_POKEMON } from '../_constants/drag';
 
 const MAX_DECK_SIZE = 6;
 
@@ -22,13 +23,13 @@ export default function DeckSidePanel({ deckPokemons, onRemove, onAdd, onReorder
   const slots = Array.from({ length: MAX_DECK_SIZE }, (_, i) => deckPokemons[i] ?? null);
 
   const handleSlotDragStart = (e: React.DragEvent, index: number) => {
-    e.dataTransfer.setData('deckSlotIndex', String(index));
+    e.dataTransfer.setData(DRAG_TYPE_DECK_SLOT, String(index));
     e.dataTransfer.effectAllowed = 'move';
     setDragSourceIndex(index);
   };
 
   const handleDragOver = (e: React.DragEvent, index: number, pokemon: PokemonData | null) => {
-    const isInternal = e.dataTransfer.types.includes('deckslotindex');
+    const isInternal = e.dataTransfer.types.includes(DRAG_TYPE_DECK_SLOT);
     if (isInternal) {
       if (dragSourceIndex === index) return;
     } else {
@@ -43,7 +44,7 @@ export default function DeckSidePanel({ deckPokemons, onRemove, onAdd, onReorder
     setDragOverIndex(null);
     setDragSourceIndex(null);
 
-    const slotIndexStr = e.dataTransfer.getData('deckSlotIndex');
+    const slotIndexStr = e.dataTransfer.getData(DRAG_TYPE_DECK_SLOT);
     if (slotIndexStr !== '') {
       const sourceIdx = Number(slotIndexStr);
       if (sourceIdx === index) return;
@@ -53,7 +54,7 @@ export default function DeckSidePanel({ deckPokemons, onRemove, onAdd, onReorder
       return;
     }
 
-    const dexId = Number(e.dataTransfer.getData('pokemonDexId'));
+    const dexId = Number(e.dataTransfer.getData(DRAG_TYPE_POKEMON));
     if (dexId && !slots[index]) onAdd(dexId);
   };
 

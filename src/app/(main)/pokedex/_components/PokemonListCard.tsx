@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Plus, Check } from 'lucide-react';
 import type { PokemonData } from '@/shared/types/pokemon';
 import { TYPE_CONFIG } from '../_constants/pokemon-type';
+import { DRAG_TYPE_POKEMON } from '../_constants/drag';
 
 type Props = {
   pokemon: PokemonData;
@@ -70,7 +71,7 @@ export default function PokemonListCard({
 
   // 획득 카드
   const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData('pokemonDexId', String(pokemon.dexId));
+    e.dataTransfer.setData(DRAG_TYPE_POKEMON, String(pokemon.dexId));
     e.dataTransfer.effectAllowed = 'copy';
 
     // 드래그 시 기본 고스트 이미지 제거

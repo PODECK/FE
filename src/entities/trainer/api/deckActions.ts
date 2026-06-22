@@ -37,7 +37,10 @@ export async function saveDeckAction(dexIds: number[]): Promise<{ ok: boolean }>
   }
 
   const { error: deleteError } = await supabase.from('deck_numbers').delete().eq('deck_id', deckId);
-  if (deleteError) console.error('[saveDeckAction] deck_numbers delete error:', deleteError);
+  if (deleteError) {
+    console.error('[saveDeckAction] deck_numbers delete error:', deleteError);
+    return { ok: false };
+  }
 
   if (dexIds.length > 0) {
     const { data: ownedPokemons, error: ownedError } = await supabase
