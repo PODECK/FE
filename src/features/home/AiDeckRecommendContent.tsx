@@ -6,6 +6,7 @@ import { RotateCcw } from 'lucide-react';
 
 import { recommendHomeDecks } from '@/features/deck-recommendation/actions/recommendDeck';
 import AiDeckCard from '@/features/deck-recommendation/_components/AiDeckCard';
+import { useCopyDeck } from '@/features/deck-recommendation/hooks/use-copy-deck';
 import type { RecommendResponse } from '@/features/deck-recommendation/model/schemas';
 import { cn } from '@/shared/lib/cn';
 
@@ -31,6 +32,7 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
   const [results, setResults] = useState<[RecommendResponse, RecommendResponse]>(initialResults);
   const [isPending, startTransition] = useTransition();
   const [cooldown, setCooldown] = useState(0);
+  const { copyDeck, isPending: copyPending } = useCopyDeck();
 
   useEffect(() => {
     const remaining = getRemainingCooldown();
@@ -69,9 +71,23 @@ export default function AiDeckRecommendContent({ initialResults }: AiDeckRecomme
 
   return (
     <div className="mt-4 flex flex-col gap-2.5">
-      {first.ok && <AiDeckCard title={first.data.title} description={first.data.description} deck={first.data.deck} />}
+      {first.ok && (
+        <AiDeckCard
+          title={first.data.title}
+          description={first.data.description}
+          deck={first.data.deck}
+          onUseDeck={() => copyDeck(first.data.deck.map((d) => d.dexId))}
+          disabled={copyPending}
+        />
+      )}
       {second.ok && (
-        <AiDeckCard title={second.data.title} description={second.data.description} deck={second.data.deck} />
+        <AiDeckCard
+          title={second.data.title}
+          description={second.data.description}
+          deck={second.data.deck}
+          onUseDeck={() => copyDeck(second.data.deck.map((d) => d.dexId))}
+          disabled={copyPending}
+        />
       )}
       {allFailed && <p className="text-base-1 text-center text-sm">{first.message}</p>}
       <button

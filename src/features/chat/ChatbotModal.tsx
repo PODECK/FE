@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useEffect, useReducer, useRef, useTransition } from 'react';
 
 import { typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
 import {
   analyzeEntryDeck,
-  copyCounterDeckToUser,
   loadEntryDeck,
   recommendCounterDeck,
   recommendTypeDeck,
@@ -13,6 +12,7 @@ import {
 } from '@/features/chat/actions';
 import type { DeckSuggestion } from '@/features/chat/actions';
 import AiDeckCard from '@/features/deck-recommendation/_components/AiDeckCard';
+import { useCopyDeck } from '@/features/deck-recommendation/hooks/use-copy-deck';
 import { cn } from '@/shared/lib/cn';
 import { useOverlayStore } from '@/shared/stores/overlay-store';
 import { PokemonType } from '@/shared/types/pokemon';
@@ -34,29 +34,80 @@ function parseRequestedFloor(text: string, currentFloor: number): number | null 
   return null;
 }
 
+type ChatbotState = {
+  input: string;
+  isTyping: boolean;
+  deckLoading: boolean;
+  entryReady: boolean;
+  entryHint: string;
+  pickerOpen: boolean;
+};
+
+type ChatbotAction =
+  | { type: 'SET_INPUT'; payload: string }
+  | { type: 'SET_PICKER_OPEN'; payload: boolean }
+  | { type: 'LOAD_DECK_SUCCESS'; payload: boolean }
+  | { type: 'LOAD_DECK_FAILURE'; payload: string }
+  | { type: 'START_SUGGESTION' }
+  | { type: 'START_SUBMIT' }
+  | { type: 'END_STREAM' }
+  | { type: 'ERROR_OCCURRED' };
+
+const initialState: ChatbotState = {
+  input: '',
+  isTyping: false,
+  deckLoading: true,
+  entryReady: false,
+  entryHint: '',
+  pickerOpen: false,
+};
+
+function chatbotReducer(state: ChatbotState, action: ChatbotAction): ChatbotState {
+  switch (action.type) {
+    case 'SET_INPUT':
+      return { ...state, input: action.payload };
+    case 'SET_PICKER_OPEN':
+      return { ...state, pickerOpen: action.payload };
+    case 'LOAD_DECK_SUCCESS':
+      return { ...state, deckLoading: false, entryReady: action.payload };
+    case 'LOAD_DECK_FAILURE':
+      return { ...state, deckLoading: false, entryReady: false, entryHint: action.payload };
+    case 'START_SUGGESTION':
+      return { ...state, pickerOpen: false };
+    case 'START_SUBMIT':
+      return { ...state, input: '', isTyping: true };
+    case 'END_STREAM':
+    case 'ERROR_OCCURRED':
+      return { ...state, isTyping: false };
+    default:
+      return state;
+  }
+}
+
 export default function ChatbotModal() {
   const { chatMessages } = useOverlayStore((state) => state);
   const currentFloor = useOverlayStore((state) => state.currentFloor ?? 1);
   const { closeChat, setChatMessages, updateLastAssistantMessage } = useOverlayStore((state) => state.actions);
 
-  const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [deckLoading, setDeckLoading] = useState(true);
-  const [entryReady, setEntryReady] = useState(false);
-  const [entryHint, setEntryHint] = useState('');
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const { copyDeck, isPending: copyPending } = useCopyDeck();
+
+  const [state, dispatch] = useReducer(chatbotReducer, initialState);
+  const { input, isTyping, deckLoading, entryReady, entryHint, pickerOpen } = state;
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const busy = isPending || isTyping || copyPending;
 
   // 챗봇이 열리면 등록 덱(pokedex_entries)을 미리 읽어 분석 칩 활성화 여부를 결정한다
   useEffect(() => {
     let active = true;
     loadEntryDeck().then((res) => {
       if (!active) return;
-      setEntryReady(res.ok);
-      if (!res.ok) setEntryHint(res.message);
-      setDeckLoading(false);
+      if (res.ok) {
+        dispatch({ type: 'LOAD_DECK_SUCCESS', payload: res.ok });
+      } else {
+        dispatch({ type: 'LOAD_DECK_FAILURE', payload: res.message });
+      }
     });
     return () => {
       active = false;
@@ -67,11 +118,9 @@ export default function ChatbotModal() {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  const busy = isPending || isTyping;
-
   function runSuggestion(userLabel: string, title: string, action: () => Promise<DeckSuggestion>) {
     if (busy) return;
-    setPickerOpen(false);
+    dispatch({ type: 'START_SUGGESTION' });
     setChatMessages((prev) => [...prev, { role: 'user', content: userLabel }]);
     startTransition(async () => {
       const res = await action();
@@ -85,16 +134,8 @@ export default function ChatbotModal() {
 
   function handleUseDeck(deck: ChatDeckSlot[]) {
     if (busy) return;
-    startTransition(async () => {
-      const res = await copyCounterDeckToUser(deck.map((d) => d.dexId));
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: res.success ? (res.message ?? '덱이 저장되었습니다.') : (res.error ?? '덱 저장에 실패했습니다.'),
-        },
-      ]);
-    });
+    // 복사 결과는 채팅 메시지가 아니라 토스트로 알린다 (useCopyDeck). 다른 채팅 로직은 그대로 유지.
+    copyDeck(deck.map((d) => d.dexId));
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,7 +150,7 @@ export default function ChatbotModal() {
         { role: 'user', content: input },
         { role: 'assistant', content: `현재 ${currentFloor}층에서는 ${requestedFloor}층 공략을 도와드릴 수 없어요.` },
       ]);
-      setInput('');
+      dispatch({ type: 'SET_INPUT', payload: '' });
       return;
     }
 
@@ -119,9 +160,8 @@ export default function ChatbotModal() {
     const updatedMessages = [...chatMessages, userMessage];
 
     setChatMessages(updatedMessages);
-    setInput('');
-    setIsTyping(true);
 
+    dispatch({ type: 'START_SUBMIT' });
     setChatMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
     try {
@@ -137,7 +177,7 @@ export default function ChatbotModal() {
         { role: 'assistant', content: '죄송합니다. 통신 오류가 발생했습니다. 다시 시도해 주세요.' },
       ]);
     } finally {
-      setIsTyping(false);
+      dispatch({ type: 'END_STREAM' });
     }
   };
 
@@ -216,7 +256,11 @@ export default function ChatbotModal() {
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <span className="text-base-1 text-xs font-semibold">타입을 선택하세요</span>
-              <button type="button" onClick={() => setPickerOpen(false)} className="text-base-1 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_PICKER_OPEN', payload: false })}
+                className="text-base-1 text-xs font-semibold"
+              >
                 뒤로
               </button>
             </div>
@@ -250,7 +294,7 @@ export default function ChatbotModal() {
               >
                 이 층 카운터 덱
               </ChipButton>
-              <ChipButton disabled={busy} onClick={() => setPickerOpen(true)}>
+              <ChipButton disabled={busy} onClick={() => dispatch({ type: 'SET_PICKER_OPEN', payload: true })}>
                 특정 타입 덱
               </ChipButton>
               <ChipButton
@@ -272,7 +316,7 @@ export default function ChatbotModal() {
         <input
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => dispatch({ type: 'SET_INPUT', payload: e.target.value })}
           placeholder={busy ? 'AI가 생각하는 중입니다...' : '직접 입력해 물어보기'}
           disabled={busy}
           className="bg-base-2 text-base-0 placeholder:text-base-1 focus:border-primary focus:bg-base-3 flex-1 rounded-xl border border-transparent px-4 py-2.5 text-sm transition-all focus:outline-none"
