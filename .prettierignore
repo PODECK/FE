@@ -1,4 +1,5 @@
 .next
 node_modules
+*.tsbuildinfo
 pnpm-lock.yaml
 package-lock.json

@@ -1,1 +1,274 @@
 @import 'tailwindcss';
+
+@theme {
+  /* ─── 브랜드 컬러 ─── */
+  --color-primary: #ffb41d;
+
+  /* ─── 기본 컬러 ─── */
+  --color-base-0: #212121;
+  --color-base-1: #999999;
+  --color-base-2: #f1f1f1;
+  --color-base-3: #ffffff;
+
+  /* ─── 유틸리티 컬러 ─── */
+  --color-dimmed: rgb(0 0 0 / 0.4);
+  --color-outline: rgb(255 255 255 / 0.3);
+
+  /* ─── 보조 컬러 ─── */
+  --color-secondary-1: #555555;
+  --color-secondary-2: #ffffff;
+
+  /* ─── 포켓몬 타입 컬러 ─── */
+  --color-type-fire: #ff612c;
+  --color-type-water: #2992ff;
+  --color-type-grass: #42bf24;
+  --color-type-electric: #ffdb00;
+  --color-type-fairy: #ee99ac;
+  --color-type-flying: #95c9ff;
+  --color-type-ground: #ab7939;
+  --color-type-steel: #6aaed3;
+  --color-type-ghost: #6e4570;
+  --color-type-psychic: #ff637f;
+  --color-type-dark: #4f4747;
+  --color-type-ice: #42d8ff;
+  --color-type-bug: #9fa424;
+  --color-type-rock: #bcb889;
+  --color-type-fight: #ffa202;
+  --color-type-poison: #994dcf;
+  --color-type-dragon: #5462d6;
+  --color-type-normal: #999999;
+
+  /* 배틀 UI 토큰 */
+  --color-battle-navy: rgb(8 20 52);
+  --color-battle-panel: rgb(13 16 36);
+  --color-battle-panel-soft: rgb(8 20 52 / 0.36);
+  --color-battle-overlay: rgb(0 0 0 / 0.65);
+  --color-battle-overlay-strong: rgb(0 0 0 / 0.75);
+  --color-battle-life-active: rgb(255 234 0);
+  --color-battle-life-empty: rgb(0 0 0 / 0.25);
+  --color-battle-hp-high: rgb(67 160 71);
+  --color-battle-hp-mid: rgb(251 140 0);
+  --color-battle-hp-low: rgb(220 50 30);
+
+  /* 타입 그라디언트 토큰 */
+  --color-type-gradient-normal-from: #d4d0cb;
+  --color-type-gradient-normal-to: #7a7668;
+  --color-type-gradient-fire-from: #ffba88;
+  --color-type-gradient-fire-to: #c83010;
+  --color-type-gradient-water-from: #90d0ff;
+  --color-type-gradient-water-to: #1068c8;
+  --color-type-gradient-electric-from: #ffec70;
+  --color-type-gradient-electric-to: #c89800;
+  --color-type-gradient-fairy-from: #ffd1e6;
+  --color-type-gradient-fairy-to: #ee99ac;
+  --color-type-gradient-grass-from: #a9e288;
+  --color-type-gradient-grass-to: #308400;
+  --color-type-gradient-ice-from: #b8eeff;
+  --color-type-gradient-ice-to: #18a0c0;
+  --color-type-gradient-fighting-from: #ffb878;
+  --color-type-gradient-fighting-to: #a83000;
+  --color-type-gradient-poison-from: #dcb0e8;
+  --color-type-gradient-poison-to: #6a2090;
+  --color-type-gradient-ground-from: #ecd888;
+  --color-type-gradient-ground-to: #906020;
+  --color-type-gradient-flying-from: #ccdfff;
+  --color-type-gradient-flying-to: #5878c8;
+  --color-type-gradient-psychic-from: #ffc0c8;
+  --color-type-gradient-psychic-to: #c02050;
+  --color-type-gradient-bug-from: #d4e870;
+  --color-type-gradient-bug-to: #607020;
+  --color-type-gradient-rock-from: #ddd8a8;
+  --color-type-gradient-rock-to: #807040;
+  --color-type-gradient-ghost-from: #c0a8d0;
+  --color-type-gradient-ghost-to: #482860;
+  --color-type-gradient-dragon-from: #a8b0f0;
+  --color-type-gradient-dragon-to: #2030a8;
+  --color-type-gradient-dark-from: #9a8878;
+  --color-type-gradient-dark-to: #302020;
+  --color-type-gradient-steel-from: #d4e0e8;
+  --color-type-gradient-steel-to: #4888a8;
+
+  /* 타입 배지 토큰 */
+  --color-type-badge-normal: #999999;
+  --color-type-badge-fire: #ff612c;
+  --color-type-badge-water: #2992ff;
+  --color-type-badge-electric: #ffdb00;
+  --color-type-badge-fairy: #ee99ac;
+  --color-type-badge-grass: #42bf24;
+  --color-type-badge-ice: #42d8ff;
+  --color-type-badge-fighting: #ffa202;
+  --color-type-badge-poison: #994dcf;
+  --color-type-badge-ground: #ab7939;
+  --color-type-badge-flying: #95c9ff;
+  --color-type-badge-psychic: #ff637f;
+  --color-type-badge-bug: #9fa424;
+  --color-type-badge-rock: #bcb889;
+  --color-type-badge-ghost: #6e4570;
+  --color-type-badge-dragon: #5462d6;
+  --color-type-badge-dark: #4f4747;
+  --color-type-badge-steel: #6aaed3;
+
+  /* ─── 그라디언트 배경 ─── */
+  --gradient-bg: linear-gradient(180deg, #ffd45e 0%, #f6b400 100%);
+}
+
+/* ─── 커스텀 폰트 ─── */
+@font-face {
+  font-family: 'NeoDunggeunmo';
+  src: url('/fonts/neodgm.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Phaser 캔버스 여백 제거 ─── */
+#phaser-container canvas {
+  display: block !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ─── 커스텀 유틸리티 ─── */
+@utility bg-gradient-primary {
+  background-image: var(--gradient-bg);
+}
+
+@utility text-body-sm {
+  font-size: 1rem;
+  line-height: 1.625rem;
+}
+
+@utility text-body-md {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+@keyframes slow-spin {
+  from {
+    transform: translateX(-8.75rem) translateY(-5rem) rotate(-45deg);
+  }
+  to {
+    transform: translateX(-8.75rem) translateY(-5rem) rotate(315deg);
+  }
+}
+
+.animate-slow-spin {
+  animation: slow-spin 18s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.25s ease-out forwards;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* ─── 배틀 턴 버튼 애니메이션 ─── */
+.turn-button-count-text {
+  display: inline-block;
+  animation: turnButtonCount 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes turnButtonCount {
+  0% {
+    opacity: 0;
+    transform: translateY(-130%);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(8%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── 배틀 볼륨 슬라이더 ─── */
+.battle-volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+.battle-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+.battle-volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 카드팩 뽑기 중 카드 애니메이션 효과 */
+.shine {
+  position: absolute;
+  inset: 0;
+  left: -100%;
+  width: 200%;
+  background: linear-gradient(115deg, transparent 15%, rgba(255, 255, 255, 0.3) 50%, transparent 85%);
+  animation: card-shine 5s ease-in-out 1s infinite;
+}
+
+@keyframes card-shine {
+  0% {
+    transform: translateX(-60%);
+  }
+
+  35% {
+    transform: translateX(110%);
+  }
+
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+/* overflow-y-auto 속성 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

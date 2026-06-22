@@ -11,38 +11,68 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest run",
+    "generate:cards": "node scripts/generate-pokemon-cards.mjs",
+    "generate:cards:force": "node scripts/generate-pokemon-cards.mjs --force",
+    "seed:game-data": "tsx scripts/seed-game-data.ts"
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,jsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "**/*.{json,md,css}": [
+    "**/*.{json,md,css,yml,yaml}": [
+      "prettier --write"
+    ],
+    "**/*.{mjs,cjs}": [
       "prettier --write"
     ]
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.80",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.2",
+    "ai": "^6.0.197",
+    "ai-sdk-ollama": "^3.8.7",
+    "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.38.0",
+    "howler": "^2.2.4",
+    "lucide-react": "^1.14.0",
     "next": "16.2.4",
+    "ollama-ai-provider-v2": "^3.6.0",
+    "phaser": "^4.1.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-parallax-tilt": "^1.7.331",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.5.0",
+    "typewriter-effect": "^2.22.0",
     "zod": "^4.3.6",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@napi-rs/canvas": "^1.0.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@tailwindcss/postcss": "4.2.4",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/howler": "^2.2.12",
     "@types/node": "^20",
     "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
-    "eslint-config-prettier": "^10.1.8",
+    "eslint-config-prettier": "10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "prettier-plugin-tailwindcss": "0.7.2",
+    "tailwindcss": "4.2.4",
+    "tsx": "^4.22.4",
+    "typescript": "^5",
+    "vitest": "^4.1.6"
   }
 }

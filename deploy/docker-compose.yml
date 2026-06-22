@@ -1,0 +1,52 @@
+# EC2 (GPU) 전용 — Ollama + Caddy 인증 프록시
+# 옵션 2 구성: Next.js는 Vercel, 이 호스트는 LLM 서버만 담당한다.
+# Ollama 11434는 외부에 직접 노출하지 않고, Caddy(443)가 Bearer 토큰을 검증한 뒤에만 프록시한다.
+#
+# 사전 준비(EC2):
+#   - NVIDIA 드라이버 + nvidia-container-toolkit 설치 (Deep Learning AMI면 대부분 포함)
+#   - deploy/.env 파일에 DOMAIN, LLM_API_KEY 설정 (deploy/.env.example 참고)
+#   - DOMAIN의 A 레코드가 이 EC2의 Elastic IP를 가리켜야 Caddy 자동 HTTPS가 동작
+#
+# 기동:  docker compose up -d
+# 모델:  docker compose exec ollama ollama pull exaone3.5:7.8b
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    expose:
+      - '11434' # 컨테이너 네트워크 내부에만 노출 (호스트 포트 매핑 X)
+    environment:
+      OLLAMA_KEEP_ALIVE: '-1' # 모델을 메모리에 상주시켜 cold start 방지
+    volumes:
+      - ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAIN: ${DOMAIN}
+      LLM_API_KEY: ${LLM_API_KEY}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - ollama
+
+volumes:
+  ollama:
+  caddy_data:
+  caddy_config:
