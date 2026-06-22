@@ -93,7 +93,6 @@ export async function updateTrainerProfile(formData: FormData) {
 
   revalidatePath('/home');
   revalidatePath('/pokedex');
-  revalidatePath('/mydeck');
   revalidatePath('/battle');
 
   return { ok: true, message: '프로필이 수정되었습니다' };

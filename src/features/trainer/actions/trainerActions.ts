@@ -126,7 +126,6 @@ export async function selectStarterPokemons(dexIds: number[]) {
   }
 
   revalidatePath('/home');
-  revalidatePath('/mydeck');
   revalidatePath('/pokedex');
 
   return {

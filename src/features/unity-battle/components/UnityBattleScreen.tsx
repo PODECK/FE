@@ -26,6 +26,8 @@ type UnityBattlePayload = {
   };
 };
 
+type CompleteUnityBattleResult = Awaited<ReturnType<typeof completeUnityBattle>>;
+
 declare global {
   interface Window {
     createUnityInstance?: (
@@ -37,9 +39,9 @@ declare global {
 }
 
 const UNITY_LOADER_URL = process.env.NEXT_PUBLIC_UNITY_LOADER_URL ?? '/unity/Build/unity.loader.js';
-const UNITY_DATA_URL = process.env.NEXT_PUBLIC_UNITY_DATA_URL ?? '/unity/Build/unity.data.gz';
-const UNITY_FRAMEWORK_URL = process.env.NEXT_PUBLIC_UNITY_FRAMEWORK_URL ?? '/unity/Build/unity.framework.js.gz';
-const UNITY_CODE_URL = process.env.NEXT_PUBLIC_UNITY_CODE_URL ?? '/unity/Build/unity.wasm.gz';
+const UNITY_DATA_URL = process.env.NEXT_PUBLIC_UNITY_DATA_URL ?? '/unity/Build/unity.data.unityweb';
+const UNITY_FRAMEWORK_URL = process.env.NEXT_PUBLIC_UNITY_FRAMEWORK_URL ?? '/unity/Build/unity.framework.js.unityweb';
+const UNITY_CODE_URL = process.env.NEXT_PUBLIC_UNITY_CODE_URL ?? '/unity/Build/unity.wasm.unityweb';
 const UNITY_STREAMING_ASSETS_URL = process.env.NEXT_PUBLIC_UNITY_STREAMING_ASSETS_URL ?? '/unity/StreamingAssets';
 
 let unityLoaderPromise: Promise<void> | null = null;
@@ -97,12 +99,17 @@ export default function UnityBattleScreen() {
   const unityRef = useRef<UnityInstance | null>(null);
   const payloadRef = useRef<UnityBattlePayload | null>(null);
   const completedResultKeysRef = useRef(new Set<string>());
+  const completedBattlePromiseRef = useRef<Promise<CompleteUnityBattleResult> | null>(null);
+  const completedBattleResultRef = useRef<CompleteUnityBattleResult | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState('전투 정보를 준비하는 중입니다.');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const applySessionToUnity = useCallback((payload: UnityBattlePayload) => {
     payloadRef.current = payload;
+    completedResultKeysRef.current.clear();
+    completedBattlePromiseRef.current = null;
+    completedBattleResultRef.current = null;
     unityRef.current?.SendMessage('WebGameSessionReceiver', 'ApplySessionJson', JSON.stringify(payload));
   }, []);
 
@@ -127,6 +134,14 @@ export default function UnityBattleScreen() {
     },
     [applySessionToUnity, loadBattleScene],
   );
+
+  const waitForBattleCompletion = useCallback(async () => {
+    if (completedBattleResultRef.current) return completedBattleResultRef.current;
+    if (completedBattlePromiseRef.current) return completedBattlePromiseRef.current;
+
+    setErrorMessage('전투 완료 처리가 아직 시작되지 않았습니다.');
+    return null;
+  }, []);
 
   useEffect(() => {
     let disposed = false;
@@ -195,14 +210,18 @@ export default function UnityBattleScreen() {
         if (completedResultKeysRef.current.has(key)) return;
         completedResultKeysRef.current.add(key);
 
-        void completeUnityBattle({
+        const completionPromise = completeUnityBattle({
           battleSessionId: String(payload.battleSessionId ?? payloadRef.current?.battleSessionId ?? ''),
           floor,
           won,
           turnCount: toSafeNumber(payload.turnCount, 0),
         }).then((result) => {
+          completedBattleResultRef.current = result;
           if (!result.ok) setErrorMessage(result.message ?? '전투 결과 저장에 실패했습니다.');
+          return result;
         });
+        completedBattlePromiseRef.current = completionPromise;
+        void completionPromise;
         return;
       }
 
@@ -214,25 +233,40 @@ export default function UnityBattleScreen() {
       }
 
       if (detail.eventName === 'homeRequested') {
-        router.push('/home');
+        void (async () => {
+          if (completedBattlePromiseRef.current) await waitForBattleCompletion();
+          router.push('/home');
+        })();
         return;
       }
 
       if (detail.eventName === 'retryRequested') {
-        const floor = resolveCurrentFloor(payloadRef.current);
-        void loadSessionForFloor(floor, true);
+        void (async () => {
+          const result = await waitForBattleCompletion();
+          if (!result?.ok) return;
+
+          const floor = resolveCurrentFloor(payloadRef.current);
+          await loadSessionForFloor(floor, true);
+        })();
         return;
       }
 
       if (detail.eventName === 'nextFloorRequested') {
-        const nextFloor = toSafeNumber(payload.nextFloor, resolveCurrentFloor(payloadRef.current) + 1);
-        void loadSessionForFloor(nextFloor, true);
+        void (async () => {
+          const result = await waitForBattleCompletion();
+          if (!result?.ok) return;
+
+          const fallbackNextFloor = toSafeNumber(payload.nextFloor, resolveCurrentFloor(payloadRef.current) + 1);
+          const nextFloor =
+            'nextFloor' in result ? toSafeNumber(result.nextFloor, fallbackNextFloor) : fallbackNextFloor;
+          await loadSessionForFloor(nextFloor, true);
+        })();
       }
     };
 
     window.addEventListener('podeck:unity-event', handleUnityEvent);
     return () => window.removeEventListener('podeck:unity-event', handleUnityEvent);
-  }, [loadSessionForFloor, router]);
+  }, [loadSessionForFloor, router, waitForBattleCompletion]);
 
   return (
     <main className="fixed inset-0 overflow-hidden bg-black">

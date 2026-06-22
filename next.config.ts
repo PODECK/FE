@@ -10,27 +10,69 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/unity/Build/:path*.data.gz',
+        source: '/unity/Build/:path*.data.unityweb',
         headers: [
           { key: 'Content-Encoding', value: 'gzip' },
           { key: 'Content-Type', value: 'application/octet-stream' },
         ],
       },
       {
-        source: '/unity/Build/:path*.wasm.gz',
+        source: '/unity/Build/:path*.wasm.unityweb',
         headers: [
           { key: 'Content-Encoding', value: 'gzip' },
           { key: 'Content-Type', value: 'application/wasm' },
         ],
       },
       {
-        source: '/unity/Build/:path*.js.gz',
+        source: '/unity/Build/:path*.js.unityweb',
         headers: [
           { key: 'Content-Encoding', value: 'gzip' },
           { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
         ],
       },
     ];
+  },
+
+  turbopack: {
+    rules: {
+      '*.svg': {
+        condition: {
+          query: /[?&]react(?=&|$)/,
+        },
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
+
+  webpack(config) {
+    const fileLoaderRule = config.module.rules.find((rule: unknown) => {
+      if (typeof rule !== 'object' || rule === null || !('test' in rule)) {
+        return false;
+      }
+
+      return rule.test instanceof RegExp && rule.test.test('.svg');
+    });
+
+    if (fileLoaderRule && typeof fileLoaderRule === 'object') {
+      config.module.rules.push(
+        {
+          ...fileLoaderRule,
+          test: /\.svg$/i,
+          resourceQuery: /react/,
+          use: ['@svgr/webpack'],
+        },
+        {
+          ...fileLoaderRule,
+          test: /\.svg$/i,
+          resourceQuery: { not: [/react/] },
+        },
+      );
+
+      fileLoaderRule.exclude = /\.svg$/i;
+    }
+
+    return config;
   },
 
   images: {

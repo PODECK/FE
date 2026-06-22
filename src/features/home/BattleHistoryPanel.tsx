@@ -46,8 +46,13 @@ function BattleHistoryRow({ item }: { item: HomeBattleHistoryItem }) {
 
       <div className="flex flex-1 items-center gap-3 rounded-tr-lg rounded-br-lg border-t border-r border-b border-[#d9d9d9] py-2 pr-[15px] pl-[10px]">
         <div className="flex w-[190px] shrink-0 items-center gap-[10px]">
-          <div className="relative size-11 shrink-0 opacity-20">
-            <Image src="/images/home/action/battlesymbol.svg" alt="" fill className="object-contain" />
+          <div className="relative size-11 shrink-0 opacity-80">
+            <Image
+              src={isWin ? '/images/home/action/battle-symbol-win.svg' : '/images/home/action/battle-symbol-defeat.svg'}
+              alt=""
+              fill
+              className="object-contain"
+            />
           </div>
           <div className="flex min-w-0 flex-col gap-[5px]">
             <p className="truncate text-[15px] leading-[1.4] font-semibold tracking-[-0.375px]">

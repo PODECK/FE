@@ -1,7 +1,7 @@
 'use server';
 
-import { generateText, streamText } from 'ai';
-import { createOllama } from 'ollama-ai-provider-v2';
+import { google } from '@ai-sdk/google';
+import { generateText } from 'ai';
 
 import { typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
 import { filterByType, filterTowerCounter } from '@/features/deck-recommendation/lib/rule-engine';
@@ -14,15 +14,65 @@ import type { ChatMessage } from '@/shared/stores/overlay-store';
 
 import { TYPE_CHART } from '../../../data/type-chart';
 
-const LLM_BASE_URL = process.env.LLM_BASE_URL ?? 'http://localhost:11434/api';
-const LLM_CHAT_MODEL = process.env.LLM_CHAT_MODEL ?? 'exaone3.5:7.8b';
-const LLM_API_KEY = process.env.LLM_API_KEY;
+// 챗봇 LLM은 Gemini를 사용한다. 키는 GOOGLE_GENERATIVE_AI_API_KEY 환경변수에서 자동 주입된다.
+const LLM_CHAT_MODEL = process.env.LLM_CHAT_MODEL ?? 'gemini-2.5-flash';
 
-const llm = createOllama({
-  baseURL: LLM_BASE_URL,
-  // 원격 Ollama(EC2)는 프록시에서 Bearer 토큰을 검증한다. 로컬은 키가 없어 헤더 미전송.
-  headers: LLM_API_KEY ? { Authorization: `Bearer ${LLM_API_KEY}` } : undefined,
-});
+// gemini-2.5-flash의 추론(thinking) 토큰을 끈다. 단답형 공략 응답에 불필요한 지연·비용을 줄인다.
+const NO_THINKING = { google: { thinkingConfig: { thinkingBudget: 0 } } } as const;
+
+const DEFAULT_LLM_ERROR_MESSAGE = 'AI 응답 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+
+/** AI SDK / Gemini 오류를 사용자용 한국어 메시지로 변환한다 */
+function toLlmUserMessage(error: unknown): string {
+  const parts: string[] = [];
+  const seen = new Set<unknown>();
+
+  const visit = (err: unknown) => {
+    if (!err || seen.has(err)) return;
+    seen.add(err);
+
+    if (typeof err === 'object' && err !== null) {
+      const record = err as Record<string, unknown>;
+      if (typeof record.message === 'string') parts.push(record.message);
+      if (typeof record.statusCode === 'number') parts.push(`status:${record.statusCode}`);
+      if (typeof record.status === 'string') parts.push(record.status);
+      visit(record.cause);
+      visit(record.lastError);
+      if (Array.isArray(record.errors)) {
+        for (const nested of record.errors) visit(nested);
+      }
+    } else if (typeof err === 'string') {
+      parts.push(err);
+    }
+  };
+
+  visit(error);
+  const blob = parts.join(' ').toLowerCase();
+
+  if (blob.includes('prepayment credits') || blob.includes('credits are depleted')) {
+    return 'AI 사용 크레딧이 소진되었습니다. Google AI Studio에서 충전한 뒤 다시 시도해 주세요.';
+  }
+  if (blob.includes('resource_exhausted') || blob.includes('status:429') || blob.includes('quota')) {
+    return 'AI 사용 한도에 도달했습니다. 잠시 후 다시 시도하거나 API 크레딧을 확인해 주세요.';
+  }
+  if (
+    blob.includes('api key') ||
+    blob.includes('api_key') ||
+    blob.includes('invalid key') ||
+    blob.includes('status:401') ||
+    blob.includes('status:403')
+  ) {
+    return 'AI API 키가 없거나 올바르지 않습니다. .env.local의 GOOGLE_GENERATIVE_AI_API_KEY를 확인해 주세요.';
+  }
+  if (blob.includes('status:503') || blob.includes('overloaded') || blob.includes('unavailable')) {
+    return 'AI 서버가 일시적으로 혼잡합니다. 잠시 후 다시 시도해 주세요.';
+  }
+  if (blob.includes('fetch failed') || blob.includes('network') || blob.includes('econnrefused')) {
+    return '네트워크 연결을 확인한 뒤 다시 시도해 주세요.';
+  }
+
+  return DEFAULT_LLM_ERROR_MESSAGE;
+}
 
 type EnemySpecies = {
   ko_name: string;
@@ -239,7 +289,12 @@ const EXPLAIN_SYSTEM_PROMPT = `너는 PODECK 무한의 탑 공략 조력자다. 
 // 확정된 덱에 대한 짧은 설명만 LLM으로 생성한다 (덱 선정 자체는 결정론)
 async function explainDeck(prompt: string): Promise<string> {
   try {
-    const { text } = await generateText({ model: llm(LLM_CHAT_MODEL), system: EXPLAIN_SYSTEM_PROMPT, prompt });
+    const { text } = await generateText({
+      model: google(LLM_CHAT_MODEL),
+      system: EXPLAIN_SYSTEM_PROMPT,
+      prompt,
+      providerOptions: NO_THINKING,
+    });
     return text
       .replace(/\*\*/g, '')
       .replace(/([.!?])\s+/g, '$1\n')
@@ -340,8 +395,12 @@ export async function analyzeEntryDeck(currentFloor: number): Promise<DeckSugges
   return { ok: true, deck: toDeckSlots(roster), explanation: lines.join('\n') };
 }
 
-// 채팅 스트리밍 응답 생성
-export async function streamChatResponse(messages: ChatMessage[], currentFloor: number) {
+export type ChatResponse = { ok: true; content: string } | { ok: false; message: string };
+
+// 채팅 응답 생성(비스트리밍).
+// textStream(async iterable)을 Server Action 경계 밖으로 반환하면 무한 pending이 발생하므로
+// 전체 응답을 받아 한 번에 돌려준다.
+export async function generateChatResponse(messages: ChatMessage[], currentFloor: number): Promise<ChatResponse> {
   const supabase = await createClient();
 
   // 적 정보는 DB(tower_floors.pokemon_pool)의 dex ID를 기준으로 species를 조회한다
@@ -385,14 +444,20 @@ ${enemyContext}
 - 모든 문장을 완벽한 한국어로만 써라. 영어 단어(HP, Burn 등)는 '체력', '화상'처럼 한글로 바꾸고, 포켓몬 타입도 반드시 한글(불꽃, 물, 노말 등)로 표기해라.
 - 마크다운 기호(**, #)나 이모지를 절대 쓰지 말고 담백한 글자로만 출력해라.`;
 
-  const result = await streamText({
-    model: llm(LLM_CHAT_MODEL),
-    system: CHAT_SYSTEM_PROMPT,
-    messages: messages.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    })),
-  });
+  try {
+    const { text } = await generateText({
+      model: google(LLM_CHAT_MODEL),
+      system: CHAT_SYSTEM_PROMPT,
+      messages: messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      })),
+      providerOptions: NO_THINKING,
+    });
 
-  return result.textStream;
+    return { ok: true, content: text.replace(/\*\*/g, '').trim() };
+  } catch (error) {
+    console.error('채팅 응답 생성 실패:', error);
+    return { ok: false, message: toLlmUserMessage(error) };
+  }
 }
