@@ -19,11 +19,15 @@ export function useCopyDeck(): UseCopyDeckResult {
   function copyDeck(dexIds: number[]) {
     if (isPending) return;
     startTransition(async () => {
-      const res = await copyCounterDeckToUser(dexIds);
-      if (res.success) {
-        toast.success(res.message ?? '덱이 복사되었습니다.');
-      } else {
-        toast.error(res.error ?? '덱 복사에 실패했습니다.');
+      try {
+        const res = await copyCounterDeckToUser(dexIds);
+        if (res.success) {
+          toast.success(res.message ?? '덱이 복사되었습니다.');
+        } else {
+          toast.error(res.error ?? '덱 복사에 실패했습니다.');
+        }
+      } catch {
+        toast.error('덱 복사 중 오류가 발생했습니다. 다시 시도해 주세요.');
       }
     });
   }

@@ -106,7 +106,10 @@ export async function copyCounterDeckToUser(dexIds: number[]) {
 
   if (numbersError) {
     console.error('Deck Numbers Insert 실패:', numbersError);
-    await supabase.from('decks').delete().eq('id', deck.id);
+    const { error: cleanupError } = await supabase.from('decks').delete().eq('id', deck.id);
+    if (cleanupError) {
+      console.error('고아 덱 정리 실패:', cleanupError);
+    }
 
     if (numbersError.code === '23503') {
       return { success: false, error: '실제로 소유하지 않은 카드가 포함되어 있습니다.' };
