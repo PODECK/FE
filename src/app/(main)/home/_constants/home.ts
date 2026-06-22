@@ -1,6 +1,7 @@
 // 홈 화면 내비게이션, 액션 카드, 배너 데이터 상수
 
 import type {
+  BattleHistoryPokemon,
   HomeActionCardData,
   HomeBattleHistoryItem,
   HomeHeroCarouselItem,
@@ -78,6 +79,11 @@ export const homeheroCarouselItems: HomeHeroCarouselItem[] = [
 ];
 
 // 실제 데이터로 치환 필요
+const MOCK_DECK: BattleHistoryPokemon[] = Array.from({ length: 6 }, () => ({
+  artworkUrl: '/images/home/status/ball.svg',
+  koName: '포켓몬',
+}));
+
 export const homeBattleHistoryItem: HomeBattleHistoryItem[] = [
   {
     id: 'battle-1',
@@ -85,14 +91,7 @@ export const homeBattleHistoryItem: HomeBattleHistoryItem[] = [
     opponentName: '배틀광 재혁',
     floorName: '무한의 탑 13층',
     timeAgo: '1시간 전',
-    pokemonImageSrcs: [
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-    ],
+    deckPokemons: [...MOCK_DECK],
   },
   {
     id: 'battle-2',
@@ -100,29 +99,7 @@ export const homeBattleHistoryItem: HomeBattleHistoryItem[] = [
     opponentName: '열혈 트레이너 강우',
     floorName: '무한의 탑 12층',
     timeAgo: '1시간 전',
-    pokemonImageSrcs: [
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-    ],
-  },
-  {
-    id: 'battle-3',
-    result: 'WIN',
-    opponentName: 'anfdmf whgdkgksms wlgus',
-    floorName: '무한의 탑 13층',
-    timeAgo: '1시간 전',
-    pokemonImageSrcs: [
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-      '/images/home/status/ball.svg',
-    ],
+    deckPokemons: [...MOCK_DECK],
   },
 ];
 
