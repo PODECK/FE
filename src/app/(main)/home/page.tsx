@@ -1,4 +1,5 @@
 import AiDeckRecommendPanel from '@/features/home/AiDeckRecommendPanel';
+import BattleHistoryPanel from '@/features/home/BattleHistoryPanel';
 import HomeActionCards from '@/features/home/HomeActionCards';
 import HomeBanner from '@/features/home/HomeBanner';
 import HomeMissionCard from '@/features/home/HomeMissionCard';
@@ -37,11 +38,8 @@ export default async function HomePage() {
               <div data-tour-id="home-mission">
                 <HomeMissionCard missions={dailyMissions} />
               </div>
-              <div
-                data-tour-id="home-history"
-                className="h-[280px] rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
-              >
-                배틀 히스토리 영역
+              <div data-tour-id="home-history">
+                <BattleHistoryPanel />
               </div>
             </div>
 
