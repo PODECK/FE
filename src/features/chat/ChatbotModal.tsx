@@ -5,10 +5,10 @@ import { useEffect, useReducer, useRef, useTransition } from 'react';
 import { typeLabelMap } from '@/app/(main)/(start)/build-deck/_constants/pokemon-type';
 import {
   analyzeEntryDeck,
+  generateChatResponse,
   loadEntryDeck,
   recommendCounterDeck,
   recommendTypeDeck,
-  streamChatResponse,
 } from '@/features/chat/actions';
 import type { DeckSuggestion } from '@/features/chat/actions';
 import AiDeckCard from '@/features/deck-recommendation/_components/AiDeckCard';
@@ -165,11 +165,8 @@ export default function ChatbotModal() {
     setChatMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
     try {
-      const textStream = await streamChatResponse(updatedMessages, targetFloor);
-
-      for await (const textDelta of textStream) {
-        updateLastAssistantMessage(textDelta);
-      }
+      const res = await generateChatResponse(updatedMessages, targetFloor);
+      updateLastAssistantMessage(res.ok ? res.content : res.message);
     } catch (err) {
       console.error(err);
       setChatMessages((prev) => [
