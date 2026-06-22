@@ -23,7 +23,7 @@ export default function GenerationTabs({ tabs, activeGeneration, onSelectGenerat
             type="button"
             onClick={() => onSelectGeneration(tab.generation)}
             className={`h-12 cursor-pointer rounded-full text-lg font-bold transition ${
-              isActive ? 'bg-[var(--color-secondary-1)] text-white' : 'text-[#999999]'
+              isActive ? 'bg-[var(--color-secondary-1)] text-[var(--color-base-3)]' : 'text-[var(--color-base-1)]'
             }`}
           >
             {tab.label}
