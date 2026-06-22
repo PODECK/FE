@@ -11,11 +11,11 @@ type Props = {
   types: PokemonType[];
   setTypes: (value: PokemonType[]) => void;
   selectedPokemonCount: number;
+  totalPokemonCount: number;
 };
 
-const generationOptions = ['1세대', '2세대', '3세대', '4세대'];
+const generationOptions = ['1세대', '2세대', '3세대', '4세대', '5세대', '6세대', '7세대'];
 const TypeOptions = PokemonType.options;
-const TOTAL_POKEMON = 493;
 
 export default function SearchBar({
   search,
@@ -25,6 +25,7 @@ export default function SearchBar({
   types,
   setTypes,
   selectedPokemonCount,
+  totalPokemonCount,
 }: Props) {
   const [tempSearch, setTempSearch] = useState(search);
   const [tempGenerations, setTempGenerations] = useState(generations);
@@ -47,9 +48,9 @@ export default function SearchBar({
 
   return (
     <div className="rounded-3xl bg-[#f9f9f9]" style={{ padding: '30px' }}>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center gap-4">
         {/* 검색창 */}
-        <div className="flex items-center gap-[10px]" style={{ maxWidth: '700px', width: '100%' }}>
+        <div className="flex flex-1 items-center gap-[10px]" style={{ maxWidth: '700px' }}>
           <label htmlFor="pokemon-search" className="sr-only">
             포켓몬 이름 검색
           </label>
@@ -93,7 +94,7 @@ export default function SearchBar({
         </div>
 
         {/* 보유 포켓몬 카드 수 */}
-        <div className="flex shrink-0 items-center gap-1" style={{ marginRight: '20px' }}>
+        <div className="ml-auto flex shrink-0 items-center gap-1" style={{ marginRight: '20px' }}>
           <Image
             src="/images/pokedex/deck-icon.svg"
             alt="보유 포켓몬 수"
@@ -106,7 +107,7 @@ export default function SearchBar({
             {selectedPokemonCount}
           </span>
           <span className="text-lg font-semibold" style={{ color: 'var(--color-base-1)' }}>
-            / {TOTAL_POKEMON}
+            / {totalPokemonCount}
           </span>
         </div>
       </div>

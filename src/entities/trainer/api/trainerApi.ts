@@ -2,6 +2,22 @@ import { createClient } from '@/shared/lib/supabase/server';
 import type { TrainerSummary } from '@/entities/trainer/model/types';
 import { getOnboardingPathForUser } from '@/entities/trainer/api/onboarding';
 
+export async function getOwnedPokemonDexIds(): Promise<number[]> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data, error } = await supabase.from('owned_pokemon').select('dex_id').eq('user_id', user.id);
+
+  if (error) return [];
+
+  return data.map((row: { dex_id: number }) => row.dex_id);
+}
+
 export async function getCurrentUserId() {
   const supabase = await createClient();
 
@@ -87,6 +103,38 @@ export async function getTrainerSummary(): Promise<TrainerSummary | null> {
         ? user.user_metadata.picture
         : null;
 
+  const { data: activeDeck } = await supabase
+    .from('decks')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('is_active', true)
+    .maybeSingle();
+
+  let activeDeckDexIds: number[] = [];
+  if (activeDeck) {
+    const { data: deckNumbers } = await supabase
+      .from('deck_numbers')
+      .select('instance_id, position')
+      .eq('deck_id', activeDeck.id)
+      .order('position');
+
+    if (deckNumbers && deckNumbers.length > 0) {
+      const instanceIds = deckNumbers.map((row) => row.instance_id as string);
+      const { data: ownedPokemons } = await supabase
+        .from('owned_pokemon')
+        .select('instance_id, dex_id')
+        .in('instance_id', instanceIds);
+
+      const instanceIdToDexId = new Map(
+        (ownedPokemons ?? []).map((p) => [p.instance_id as string, p.dex_id as number]),
+      );
+
+      activeDeckDexIds = deckNumbers
+        .map((row) => instanceIdToDexId.get(row.instance_id as string))
+        .filter((id): id is number => id !== undefined);
+    }
+  }
+
   return {
     id: appUser.id,
     nickname: appUser.nickname,
@@ -97,7 +145,7 @@ export async function getTrainerSummary(): Promise<TrainerSummary | null> {
       losses: losses ?? 0,
     },
     ownedPokemonCount: ownedPokemonCount ?? 0,
-    activeDeckDexIds: [], // mydeck 전환 시 decks/deck_numbers 기준으로 채움
+    activeDeckDexIds,
     currentFloor: tower?.current_floor ?? 1,
   };
 }

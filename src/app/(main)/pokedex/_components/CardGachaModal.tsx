@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type { GachaCard } from '@/app/(main)/pokedex/_lib/cardGacha';
-import { pullGacha, saveGachaResult } from '@/app/(main)/pokedex/_lib/cardGacha';
+import { pullGachaAction } from '@/app/(main)/pokedex/_lib/gachaActions';
 import GachaLoading from './GachaLoading';
 import GachaReveal from './GachaReveal';
 import GachaResult from './GachaResult';
@@ -11,40 +12,71 @@ import { useOverlayStore } from '@/shared/stores/overlay-store';
 
 type Props = {
   packCount: number;
+  ownedCount: number;
+  totalCount: number;
 };
 
 type Step = 1 | 2 | 3;
 
-export default function CardGachaModal({ packCount }: Props) {
+export default function CardGachaModal({ packCount, ownedCount, totalCount }: Props) {
+  const router = useRouter();
   const { isGachaOpen } = useOverlayStore((state) => state);
   const { closeGacha } = useOverlayStore((state) => state.actions);
 
   const [step, setStep] = useState<Step>(1);
   const [cards, setCards] = useState<GachaCard[]>([]);
-  const isEmptyPackState = packCount === 0 && step === 1 && cards.length === 0;
+  const [localPackCount, setLocalPackCount] = useState(packCount);
+  const [runningOwnedCount, setRunningOwnedCount] = useState(ownedCount);
+  const [ownedCountBefore, setOwnedCountBefore] = useState(ownedCount);
+
+  const handleClose = useCallback(() => {
+    setCards([]);
+    setStep(1);
+    closeGacha();
+    router.refresh();
+  }, [closeGacha, router]);
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (isGachaOpen) {
+      setLocalPackCount(packCount);
+      setRunningOwnedCount(ownedCount);
+      setOwnedCountBefore(ownedCount);
+      setStep(1);
+      setCards([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGachaOpen]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    if (!isGachaOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isGachaOpen, handleClose]);
+
+  const isEmptyPackState = localPackCount === 0 && step === 1 && cards.length === 0;
 
   if (!isGachaOpen) return null;
 
-  const handlePull = () => {
-    try {
-      const result = pullGacha();
-      setCards(result);
-      saveGachaResult(result);
-    } catch {
-      setCards([]);
-      setStep(1);
+  const handlePull = async () => {
+    setOwnedCountBefore(runningOwnedCount);
+    const result = await pullGachaAction();
+    if (!result.ok) {
+      throw new Error(result.message);
     }
+    setCards(result.cards);
+    const newCount = result.cards.filter((c) => c.isNew).length;
+    setRunningOwnedCount((prev) => prev + newCount);
+    setLocalPackCount((prev) => Math.max(0, prev - 1));
   };
 
   const handlePullAgain = () => {
     setCards([]);
     setStep(1);
-  };
-
-  const handleClose = () => {
-    setCards([]);
-    setStep(1);
-    closeGacha();
   };
 
   return (
@@ -58,7 +90,7 @@ export default function CardGachaModal({ packCount }: Props) {
     >
       <div
         className="relative flex flex-col rounded-[20px] border-4 border-[var(--color-base-1)] bg-white p-8"
-        style={{ width: 720, height: 640 }}
+        style={{ width: 720, height: 650 }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
@@ -105,10 +137,20 @@ export default function CardGachaModal({ packCount }: Props) {
           </div>
         ) : (
           <div className="flex flex-1 flex-col">
-            {step === 1 && <GachaLoading onPull={handlePull} onComplete={() => setStep(2)} />}
+            {step === 1 && (
+              <GachaLoading onPull={handlePull} onComplete={() => setStep(2)} packCount={localPackCount} />
+            )}
             {step === 2 && <GachaReveal cards={cards} onComplete={() => setStep(3)} />}
             {step === 3 && (
-              <GachaResult cards={cards} packCount={packCount} onPullAgain={handlePullAgain} onClose={handleClose} />
+              <GachaResult
+                cards={cards}
+                packCount={localPackCount}
+                ownedCountBefore={ownedCountBefore}
+                ownedCountAfter={ownedCountBefore + cards.filter((c) => c.isNew).length}
+                totalCount={totalCount}
+                onPullAgain={handlePullAgain}
+                onClose={handleClose}
+              />
             )}
           </div>
         )}

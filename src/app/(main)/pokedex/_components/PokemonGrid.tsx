@@ -5,9 +5,21 @@ type Props = {
   data: PokemonData[];
   onSelect: (pokemon: PokemonData) => void;
   ownedPokemonIds: number[];
+  isDeckMode?: boolean;
+  deckDexIds?: number[];
+  onAddToDeck?: (pokemon: PokemonData) => void;
+  onRemoveFromDeck?: (dexId: number) => void;
 };
 
-export default function PokemonGrid({ data, onSelect, ownedPokemonIds }: Props) {
+export default function PokemonGrid({
+  data,
+  onSelect,
+  ownedPokemonIds,
+  isDeckMode,
+  deckDexIds = [],
+  onAddToDeck,
+  onRemoveFromDeck,
+}: Props) {
   if (!data || data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-1 py-16 text-center">
@@ -25,6 +37,10 @@ export default function PokemonGrid({ data, onSelect, ownedPokemonIds }: Props) 
           pokemon={pokemon}
           owned={ownedPokemonIds.includes(pokemon.dexId)}
           onClick={() => onSelect(pokemon)}
+          isDeckMode={isDeckMode}
+          isInDeck={deckDexIds.includes(pokemon.dexId)}
+          onAddToDeck={onAddToDeck}
+          onRemoveFromDeck={onRemoveFromDeck}
         />
       ))}
     </div>
