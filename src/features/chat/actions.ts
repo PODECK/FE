@@ -20,6 +20,60 @@ const LLM_CHAT_MODEL = process.env.LLM_CHAT_MODEL ?? 'gemini-2.5-flash';
 // gemini-2.5-flash의 추론(thinking) 토큰을 끈다. 단답형 공략 응답에 불필요한 지연·비용을 줄인다.
 const NO_THINKING = { google: { thinkingConfig: { thinkingBudget: 0 } } } as const;
 
+const DEFAULT_LLM_ERROR_MESSAGE = 'AI 응답 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+
+/** AI SDK / Gemini 오류를 사용자용 한국어 메시지로 변환한다 */
+function toLlmUserMessage(error: unknown): string {
+  const parts: string[] = [];
+  const seen = new Set<unknown>();
+
+  const visit = (err: unknown) => {
+    if (!err || seen.has(err)) return;
+    seen.add(err);
+
+    if (typeof err === 'object' && err !== null) {
+      const record = err as Record<string, unknown>;
+      if (typeof record.message === 'string') parts.push(record.message);
+      if (typeof record.statusCode === 'number') parts.push(`status:${record.statusCode}`);
+      if (typeof record.status === 'string') parts.push(record.status);
+      visit(record.cause);
+      visit(record.lastError);
+      if (Array.isArray(record.errors)) {
+        for (const nested of record.errors) visit(nested);
+      }
+    } else if (typeof err === 'string') {
+      parts.push(err);
+    }
+  };
+
+  visit(error);
+  const blob = parts.join(' ').toLowerCase();
+
+  if (blob.includes('prepayment credits') || blob.includes('credits are depleted')) {
+    return 'AI 사용 크레딧이 소진되었습니다. Google AI Studio에서 충전한 뒤 다시 시도해 주세요.';
+  }
+  if (blob.includes('resource_exhausted') || blob.includes('status:429') || blob.includes('quota')) {
+    return 'AI 사용 한도에 도달했습니다. 잠시 후 다시 시도하거나 API 크레딧을 확인해 주세요.';
+  }
+  if (
+    blob.includes('api key') ||
+    blob.includes('api_key') ||
+    blob.includes('invalid key') ||
+    blob.includes('status:401') ||
+    blob.includes('status:403')
+  ) {
+    return 'AI API 키가 없거나 올바르지 않습니다. .env.local의 GOOGLE_GENERATIVE_AI_API_KEY를 확인해 주세요.';
+  }
+  if (blob.includes('status:503') || blob.includes('overloaded') || blob.includes('unavailable')) {
+    return 'AI 서버가 일시적으로 혼잡합니다. 잠시 후 다시 시도해 주세요.';
+  }
+  if (blob.includes('fetch failed') || blob.includes('network') || blob.includes('econnrefused')) {
+    return '네트워크 연결을 확인한 뒤 다시 시도해 주세요.';
+  }
+
+  return DEFAULT_LLM_ERROR_MESSAGE;
+}
+
 type EnemySpecies = {
   ko_name: string;
   type1_id: PokemonType;
@@ -404,6 +458,6 @@ ${enemyContext}
     return { ok: true, content: text.replace(/\*\*/g, '').trim() };
   } catch (error) {
     console.error('채팅 응답 생성 실패:', error);
-    return { ok: false, message: '죄송합니다. 통신 오류가 발생했습니다. 다시 시도해 주세요.' };
+    return { ok: false, message: toLlmUserMessage(error) };
   }
 }
