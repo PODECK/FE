@@ -5,7 +5,7 @@ import type { RecommendRequest, RecommendedDeck, RosterPokemon } from '../model/
 
 const AiDeckSchema = z.object({
   title: z.string(),
-  description: z.string().transform((s) => s.slice(0, 14)),
+  description: z.string(),
   deck: z
     .array(z.object({ dexId: z.number() }))
     .min(3)
@@ -30,7 +30,7 @@ const SYSTEM_PROMPT = `너는 PODECK라는 포켓몬 턴제 카드 배틀 게임
 - 반드시 제시된 후보 포켓몬(candidate) 중에서만 고른다. 후보에 없는 포켓몬은 절대 추천하지 않는다.
 - 종족값뿐 아니라 타입 시너지, 약점 보완, 기술 구성을 종합적으로 고려한다.
 - title은 덱 콘셉트를 10자 이내로 작성한다. (예: "격투 카운터덱", "상태이상 특화덱")
-- description은 전략 핵심을 14자 이내로 "~하자!" 형식으로 작성한다. (예: "상태이상으로 압박하자!", "격투 타입을 제압하자!")
+- description은 전략 핵심을 20자 이내의 완성된 문장으로 작성한다. (예: "상태이상으로 압박하자!", "격투 타입을 제압하자!")
 - strategy에는 이 덱의 전체 운영 방향을 한국어로 서술한다.`;
 
 function themeInstruction(req: RecommendRequest): string {

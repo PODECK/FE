@@ -74,7 +74,7 @@ export default async function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="kt cloud TECH UP 페이지로 이동"
-              className="block h-[170px] overflow-hidden rounded-[20px]"
+              className="block h-[161px] translate-y-0.5 overflow-hidden rounded-[20px]"
             >
               <Image
                 src="/images/home/ad/techup-banner.svg"
