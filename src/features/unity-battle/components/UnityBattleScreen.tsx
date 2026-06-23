@@ -41,7 +41,7 @@ declare global {
   }
 }
 
-const UNITY_BUILD_VERSION = process.env.NEXT_PUBLIC_UNITY_BUILD_VERSION ?? '20260623-trade-modal-sprite-import-fix';
+const UNITY_BUILD_VERSION = process.env.NEXT_PUBLIC_UNITY_BUILD_VERSION ?? '20260623-skill-modal-runtime-moves';
 const UNITY_LOADER_URL = withUnityBuildVersion(
   process.env.NEXT_PUBLIC_UNITY_LOADER_URL ?? '/unity/Build/unity.loader.js',
 );
