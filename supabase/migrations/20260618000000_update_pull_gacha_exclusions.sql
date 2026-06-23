@@ -1,5 +1,5 @@
--- Update pull_gacha: keep is_legendary/is_mythical filter,
--- additionally exclude pseudo-legendary lines and ultra beasts by dex_id
+-- Update pull_gacha: exclude legendary, pseudo-legendary lines and ultra beasts by dex_id
+-- Uses pack_inventory table (id = user_id)
 
 CREATE OR REPLACE FUNCTION pull_gacha()
 RETURNS TABLE (dex_id integer, is_new boolean)
@@ -16,16 +16,16 @@ BEGIN
   END IF;
 
   SELECT pack_count INTO v_pack_count
-  FROM trainers
-  WHERE user_id = v_user_id;
+  FROM pack_inventory
+  WHERE id = v_user_id;
 
   IF v_pack_count IS NULL OR v_pack_count <= 0 THEN
     RAISE EXCEPTION 'NO_PACKS';
   END IF;
 
-  UPDATE trainers
+  UPDATE pack_inventory
   SET pack_count = pack_count - 1
-  WHERE user_id = v_user_id;
+  WHERE id = v_user_id;
 
   -- Draw 5 cards into temp table so INSERT and RETURN use the same set
   CREATE TEMP TABLE _gacha_draw ON COMMIT DROP AS
@@ -33,7 +33,7 @@ BEGIN
     SELECT ps.dex_id
     FROM pokemon_species ps
     WHERE ps.is_legendary = false
-      AND ps.is_mythical = false
+      AND ps.evolution_stage = 1
       AND ps.dex_id NOT IN (
         -- 준전설 계열 (Gen1~7)
         147, 148, 149,       -- 미뇽, 신뇽, 망나뇽

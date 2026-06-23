@@ -16,6 +16,8 @@ interface PokemonDetailModalProps {
 export default function PokemonDetailModal({ pokemon, isOpen, onClose }: PokemonDetailModalProps) {
   const [isVisible, setIsVisible] = useState(false);
   const rafRef = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [showGradient, setShowGradient] = useState(false);
 
   useEffect(() => {
     if (!isOpen || !pokemon) return;
@@ -25,6 +27,20 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       setIsVisible(false);
+    };
+  }, [isOpen, pokemon]);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const check = () => {
+      setShowGradient(el.scrollHeight > el.clientHeight && el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+    };
+    const tid = setTimeout(check, 50);
+    el.addEventListener('scroll', check);
+    return () => {
+      clearTimeout(tid);
+      el.removeEventListener('scroll', check);
     };
   }, [isOpen, pokemon]);
 
@@ -79,7 +95,7 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
       onClick={onClose}
     >
       <article
-        className="relative grid w-[800px] grid-cols-[240px_1fr] gap-15 rounded-[20px] border-4 border-[#999999] bg-[var(--color-secondary-2)] p-6"
+        className="relative grid w-[860px] grid-cols-[240px_1fr] items-center gap-17 rounded-[20px] border-4 border-[var(--color-base-1)] bg-[var(--color-secondary-2)] px-10 pt-5 pb-7"
         onClick={(e) => e.stopPropagation()}
         style={{
           transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
@@ -90,7 +106,7 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          className="absolute top-6 right-6 z-20 text-[#999999] transition"
+          className="absolute top-6 right-6 z-20 cursor-pointer text-[var(--color-base-1)] transition"
         >
           <X size={36} strokeWidth={1.8} />
         </button>
@@ -102,78 +118,89 @@ export default function PokemonDetailModal({ pokemon, isOpen, onClose }: Pokemon
           glareEnable={true}
           glareMaxOpacity={0.15}
           glareBorderRadius="12px"
-          className="relative h-[390px] w-[260px] self-center overflow-hidden rounded-[12px]"
+          className="relative h-[420px] w-[260px] self-center overflow-hidden rounded-[12px]"
           style={{ filter: 'drop-shadow(0 6px 18px rgba(0,0,0,0.2))' }}
         >
           <Image
             src={`/images/pokemon-cards/${pokemon.dexId}.png`}
             alt={`${pokemon.koName} 카드`}
             fill
+            sizes="260px"
+            priority
             className="object-contain"
           />
         </Tilt>
 
-        <section className="scrollbar-hide h-[390px] self-center overflow-y-auto pr-6">
-          <div className="flex items-end gap-2">
-            <h2 className="text-3xl font-bold text-[var(--color-base-0)]">{pokemon.koName}</h2>
-            <span className="pb-1 text-base font-bold text-[#AAAAAA]">#{String(pokemon.dexId).padStart(3, '0')}</span>
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            {pokemon.types.map((type) => (
-              <span
-                key={type}
-                className={`flex h-6 w-16 items-center justify-center gap-1 rounded-full text-xs font-bold text-[var(--color-base-3)] ${
-                  typeColorMap[type] ?? 'bg-gray-400'
-                }`}
-              >
-                <Image src={typeIconMap[type]} alt="" width={14} height={14} className="shrink-0" />
-                <span className="leading-none">{typeLabelMap[type] ?? type}</span>
-              </span>
-            ))}
-          </div>
-
-          <p className="text-body-sm mt-4 font-medium text-[#666666]">
-            {pokemon.category} | 키 {pokemon.height}m | 몸무게 {pokemon.weight}kg
-          </p>
-
-          <p className="text-body-sm mt-4 rounded-lg bg-[#F9F9F9] px-4 py-5 leading-6 [word-break:keep-all] break-keep text-[#666666]">
-            {pokemon.flavorText}
-          </p>
-
-          <dl className="text-body-sm mt-5 space-y-4">
-            <div className="flex gap-6">
-              <dt className="w-12 font-extrabold text-[#666666]">특성</dt>
-              <dd className="space-y-1 break-keep text-[#666666]">{pokemon.ability.description}</dd>
+        <div className="relative h-[410px] self-center overflow-hidden">
+          {showGradient && (
+            <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-12 bg-gradient-to-t from-[var(--color-secondary-2)] to-transparent" />
+          )}
+          <section
+            ref={sectionRef}
+            className="scrollbar-hide h-full overflow-x-hidden overflow-y-auto overscroll-contain pr-[10px]"
+          >
+            <div className="mt-6 flex items-end gap-2">
+              <h2 className="text-3xl font-bold text-[var(--color-base-0)]">{pokemon.koName}</h2>
+              <span className="pb-1 text-base font-bold text-[#AAAAAA]">#{String(pokemon.dexId).padStart(3, '0')}</span>
             </div>
 
-            <div className="flex gap-6">
-              <dt className="w-12 font-extrabold text-[#666666]">약점</dt>
-              <dd className="flex flex-wrap gap-2">
-                {weaknesses.map((type) => (
-                  <span
-                    key={type}
-                    className={`flex h-6 w-16 items-center justify-center gap-1 rounded-full text-xs font-bold text-[var(--color-secondary-2)] ${
-                      typeColorMap[type] ?? 'bg-gray-400'
-                    }`}
-                  >
-                    <Image src={typeIconMap[type]} alt="" width={14} height={14} className="shrink-0" />
-                    <span className="leading-none">{typeLabelMap[type] ?? type}</span>
-                  </span>
-                ))}
-              </dd>
+            <div className="mt-3 flex gap-2">
+              {pokemon.types.map((type) => (
+                <span
+                  key={type}
+                  className={`flex h-6 w-16 items-center justify-center gap-1 rounded-full text-xs font-bold text-[var(--color-base-3)] ${
+                    typeColorMap[type] ?? 'bg-gray-400'
+                  }`}
+                >
+                  <Image src={typeIconMap[type]} alt="" width={14} height={14} className="shrink-0" />
+                  <span className="leading-none">{typeLabelMap[type] ?? type}</span>
+                </span>
+              ))}
             </div>
 
-            <div className="flex gap-6">
-              <dt className="w-12 font-extrabold text-[#666666]">스탯</dt>
-              <dd className="ml-3 w-full space-y-1">
-                <StatRow label="HP" value={pokemon.baseStats.hp} type={mainType} />
-                <StatRow label="ATK" value={pokemon.baseStats.attack} type={mainType} />
-                <StatRow label="DEF" value={pokemon.baseStats.defense} type={mainType} />
-              </dd>
-            </div>
-          </dl>
-        </section>
+            <p className="text-body-sm mt-4 font-medium text-[#666666]">
+              {pokemon.category} | 키 {pokemon.height}m | 몸무게 {pokemon.weight}kg
+            </p>
+
+            <p className="text-body-sm mt-4 rounded-lg bg-[#F9F9F9] p-4 leading-6 [word-break:keep-all] break-keep text-[#666666]">
+              {pokemon.flavorText}
+            </p>
+
+            <dl className="text-body-sm mt-5 space-y-4">
+              <div className="flex gap-6">
+                <dt className="w-12 font-extrabold text-[#666666]">특성</dt>
+                <dd className="space-y-1 break-keep text-[#666666]">{pokemon.ability.description}</dd>
+              </div>
+
+              <div className="flex gap-6">
+                <dt className="w-12 font-extrabold text-[#666666]">약점</dt>
+                <dd className="flex flex-wrap gap-2">
+                  {weaknesses.map((type) => (
+                    <span
+                      key={type}
+                      className={`flex h-6 w-16 items-center justify-center gap-1 rounded-full text-xs font-bold text-[var(--color-secondary-2)] ${
+                        typeColorMap[type] ?? 'bg-gray-400'
+                      }`}
+                    >
+                      <Image src={typeIconMap[type]} alt="" width={14} height={14} className="shrink-0" />
+                      <span className="leading-none">{typeLabelMap[type] ?? type}</span>
+                    </span>
+                  ))}
+                </dd>
+              </div>
+
+              <div className="flex gap-6">
+                <dt className="w-12 font-extrabold text-[#666666]">스탯</dt>
+                <dd className="ml-3 w-full space-y-1">
+                  <StatRow label="HP" value={pokemon.baseStats.hp} type={mainType} />
+                  <StatRow label="ATK" value={pokemon.baseStats.attack} type={mainType} />
+                  <StatRow label="DEF" value={pokemon.baseStats.defense} type={mainType} />
+                </dd>
+              </div>
+            </dl>
+            <div className="h-3" />
+          </section>
+        </div>
       </article>
     </div>
   );
