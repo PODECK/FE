@@ -108,6 +108,7 @@ const movesData = rawMovesJson as Record<string, MoveEntry>;
 const pokemonMovesData = rawPokemonMovesJson as Record<string, string[]>;
 const supabasePublicUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const pokemonCardBucket = 'pokemon-cards';
+const UNITY_BATTLE_DECK_SIZE = 6;
 
 export async function getUnityBattleSession(requestedFloor?: number) {
   const supabase = await createClient();
@@ -307,26 +308,35 @@ async function loadActivePlayerDeck(supabase: SupabaseServerClient, userId: stri
 
 async function buildEnemyDeck(supabase: SupabaseServerClient, enemies: TowerEnemy[]) {
   const orderedEnemies = [...enemies].sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
-  const dexIds = [...new Set(orderedEnemies.map((enemy) => enemy.dexId).filter(Boolean))];
+  const battleEnemies = buildFixedSizeEnemyRoster(orderedEnemies);
+  const dexIds = [...new Set(battleEnemies.map((enemy) => enemy.dexId).filter(Boolean))];
   const speciesMap = await loadSpeciesMap(supabase, dexIds);
 
-  return orderedEnemies.flatMap((enemy) => {
+  return battleEnemies.flatMap((enemy, index) => {
     const species = speciesMap.get(enemy.dexId);
     if (!species) return [];
 
+    const order = index + 1;
     return [
       buildPokemonPayload({
-        instanceId: `enemy-${enemy.order ?? 0}-${enemy.dexId}`,
+        instanceId: `enemy-${order}-${enemy.dexId}`,
         dexId: enemy.dexId,
         level: Number(enemy.level ?? 1),
         exp: 0,
-        order: Number(enemy.order ?? 0),
+        order,
         species,
         moveIds: enemy.moves ?? pokemonMovesData[String(enemy.dexId)] ?? [],
         fallbackName: enemy.nickname,
       }),
     ];
   });
+}
+
+function buildFixedSizeEnemyRoster(enemies: TowerEnemy[]) {
+  const validEnemies = enemies.filter((enemy) => Number(enemy.dexId) > 0);
+  if (validEnemies.length === 0) return [];
+
+  return Array.from({ length: UNITY_BATTLE_DECK_SIZE }, (_, index) => validEnemies[index % validEnemies.length]!);
 }
 
 async function loadSpeciesMap(supabase: SupabaseServerClient, dexIds: number[]) {
