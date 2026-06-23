@@ -38,6 +38,8 @@ export default function FloatingButton({
 }
 
 function CardButton({ cardPackCount, onClick }: { cardPackCount: number; onClick: () => void }) {
+  const isEmpty = cardPackCount === 0;
+
   return (
     <button
       type="button"
@@ -46,18 +48,20 @@ function CardButton({ cardPackCount, onClick }: { cardPackCount: number; onClick
       style={{ zIndex: 40 }}
     >
       <div className="relative flex items-center justify-center" style={{ width: 80, height: 80 }}>
-        {/* 회전 광선 */}
-        <motion.div
-          className="pointer-events-none absolute inset-0 rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-          style={{
-            background:
-              'repeating-conic-gradient(rgba(255, 180, 29, 0.35) 0deg, transparent 5deg, transparent 15deg, rgba(255, 180, 29, 0.35) 15deg)',
-            maskImage: 'radial-gradient(circle, transparent 33px, black 40px)',
-            WebkitMaskImage: 'radial-gradient(circle, transparent 33px, black 40px)',
-          }}
-        />
+        {/* 회전 광선 — 카드팩 있을 때만 */}
+        {!isEmpty && (
+          <motion.div
+            className="pointer-events-none absolute inset-0 rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+            style={{
+              background:
+                'repeating-conic-gradient(rgba(255, 180, 29, 0.35) 0deg, transparent 5deg, transparent 15deg, rgba(255, 180, 29, 0.35) 15deg)',
+              maskImage: 'radial-gradient(circle, transparent 33px, black 40px)',
+              WebkitMaskImage: 'radial-gradient(circle, transparent 33px, black 40px)',
+            }}
+          />
+        )}
 
         {/* 원형 버튼 */}
         <div
@@ -65,8 +69,8 @@ function CardButton({ cardPackCount, onClick }: { cardPackCount: number; onClick
           style={{
             width: 64,
             height: 64,
-            backgroundColor: 'var(--color-primary)',
-            boxShadow: '0 4px 16px rgba(255, 180, 29, 0.5)',
+            backgroundColor: isEmpty ? '#AAAAAA' : 'var(--color-primary)',
+            boxShadow: isEmpty ? '0 4px 16px rgba(0,0,0,0.15)' : '0 4px 16px rgba(255, 180, 29, 0.5)',
           }}
         >
           {/* 카드팩 개수 뱃지 */}
@@ -77,7 +81,7 @@ function CardButton({ cardPackCount, onClick }: { cardPackCount: number; onClick
               height: 18,
               padding: '0 5px',
               backgroundColor: 'white',
-              color: 'var(--color-primary)',
+              color: isEmpty ? '#AAAAAA' : 'var(--color-primary)',
               top: -4,
               right: -10,
             }}
@@ -85,12 +89,16 @@ function CardButton({ cardPackCount, onClick }: { cardPackCount: number; onClick
             {cardPackCount}회
           </div>
 
-          <motion.div
-            animate={{ y: [0, -4, 0, -2, 0] }}
-            transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 1.0, ease: 'easeOut' }}
-          >
+          {isEmpty ? (
             <Layers size={30} color="white" />
-          </motion.div>
+          ) : (
+            <motion.div
+              animate={{ y: [0, -4, 0, -2, 0] }}
+              transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 1.0, ease: 'easeOut' }}
+            >
+              <Layers size={30} color="white" />
+            </motion.div>
+          )}
         </div>
       </div>
 

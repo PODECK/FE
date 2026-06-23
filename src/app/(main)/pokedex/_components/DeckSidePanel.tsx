@@ -135,6 +135,7 @@ export default function DeckSidePanel({ deckPokemons, onRemove, onAdd, onReorder
                     src={pokemon.spriteUrl || pokemon.artworkUrl}
                     alt={pokemon.koName}
                     fill
+                    sizes="36px"
                     className="object-contain"
                     draggable={false}
                   />

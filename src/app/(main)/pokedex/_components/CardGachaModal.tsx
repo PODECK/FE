@@ -90,7 +90,7 @@ export default function CardGachaModal({ packCount, ownedCount, totalCount }: Pr
     >
       <div
         className="relative flex flex-col rounded-[20px] border-4 border-[var(--color-base-1)] bg-white p-8"
-        style={{ width: 720, height: 650 }}
+        style={isEmptyPackState ? { width: 720, height: 450 } : { width: 720, height: 650 }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
@@ -115,25 +115,21 @@ export default function CardGachaModal({ packCount, ownedCount, totalCount }: Pr
 
         {/* 보유 카드팩 없을 때 */}
         {isEmptyPackState ? (
-          <div className="flex flex-1 flex-col">
-            <div className="flex flex-1 flex-col items-center justify-center gap-2">
-              <AlertCircle size={52} style={{ color: '#ccc' }} className="mb-2" />
-              <p className="text-3xl font-bold" style={{ color: 'var(--color-base-0)' }}>
-                보유한 카드팩이 없어요
-              </p>
-              <p className="text-lg" style={{ color: '#666666' }}>
-                배틀에서 승리해 카드팩을 획득해보세요!
-              </p>
-            </div>
-            <div className="flex justify-center py-[40px]">
-              <button
-                onClick={handleClose}
-                className="cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 hover:opacity-70"
-                style={{ width: 180, height: 65, backgroundColor: 'var(--color-base-2)', color: 'var(--color-base-0)' }}
-              >
-                닫기
-              </button>
-            </div>
+          <div className="flex flex-1 flex-col items-center justify-center gap-2">
+            <AlertCircle size={52} style={{ color: '#ccc' }} className="mb-2" />
+            <p className="text-[30px] font-bold" style={{ color: 'var(--color-base-0)' }}>
+              보유한 카드팩이 없어요
+            </p>
+            <p className="text-lg" style={{ color: '#666666' }}>
+              배틀에서 승리해 카드팩을 획득해보세요!
+            </p>
+            <button
+              onClick={handleClose}
+              className="mt-10 cursor-pointer rounded-xl text-lg font-bold transition-opacity duration-200 hover:opacity-70"
+              style={{ width: 180, height: 65, backgroundColor: 'var(--color-base-2)', color: 'var(--color-base-0)' }}
+            >
+              닫기
+            </button>
           </div>
         ) : (
           <div className="flex flex-1 flex-col">

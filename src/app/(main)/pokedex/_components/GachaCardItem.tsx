@@ -77,6 +77,8 @@ export default function GachaCardItem({ card, isRevealed, onClick }: Props) {
                 src={`/images/pokemon-cards/${card.pokemon.dexId}.png`}
                 alt={card.pokemon.koName}
                 fill
+                sizes="112px"
+                priority
                 className="object-contain"
               />
             </div>
