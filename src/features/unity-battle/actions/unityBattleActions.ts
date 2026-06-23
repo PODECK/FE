@@ -417,13 +417,10 @@ function buildPokemonCardImageUrl(kind: 'card' | 'circle', dexId: number) {
 }
 
 function buildMovePayloads(moveIds: string[]) {
-  const moves = moveIds.slice(0, 4).map(buildMovePayload);
-
-  while (moves.length < 4) {
-    moves.push(buildMovePayload('tackle'));
-  }
-
-  return moves;
+  return moveIds
+    .filter((moveId) => moveId && movesData[moveId])
+    .slice(0, 4)
+    .map(buildMovePayload);
 }
 
 function buildMovePayload(moveId: string): UnityMovePayload {
