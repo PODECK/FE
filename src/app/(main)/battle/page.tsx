@@ -1,7 +1,6 @@
-// 배틀 플레이 화면 라우트
-
-import BattleScreen from '@/features/battle/_components/BattleScreen';
+// Unity WebGL 전투 화면 라우트
+import UnityBattleScreen from '@/features/unity-battle/components/UnityBattleScreen';
 
 export default function BattlePage() {
-  return <BattleScreen />;
+  return <UnityBattleScreen />;
 }
