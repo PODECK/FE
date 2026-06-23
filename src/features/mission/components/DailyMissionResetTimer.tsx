@@ -42,5 +42,9 @@ export default function DailyMissionResetTimer() {
     };
   }, []);
 
-  return <span className="shrink-0 text-xs font-semibold text-[var(--color-base-1)]">초기화까지 {remainingText}</span>;
+  return (
+    <span className="text-base-1 shrink-0 text-xs leading-[1.4] font-semibold tracking-[-0.3px]">
+      초기화까지 {remainingText}
+    </span>
+  );
 }

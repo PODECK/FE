@@ -81,8 +81,8 @@ export default function BattleHistoryPanel() {
   return (
     <section className="bg-base-3 min-h-[280px] overflow-clip rounded-[20px] px-[25px] py-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
       <div className="flex items-center justify-between">
-        <h2 className="text-base-0 text-base font-bold tracking-[-0.4px]">배틀 히스토리</h2>
-        <p className="text-base-1 text-[12px] tracking-[-0.3px]">최신 3건이 표시됩니다.</p>
+        <h2 className="text-base-0 text-base leading-[1.4] font-bold tracking-[-0.4px]">배틀 히스토리</h2>
+        <p className="text-base-1 text-xs leading-[1.4] font-semibold tracking-[-0.3px]">최신 3건이 표시됩니다.</p>
       </div>
 
       {homeBattleHistoryItem.length === 0 ? (

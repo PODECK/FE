@@ -10,7 +10,7 @@ export default function HomeNewsSection() {
   return (
     <section className="mt-6 rounded-[20px] bg-[var(--color-base-3)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-lg font-extrabold text-[var(--color-base-0)]">새소식</h2>
+        <h2 className="text-base leading-[1.4] font-bold tracking-[-0.4px] text-[var(--color-base-0)]">새소식</h2>
         <Link
           href="/news"
           className="inline-flex cursor-pointer items-center gap-1 text-sm font-extrabold text-[var(--color-primary)] transition hover:opacity-80"

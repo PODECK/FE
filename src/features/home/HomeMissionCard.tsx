@@ -18,9 +18,9 @@ type HomeMissionCardProps = {
 
 export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
   return (
-    <section className="h-[280px] w-full rounded-[20px] bg-[var(--color-base-3)] px-4 pt-4 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="shrink-0 text-lg font-extrabold text-[var(--color-base-0)]">오늘의 미션</h2>
+    <section className="h-[280px] w-full rounded-[20px] bg-[var(--color-base-3)] px-4 pt-5 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <h2 className="text-base-0 shrink-0 text-base leading-[1.4] font-bold tracking-[-0.4px]">오늘의 미션</h2>
         <DailyMissionResetTimer />
       </div>
 
@@ -48,7 +48,7 @@ export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
               className={`grid h-[62px] grid-cols-[minmax(0,1fr)_68px] items-center gap-x-3 rounded-[10px] px-3 py-2 ${missionCardClassName}`}
             >
               <div className="min-w-0">
-                <p className="mb-1.5 truncate text-xs font-extrabold">
+                <p className="mb-1.5 truncate text-[14px] font-semibold">
                   {mission.id === 'type-win' ? mission.title : `${mission.title} (${mission.progressText})`}
                 </p>
 
@@ -77,7 +77,7 @@ export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
                   <button
                     type="submit"
                     disabled={!isClaimable}
-                    className={`h-6 w-[56px] cursor-pointer rounded-[7px] text-[10px] font-extrabold transition active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100 ${buttonClassName}`}
+                    className={`h-6 w-[56px] cursor-pointer rounded-[7px] text-[12px] font-bold transition active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100 ${buttonClassName}`}
                   >
                     {mission.isCompleted ? '완료' : '수령하기'}
                   </button>

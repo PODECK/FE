@@ -106,7 +106,7 @@ export default function HomeBanner() {
               </h1>
 
               <p
-                className={`mt-5 text-base leading-relaxed font-medium whitespace-pre-line ${banner.descriptionClassName}`}
+                className={`mt-5 text-[18px] leading-relaxed font-medium whitespace-pre-line ${banner.descriptionClassName}`}
               >
                 {banner.description}
               </p>

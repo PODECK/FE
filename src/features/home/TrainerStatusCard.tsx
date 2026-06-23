@@ -84,7 +84,7 @@ export default function TrainerStatusCard({
         <TrainerMetric value={`${battleRecord.wins}승 ${battleRecord.losses}패`} label="배틀 전적" />
       </div>
 
-      <div className="mt-6 space-y-5">
+      <div className="mt-6 space-y-2.5">
         <StatusProgress
           iconSrc="/images/home/status/ball.svg"
           label="보유한 포켓몬"
@@ -128,7 +128,7 @@ function StatusProgress({
   const safeRate = Math.min(Math.max(rate, 0), 100);
 
   return (
-    <div className="grid grid-cols-[42px_minmax(0,1fr)_52px] items-center gap-1">
+    <div className="grid -translate-x-0.5 grid-cols-[42px_minmax(0,1fr)_52px] items-center gap-1 pr-2">
       <div className="flex h-11 w-[42px] items-center justify-center">
         <Image src={iconSrc} alt="" width={35} height={35} className={cn('h-[35px] w-[35px]', iconClassName)} />
       </div>
