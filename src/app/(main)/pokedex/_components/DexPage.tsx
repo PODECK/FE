@@ -50,6 +50,19 @@ export default function DexPage({
   const [dragPokemon, setDragPokemon] = useState<PokemonData | null>(null);
   const dragPreviewRef = useRef<HTMLDivElement>(null);
 
+  const persistDeckDexIds = useCallback((next: number[], prev: number[]) => {
+    saveDeckAction(next)
+      .then((result) => {
+        if (result.ok) return;
+        setDeckDexIds(prev);
+        toast.error('덱 저장에 실패했습니다.');
+      })
+      .catch(() => {
+        setDeckDexIds(prev);
+        toast.error('덱 저장에 실패했습니다.');
+      });
+  }, []);
+
   useEffect(() => {
     if (searchParams.get('openDeck') === 'true') {
       router.replace('/pokedex');
@@ -90,12 +103,9 @@ export default function DexPage({
       const prev = deckDexIds;
       const next = [...deckDexIds, pokemon.dexId];
       setDeckDexIds(next);
-      saveDeckAction(next).catch(() => {
-        setDeckDexIds(prev);
-        toast.error('덱 저장에 실패했습니다');
-      });
+      persistDeckDexIds(next, prev);
     },
-    [deckDexIds],
+    [deckDexIds, persistDeckDexIds],
   );
 
   const handleRemoveFromDeck = useCallback(
@@ -103,12 +113,9 @@ export default function DexPage({
       const prev = deckDexIds;
       const next = deckDexIds.filter((id) => id !== dexId);
       setDeckDexIds(next);
-      saveDeckAction(next).catch(() => {
-        setDeckDexIds(prev);
-        toast.error('덱 저장에 실패했습니다');
-      });
+      persistDeckDexIds(next, prev);
     },
-    [deckDexIds],
+    [deckDexIds, persistDeckDexIds],
   );
 
   const handleAddToDeckById = useCallback(
@@ -123,22 +130,16 @@ export default function DexPage({
     (dexIds: number[]) => {
       const prev = deckDexIds;
       setDeckDexIds(dexIds);
-      saveDeckAction(dexIds).catch(() => {
-        setDeckDexIds(prev);
-        toast.error('덱 저장에 실패했습니다');
-      });
+      persistDeckDexIds(dexIds, prev);
     },
-    [deckDexIds],
+    [deckDexIds, persistDeckDexIds],
   );
 
   const handleClearDeck = useCallback(() => {
     const prev = deckDexIds;
     setDeckDexIds([]);
-    saveDeckAction([]).catch(() => {
-      setDeckDexIds(prev);
-      toast.error('덱 저장에 실패했습니다');
-    });
-  }, [deckDexIds]);
+    persistDeckDexIds([], prev);
+  }, [deckDexIds, persistDeckDexIds]);
 
   const deckPokemons = useMemo(
     () => deckDexIds.map((id) => pokemons.find((p) => p.dexId === id)).filter((p): p is PokemonData => Boolean(p)),

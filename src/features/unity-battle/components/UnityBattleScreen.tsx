@@ -18,8 +18,11 @@ type UnityEventDetail = {
 type UnityBattlePayload = {
   battleSessionId?: string;
   player?: {
+    nickname?: string;
     currentFloor?: number;
   };
+  playerDeck?: unknown[];
+  enemyDeck?: unknown[];
   floor?: {
     floor?: number;
     currentFloor?: number;
@@ -38,13 +41,27 @@ declare global {
   }
 }
 
-const UNITY_LOADER_URL = process.env.NEXT_PUBLIC_UNITY_LOADER_URL ?? '/unity/Build/unity.loader.js';
-const UNITY_DATA_URL = process.env.NEXT_PUBLIC_UNITY_DATA_URL ?? '/unity/Build/unity.data.unityweb';
-const UNITY_FRAMEWORK_URL = process.env.NEXT_PUBLIC_UNITY_FRAMEWORK_URL ?? '/unity/Build/unity.framework.js.unityweb';
-const UNITY_CODE_URL = process.env.NEXT_PUBLIC_UNITY_CODE_URL ?? '/unity/Build/unity.wasm.unityweb';
+const UNITY_BUILD_VERSION = process.env.NEXT_PUBLIC_UNITY_BUILD_VERSION ?? '20260623-direct-game-table-ee5da77';
+const UNITY_LOADER_URL = withUnityBuildVersion(
+  process.env.NEXT_PUBLIC_UNITY_LOADER_URL ?? '/unity/Build/unity.loader.js',
+);
+const UNITY_DATA_URL = withUnityBuildVersion(
+  process.env.NEXT_PUBLIC_UNITY_DATA_URL ?? '/unity/Build/unity.data.unityweb',
+);
+const UNITY_FRAMEWORK_URL = withUnityBuildVersion(
+  process.env.NEXT_PUBLIC_UNITY_FRAMEWORK_URL ?? '/unity/Build/unity.framework.js.unityweb',
+);
+const UNITY_CODE_URL = withUnityBuildVersion(
+  process.env.NEXT_PUBLIC_UNITY_CODE_URL ?? '/unity/Build/unity.wasm.unityweb',
+);
 const UNITY_STREAMING_ASSETS_URL = process.env.NEXT_PUBLIC_UNITY_STREAMING_ASSETS_URL ?? '/unity/StreamingAssets';
 
 let unityLoaderPromise: Promise<void> | null = null;
+
+function withUnityBuildVersion(url: string) {
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}v=${encodeURIComponent(UNITY_BUILD_VERSION)}`;
+}
 
 function loadUnityLoader() {
   if (typeof window === 'undefined') return Promise.resolve();
@@ -113,6 +130,13 @@ export default function UnityBattleScreen() {
     completedResultKeysRef.current.clear();
     completedBattlePromiseRef.current = null;
     completedBattleResultRef.current = null;
+    console.info('[PODECK Web] Applying Unity battle session.', {
+      battleSessionId: payload.battleSessionId,
+      playerNickname: payload.player?.nickname,
+      floor: payload.floor?.floor ?? payload.floor?.currentFloor,
+      playerDeckCount: payload.playerDeck?.length ?? 0,
+      enemyDeckCount: payload.enemyDeck?.length ?? 0,
+    });
     unityRef.current?.SendMessage('WebGameSessionReceiver', 'ApplySessionJson', JSON.stringify(payload));
   }, []);
 

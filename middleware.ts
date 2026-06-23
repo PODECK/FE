@@ -5,6 +5,7 @@ import { getOnboardingPathForUser } from '@/entities/trainer/api/onboarding';
 
 const publicPaths = ['/'];
 const publicPrefixes = ['/auth'];
+const publicAssetPrefixes = ['/unity'];
 const publicApiPrefixes = ['/api/health', '/api/data', '/api/type-weaknesses'];
 
 function isPublicPath(pathname: string) {
@@ -16,9 +17,13 @@ function isPublicPath(pathname: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  const { response, user, supabase } = await updateSession(request);
   const { pathname } = request.nextUrl;
 
+  if (publicAssetPrefixes.some((path) => pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
+
+  const { response, user, supabase } = await updateSession(request);
   const isPublic = isPublicPath(pathname);
 
   if (!user && !isPublic) {
