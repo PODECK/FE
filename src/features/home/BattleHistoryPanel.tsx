@@ -1,7 +1,6 @@
 import Image from 'next/image';
 
-import { homeBattleHistoryItem } from '@/app/(main)/home/_constants/home';
-import type { BattleHistoryPokemon, HomeBattleHistoryItem } from '@/app/(main)/home/_types/home';
+import type { BattleHistoryPokemon, HomeBattleHistoryItem } from '@/entities/battle/model/types';
 import Tooltip from '@/shared/components/Tooltip';
 import { cn } from '@/shared/lib/cn';
 
@@ -77,7 +76,7 @@ function BattleHistoryRow({ item }: { item: HomeBattleHistoryItem }) {
   );
 }
 
-export default function BattleHistoryPanel() {
+export default function BattleHistoryPanel({ items }: { items: HomeBattleHistoryItem[] }) {
   return (
     <section className="bg-base-3 min-h-[280px] overflow-clip rounded-[20px] px-[25px] py-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
       <div className="flex items-center justify-between">
@@ -85,13 +84,13 @@ export default function BattleHistoryPanel() {
         <p className="text-base-1 text-xs leading-[1.4] font-semibold tracking-[-0.3px]">최신 3건이 표시됩니다.</p>
       </div>
 
-      {homeBattleHistoryItem.length === 0 ? (
+      {items.length === 0 ? (
         <div className="mt-5 flex min-h-[200px] items-center justify-center">
           <p className="text-base-1 text-sm">아직 배틀 기록이 없습니다.</p>
         </div>
       ) : (
         <div className="mt-3.5 flex flex-col gap-[10px]">
-          {homeBattleHistoryItem.map((item) => (
+          {items.map((item) => (
             <BattleHistoryRow key={item.id} item={item} />
           ))}
         </div>

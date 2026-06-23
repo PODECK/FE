@@ -1,9 +1,7 @@
 // 홈 화면 내비게이션, 액션 카드, 배너 데이터 상수
 
 import type {
-  BattleHistoryPokemon,
   HomeActionCardData,
-  HomeBattleHistoryItem,
   HomeHeroCarouselItem,
   HomeNavItem,
   HomeNewsItem,
@@ -75,31 +73,6 @@ export const homeheroCarouselItems: HomeHeroCarouselItem[] = [
     badgeClassName: 'border-[#4961FF] text-[#4961FF]',
     textClassName: 'text-[var(--color-base-0)]',
     descriptionClassName: 'text-[#666666]',
-  },
-];
-
-// 실제 데이터로 치환 필요
-const MOCK_DECK: BattleHistoryPokemon[] = Array.from({ length: 6 }, () => ({
-  artworkUrl: '/images/home/status/ball.svg',
-  koName: '포켓몬',
-}));
-
-export const homeBattleHistoryItem: HomeBattleHistoryItem[] = [
-  {
-    id: 'battle-1',
-    result: 'DEFEAT',
-    opponentName: '배틀광 재혁',
-    floorName: '무한의 탑 13층',
-    timeAgo: '1시간 전',
-    deckPokemons: [...MOCK_DECK],
-  },
-  {
-    id: 'battle-2',
-    result: 'WIN',
-    opponentName: '열혈 트레이너 강우',
-    floorName: '무한의 탑 12층',
-    timeAgo: '1시간 전',
-    deckPokemons: [...MOCK_DECK],
   },
 ];
 

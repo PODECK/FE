@@ -11,15 +11,17 @@ import { redirect } from 'next/navigation';
 import { getDailyMissions } from '@/entities/mission/api/missionApi';
 import { getTrainerSummary } from '@/entities/trainer/api/trainerApi';
 import { getPokemonCount } from '@/entities/pokemon/api/pokemonApi';
+import { getRecentBattleHistories } from '@/entities/battle/api/battleHistoryApi';
 import Image from 'next/image';
 import Link from 'next/link';
 import FloatingButton from '@/app/(main)/pokedex/_components/FloatingButton';
 
 export default async function HomePage() {
-  const [trainer, totalPokemonCount, dailyMissions] = await Promise.all([
+  const [trainer, totalPokemonCount, dailyMissions, battleHistories] = await Promise.all([
     getTrainerSummary(),
     getPokemonCount().catch(() => 0),
     getDailyMissions().catch(() => []),
+    getRecentBattleHistories().catch(() => []),
   ]);
   if (!trainer) {
     redirect('/');
@@ -39,7 +41,7 @@ export default async function HomePage() {
                 <HomeMissionCard missions={dailyMissions} />
               </div>
               <div data-tour-id="home-history">
-                <BattleHistoryPanel />
+                <BattleHistoryPanel items={battleHistories} />
               </div>
             </div>
 
