@@ -41,7 +41,7 @@ declare global {
   }
 }
 
-const UNITY_BUILD_VERSION = process.env.NEXT_PUBLIC_UNITY_BUILD_VERSION ?? '20260623-runtime-db-card-fix';
+const UNITY_BUILD_VERSION = process.env.NEXT_PUBLIC_UNITY_BUILD_VERSION ?? '20260623-session-ui-fix';
 const UNITY_LOADER_URL = withUnityBuildVersion(
   process.env.NEXT_PUBLIC_UNITY_LOADER_URL ?? '/unity/Build/unity.loader.js',
 );
