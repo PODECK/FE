@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 // Unity WebGL 빌드를 로드하고 서버 전투 세션과 Unity 이벤트를 연결하는 화면
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -64,7 +64,10 @@ function loadUnityLoader() {
     document.body.appendChild(script);
   });
 
-  return unityLoaderPromise;
+  return unityLoaderPromise.catch((error) => {
+    unityLoaderPromise = null;
+    throw error;
+  });
 }
 
 function parseEventJson(json: string) {
@@ -120,17 +123,23 @@ export default function UnityBattleScreen() {
   const loadSessionForFloor = useCallback(
     async (floor?: number, reloadGameTable = false) => {
       setStatusMessage('전투 정보를 갱신하는 중입니다.');
-      const session = await getUnityBattleSession(floor);
+      setErrorMessage(null);
 
-      if (!session.ok || !session.payload) {
-        setErrorMessage(session.message ?? '전투 정보를 불러오지 못했습니다.');
-        return;
+      try {
+        const session = await getUnityBattleSession(floor);
+
+        if (!session.ok || !session.payload) {
+          setErrorMessage(session.message ?? '전투 정보를 불러오지 못했습니다.');
+          return;
+        }
+
+        applySessionToUnity(session.payload);
+        setStatusMessage('전투를 시작합니다.');
+
+        if (reloadGameTable) loadBattleScene();
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : '전투 정보를 불러오지 못했습니다.');
       }
-
-      applySessionToUnity(session.payload);
-      setStatusMessage('전투를 시작합니다.');
-
-      if (reloadGameTable) loadBattleScene();
     },
     [applySessionToUnity, loadBattleScene],
   );
@@ -157,7 +166,11 @@ export default function UnityBattleScreen() {
         payloadRef.current = session.payload;
         await loadUnityLoader();
 
-        if (disposed || !canvasRef.current || !window.createUnityInstance) return;
+        if (disposed || !canvasRef.current) return;
+        if (!window.createUnityInstance) {
+          setErrorMessage('Unity loader가 초기화되지 않았습니다. 빌드 경로와 loader 파일을 확인해 주세요.');
+          return;
+        }
 
         const unity = await window.createUnityInstance(
           canvasRef.current,
@@ -204,22 +217,49 @@ export default function UnityBattleScreen() {
       const payload = parseEventJson(detail.json);
 
       if (detail.eventName === 'battleResult') {
+        const hasWon =
+          typeof payload.won === 'boolean' || typeof payload.won === 'number' || typeof payload.won === 'string';
+        if (!hasWon) {
+          setErrorMessage('Unity 전투 결과에 승패 정보가 없습니다.');
+          return;
+        }
+
+        const battleSessionId = String(payload.battleSessionId ?? payloadRef.current?.battleSessionId ?? '');
+        if (!battleSessionId) {
+          setErrorMessage('전투 세션 정보가 없습니다.');
+          return;
+        }
+
         const floor = toSafeNumber(payload.floor, resolveCurrentFloor(payloadRef.current));
         const won = toBoolean(payload.won);
-        const key = `${String(payload.battleSessionId ?? payloadRef.current?.battleSessionId ?? '')}:${floor}:${won}`;
+        const key = `${battleSessionId}:${floor}:${won}`;
         if (completedResultKeysRef.current.has(key)) return;
         completedResultKeysRef.current.add(key);
 
         const completionPromise = completeUnityBattle({
-          battleSessionId: String(payload.battleSessionId ?? payloadRef.current?.battleSessionId ?? ''),
+          battleSessionId,
           floor,
           won,
           turnCount: toSafeNumber(payload.turnCount, 0),
-        }).then((result) => {
-          completedBattleResultRef.current = result;
-          if (!result.ok) setErrorMessage(result.message ?? '전투 결과 저장에 실패했습니다.');
-          return result;
-        });
+        })
+          .then((result) => {
+            completedBattleResultRef.current = result;
+            if (!result.ok) {
+              completedResultKeysRef.current.delete(key);
+              setErrorMessage(result.message ?? '전투 결과 저장에 실패했습니다.');
+            }
+            return result;
+          })
+          .catch((error) => {
+            completedResultKeysRef.current.delete(key);
+            const result: CompleteUnityBattleResult = {
+              ok: false,
+              message: error instanceof Error ? error.message : '전투 결과 저장에 실패했습니다.',
+            };
+            completedBattleResultRef.current = result;
+            setErrorMessage(result.message ?? '전투 결과 저장에 실패했습니다.');
+            return result;
+          });
         completedBattlePromiseRef.current = completionPromise;
         void completionPromise;
         return;
@@ -256,9 +296,9 @@ export default function UnityBattleScreen() {
           const result = await waitForBattleCompletion();
           if (!result?.ok) return;
 
-          const fallbackNextFloor = toSafeNumber(payload.nextFloor, resolveCurrentFloor(payloadRef.current) + 1);
-          const nextFloor =
-            'nextFloor' in result ? toSafeNumber(result.nextFloor, fallbackNextFloor) : fallbackNextFloor;
+          if (!('nextFloor' in result) || result.nextFloor == null) return;
+
+          const nextFloor = toSafeNumber(result.nextFloor, resolveCurrentFloor(payloadRef.current) + 1);
           await loadSessionForFloor(nextFloor, true);
         })();
       }

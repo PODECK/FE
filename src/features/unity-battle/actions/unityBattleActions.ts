@@ -100,6 +100,10 @@ type CompleteUnityBattleRpcResult = {
   retries_left?: number;
 };
 
+type CreateUnityBattleSessionRpcResult = {
+  battle_session_id?: string;
+};
+
 const movesData = rawMovesJson as Record<string, MoveEntry>;
 const pokemonMovesData = rawPokemonMovesJson as Record<string, string[]>;
 const supabasePublicUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
@@ -127,7 +131,12 @@ export async function getUnityBattleSession(requestedFloor?: number) {
     .eq('user_id', user.id)
     .maybeSingle();
 
-  const currentFloor = Math.max(1, requestedFloor ?? Number(towerProgress?.current_floor ?? 1));
+  const unlockedFloor = Number(towerProgress?.current_floor ?? 1);
+  const currentFloor = Math.max(1, requestedFloor ?? unlockedFloor);
+  if (currentFloor > Math.max(1, unlockedFloor)) {
+    return { ok: false, message: '아직 해금되지 않은 층입니다.' };
+  }
+
   const { data: floorRow, error: floorError } = await supabase
     .from('tower_floors')
     .select('floor, ai_level, pokemon_pool, reward_pack_count')
@@ -139,25 +148,17 @@ export async function getUnityBattleSession(requestedFloor?: number) {
   const playerDeck = await loadActivePlayerDeck(supabase, user.id);
   if (playerDeck.length === 0) return { ok: false, message: '전투에 사용할 덱을 찾을 수 없습니다.' };
 
-  const battleSessionId = crypto.randomUUID();
-  const playerDeckDexIds = playerDeck.map((pokemon) => pokemon.dexId);
-  const playerDeckInstanceIds = playerDeck.map((pokemon) => pokemon.instanceId);
-  const playerDeckTypeIds = getDeckTypeIds(playerDeck);
+  const pokemonPool = floorRow.pokemon_pool as TowerPokemonPool;
+  const enemyDeck = await buildEnemyDeck(supabase, pokemonPool?.enemies ?? []);
+  if (enemyDeck.length === 0) return { ok: false, message: '상대 덱 정보를 불러오지 못했습니다.' };
 
-  const { error: sessionError } = await supabase.from('unity_battle_sessions').insert({
-    id: battleSessionId,
-    user_id: user.id,
-    floor: currentFloor,
-    player_deck_dex_ids: playerDeckDexIds,
-    player_deck_type_ids: playerDeckTypeIds,
-    player_deck_instance_ids: playerDeckInstanceIds,
-    expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+  const { data: sessionData, error: sessionError } = await supabase.rpc('create_unity_battle_session', {
+    p_floor: currentFloor,
   });
 
   if (sessionError) return { ok: false, message: '전투 세션 생성에 실패했습니다.' };
-
-  const pokemonPool = floorRow.pokemon_pool as TowerPokemonPool;
-  const enemyDeck = await buildEnemyDeck(supabase, pokemonPool?.enemies ?? []);
+  const battleSessionId = String((sessionData as CreateUnityBattleSessionRpcResult | null)?.battle_session_id ?? '');
+  if (!battleSessionId) return { ok: false, message: '전투 세션 생성에 실패했습니다.' };
 
   return {
     ok: true,
@@ -248,14 +249,6 @@ export async function markUnityIntroCompleted() {
 
   revalidatePath('/home');
   return { ok: true };
-}
-
-function getDeckTypeIds(deck: UnityPokemonPayload[]) {
-  return [
-    ...new Set(
-      deck.flatMap((pokemon) => [pokemon.type1Id, pokemon.type2Id]).filter((type): type is string => Boolean(type)),
-    ),
-  ];
 }
 
 async function loadActivePlayerDeck(supabase: SupabaseServerClient, userId: string): Promise<UnityPokemonPayload[]> {
@@ -424,8 +417,9 @@ function buildMovePayloads(moveIds: string[]) {
 }
 
 function buildMovePayload(moveId: string): UnityMovePayload {
-  const id = moveId || 'tackle';
-  const move = movesData[id];
+  const fallbackMoveId = 'tackle';
+  const id = moveId && movesData[moveId] ? moveId : fallbackMoveId;
+  const move = movesData[id] ?? movesData[fallbackMoveId];
   const pp = Number(move?.pp ?? 1);
 
   return {

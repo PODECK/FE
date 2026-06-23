@@ -1,4 +1,4 @@
-﻿-- Unity 전투 세션 검증과 완료 보상을 하나의 트랜잭션으로 저장하는 RPC
+-- Unity 전투 세션 검증과 완료 보상을 하나의 트랜잭션으로 저장하는 RPC
 create table if not exists public.unity_battle_sessions (
   id uuid primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -13,7 +13,10 @@ create table if not exists public.unity_battle_sessions (
 
 alter table public.unity_battle_sessions enable row level security;
 
-grant select, insert on public.unity_battle_sessions to authenticated;
+grant select on public.unity_battle_sessions to authenticated;
+revoke insert on public.unity_battle_sessions from authenticated;
+
+drop policy if exists unity_battle_sessions_insert_own on public.unity_battle_sessions;
 
 do $$
 begin
@@ -29,22 +32,133 @@ begin
     to authenticated
     using (auth.uid() = user_id);
   end if;
-
-  if not exists (
-    select 1 from pg_policies
-    where schemaname = 'public'
-      and tablename = 'unity_battle_sessions'
-      and policyname = 'unity_battle_sessions_insert_own'
-  ) then
-    create policy unity_battle_sessions_insert_own
-    on public.unity_battle_sessions
-    for insert
-    to authenticated
-    with check (auth.uid() = user_id);
-  end if;
 end;
 $$;
 
+
+drop function if exists public.create_unity_battle_session(integer);
+
+create or replace function public.create_unity_battle_session(
+  p_floor integer
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_requested_floor integer;
+  v_unlocked_floor integer;
+  v_battle_session_id uuid := gen_random_uuid();
+  v_player_deck_dex_ids integer[] := '{}'::integer[];
+  v_player_deck_type_ids text[] := '{}'::text[];
+  v_player_deck_instance_ids text[] := '{}'::text[];
+begin
+  if v_user_id is null then
+    raise exception using
+      errcode = '28000',
+      message = 'not_authenticated';
+  end if;
+
+  select coalesce(tp.current_floor, 1)
+  into v_unlocked_floor
+  from public.tower_progress tp
+  where tp.user_id = v_user_id;
+
+  if not found then
+    v_unlocked_floor := 1;
+  end if;
+
+  v_requested_floor := greatest(coalesce(p_floor, v_unlocked_floor, 1), 1);
+
+  if v_requested_floor > greatest(v_unlocked_floor, 1) then
+    raise exception using
+      errcode = '22023',
+      message = 'floor_locked';
+  end if;
+
+  perform 1
+  from public.tower_floors tf
+  where tf.floor = v_requested_floor;
+
+  if not found then
+    raise exception using
+      errcode = '22023',
+      message = 'tower_floor_not_found';
+  end if;
+
+  with active_deck as (
+    select d.id
+    from public.decks d
+    where d.user_id = v_user_id
+      and d.is_active = true
+    limit 1
+  ),
+  deck_rows as (
+    select
+      dn.position,
+      dn.instance_id::text as instance_id,
+      op.dex_id::integer as dex_id,
+      ps.type1_id::text as type1_id,
+      ps.type2_id::text as type2_id
+    from active_deck ad
+    join public.deck_numbers dn on dn.deck_id = ad.id
+    join public.owned_pokemon op on op.user_id = v_user_id
+      and op.instance_id::text = dn.instance_id::text
+    left join public.pokemon_species ps on ps.dex_id = op.dex_id
+  ),
+  deck_aggregate as (
+    select
+      coalesce(array_agg(dr.dex_id order by dr.position), '{}'::integer[]) as dex_ids,
+      coalesce(array_agg(dr.instance_id order by dr.position), '{}'::text[]) as instance_ids
+    from deck_rows dr
+  ),
+  deck_type_aggregate as (
+    select coalesce(
+      array_agg(distinct type_values.type_id) filter (
+        where type_values.type_id is not null
+          and type_values.type_id <> ''
+      ),
+      '{}'::text[]
+    ) as type_ids
+    from deck_rows dr
+    cross join lateral (values (dr.type1_id), (dr.type2_id)) as type_values(type_id)
+  )
+  select da.dex_ids, dta.type_ids, da.instance_ids
+  into v_player_deck_dex_ids, v_player_deck_type_ids, v_player_deck_instance_ids
+  from deck_aggregate da
+  cross join deck_type_aggregate dta;
+
+  if cardinality(v_player_deck_instance_ids) = 0 then
+    raise exception using
+      errcode = '22023',
+      message = 'active_deck_not_found';
+  end if;
+
+  insert into public.unity_battle_sessions (
+    id,
+    user_id,
+    floor,
+    player_deck_dex_ids,
+    player_deck_type_ids,
+    player_deck_instance_ids,
+    expires_at
+  ) values (
+    v_battle_session_id,
+    v_user_id,
+    v_requested_floor,
+    v_player_deck_dex_ids,
+    v_player_deck_type_ids,
+    v_player_deck_instance_ids,
+    now() + interval '1 hour'
+  );
+
+  return jsonb_build_object('battle_session_id', v_battle_session_id);
+end;
+$$;
+
+grant execute on function public.create_unity_battle_session(integer) to authenticated;
 drop function if exists public.complete_unity_battle(integer, boolean, integer, integer[], text[], text[]);
 
 create or replace function public.complete_unity_battle(
@@ -83,6 +197,12 @@ begin
     raise exception using
       errcode = '22023',
       message = 'invalid_battle_session';
+  end if;
+
+  if p_won is null then
+    raise exception using
+      errcode = '22023',
+      message = 'invalid_battle_result';
   end if;
 
   perform pg_advisory_xact_lock(hashtextextended(v_user_id::text, 0));
@@ -141,9 +261,15 @@ begin
   for update;
 
   if not found then
-    v_previous_current_floor := v_session_floor;
+    v_previous_current_floor := 1;
     v_previous_max_cleared_floor := 0;
     v_previous_lives := 4;
+  end if;
+
+  if v_session_floor > greatest(v_previous_current_floor, 1) then
+    raise exception using
+      errcode = '22023',
+      message = 'floor_locked';
   end if;
 
   update public.unity_battle_sessions
