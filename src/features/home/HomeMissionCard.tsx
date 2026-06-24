@@ -1,7 +1,14 @@
-import Image from 'next/image';
+'use client';
 
-import { claimDailyMissionReward } from '@/features/mission/actions/dailyMissionActions';
+import Image from 'next/image';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+
 import type { DailyMissionView } from '@/entities/mission/model/types';
+import {
+  claimDailyMissionReward,
+  type ClaimDailyMissionRewardState,
+} from '@/features/mission/actions/dailyMissionActions';
 import DailyMissionResetTimer from '@/features/mission/components/DailyMissionResetTimer';
 
 const getRewardIconSrc = (rewardText: string) => {
@@ -14,6 +21,11 @@ const getRewardIconSrc = (rewardText: string) => {
 
 type HomeMissionCardProps = {
   missions: DailyMissionView[];
+};
+
+const initialClaimState: ClaimDailyMissionRewardState = {
+  ok: false,
+  message: '',
 };
 
 export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
@@ -72,21 +84,61 @@ export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
                   {mission.rewardText}
                 </span>
 
-                <form action={claimDailyMissionReward}>
-                  <input type="hidden" name="missionId" value={mission.id} />
-                  <button
-                    type="submit"
-                    disabled={!isClaimable}
-                    className={`h-6 w-[56px] cursor-pointer rounded-[7px] text-[12px] font-bold transition active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100 ${buttonClassName}`}
-                  >
-                    {mission.isCompleted ? '완료' : '수령하기'}
-                  </button>
-                </form>
+                <MissionRewardForm mission={mission} isClaimable={isClaimable} buttonClassName={buttonClassName} />
               </div>
             </article>
           );
         })}
       </div>
     </section>
+  );
+}
+
+function MissionRewardForm({
+  mission,
+  isClaimable,
+  buttonClassName,
+}: {
+  mission: DailyMissionView;
+  isClaimable: boolean;
+  buttonClassName: string;
+}) {
+  const [state, formAction] = useActionState(claimDailyMissionReward, initialClaimState);
+  const hasMessage = Boolean(state.message) && !state.ok;
+
+  return (
+    <form action={formAction} className="flex flex-col items-end">
+      <input type="hidden" name="missionId" value={mission.id} />
+      <MissionRewardButton
+        isCompleted={Boolean(mission.isCompleted)}
+        isClaimable={isClaimable}
+        buttonClassName={buttonClassName}
+      />
+      {hasMessage && (
+        <p className="mt-1 max-w-[120px] text-right text-[9px] leading-tight text-[#ff4747]">{state.message}</p>
+      )}
+    </form>
+  );
+}
+
+function MissionRewardButton({
+  isCompleted,
+  isClaimable,
+  buttonClassName,
+}: {
+  isCompleted: boolean;
+  isClaimable: boolean;
+  buttonClassName: string;
+}) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={!isClaimable || pending}
+      className={`h-6 w-[56px] cursor-pointer rounded-[7px] text-[12px] font-bold transition active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100 ${buttonClassName}`}
+    >
+      {isCompleted ? '완료' : pending ? '처리중' : '수령하기'}
+    </button>
   );
 }
