@@ -30,7 +30,7 @@ const initialClaimState: ClaimDailyMissionRewardState = {
 
 export default function HomeMissionCard({ missions }: HomeMissionCardProps) {
   return (
-    <section className="h-[280px] w-full rounded-[20px] bg-[var(--color-base-3)] px-4 pt-5 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
+    <section className="h-[282px] w-full rounded-[20px] bg-[var(--color-base-3)] px-4 pt-5 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
       <div className="mb-5 flex items-center justify-between gap-3">
         <h2 className="text-base-0 shrink-0 text-base leading-[1.4] font-bold tracking-[-0.4px]">오늘의 미션</h2>
         <DailyMissionResetTimer />
