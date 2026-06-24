@@ -68,7 +68,7 @@ function BattleHistoryRow({ item }: { item: HomeBattleHistoryItem }) {
           ))}
         </div>
 
-        <p className="w-10 shrink-0 text-right text-[11px] leading-[1.4] tracking-[-0.275px] text-[#aaa]">
+        <p className="w-14 shrink-0 text-right text-[11px] leading-[1.4] tracking-[-0.275px] whitespace-nowrap text-[#aaa]">
           {item.timeAgo}
         </p>
       </div>
